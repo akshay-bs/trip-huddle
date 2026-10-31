@@ -11,7 +11,8 @@ v0.1 is a seed: the setup from one real trip, with private details removed. The 
 - [x] `${CLAUDE_PLUGIN_ROOT}` resolves in Claude Code: the loaded skill text shows the full plugin cache path, and the command runs as written
 - [x] Fixed: the subagent prompt path in SKILL.md now uses `${CLAUDE_PLUGIN_ROOT}` (before, it pointed inside the user's vault)
 - [x] Fixed: the validator now prints a clear message instead of crashing when run outside a vault
-- [ ] Test the same in Cowork, including whether the `general-purpose` subagents in `add-place` work there
+- [x] Test the same in Cowork: the plugin installs from GitHub, `${CLAUDE_PLUGIN_ROOT}` resolves to the synced plugin folder, the validator reports 0 errors, dedupe works, and `general-purpose` background subagents work (3 new places researched by one agent)
+- [ ] Research notes can save estimated coordinates and guessed walk details that still pass the validator. Consider a `coords_verified` field, or a warning when the research says a value is unverified
 - [ ] Add a square plugin icon at `.claude-plugin/icon.png`
 
 ## Phase 2: make it work for any trip

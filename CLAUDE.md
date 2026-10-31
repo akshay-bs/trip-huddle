@@ -16,6 +16,15 @@ cd example-vault && node ../skills/add-place/scripts/validate.mjs
 ```
 It must report 0 errors.
 
+After any change to templates, Bases, `trip-init` or its field packs, also run:
+```bash
+node skills/trip-init/scripts/init.mjs --answers skills/trip-init/tests/example-vault-answers.json --vault example-vault --reconfigure
+```
+It must print "Nothing changed": the example vault is exactly what `trip-init` makes from its answers. Then set up a made-up trip in a scratch folder and validate it:
+```bash
+node skills/trip-init/scripts/init.mjs --answers skills/trip-init/tests/portugal-answers.json --vault /tmp/th-test && (cd /tmp/th-test && node "$OLDPWD/skills/add-place/scripts/validate.mjs")
+```
+
 ## Privacy rules for this repo
 - The example came from a real trip and its private details were removed. Never add trip dates, group size or makeup, people's names, booking references, flight details, quotes from friends or agencies, or private messages.
 - Example notes point to `[[Example - Public research]]` only.

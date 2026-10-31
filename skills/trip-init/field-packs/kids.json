@@ -1,0 +1,18 @@
+{
+  "description": "Trips with young children: safe for kids, toilets nearby, family rooms.",
+  "suggest_when": "Anyone in the group is under about 10.",
+  "templates": {
+    "Location.md": {
+      "properties": { "kid_friendly": "", "toilets_nearby": false },
+      "guide": [
+        "kid_friendly: great | ok | not-suitable | unknown   (railings, drops, water, how long kids must walk)",
+        "toilets_nearby: true if there are usable toilets at or near the place"
+      ]
+    },
+    "Stay.md": {
+      "properties": { "kid_facilities": "" },
+      "guide": ["kid_facilities: cots, high chairs, play area, fenced pool, quiet at night"]
+    }
+  },
+  "types": { "kid_friendly": "text", "toilets_nearby": "checkbox", "kid_facilities": "text" }
+}

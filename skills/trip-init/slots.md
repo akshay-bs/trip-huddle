@@ -1,5 +1,7 @@
 # Slots: the per-trip values in `vault-template`
 
+`scripts/init.mjs` fills these in. It finds each line by its pattern, not its exact text, so re-running it with new answers works. If you add a slot, add it to `init.mjs` and here.
+
 Everything in `vault-template/Templates`, `Bases` and `.obsidian` is neutral except the lines below. `trip-init` (and `trip-init --reconfigure`) fills each one with the trip's values by exact find/replace.
 
 How to use this file:
@@ -49,14 +51,14 @@ How to use this file:
 ### S6. Location: category list
 - File: `Templates/Location.md` (FIELD GUIDE comment)
 - Template text: `category: viewpoint | nature | old-town | museum | market | food | activity | beach | hike | …`
-- Example text: `category: waterfall | viewpoint | cave | village | root-bridge | lake-river | wildlife | temple | museum | market | tea-estate | activity`
-- Meaning: the kinds of place. The template list ends in `…`, so it is open. The example list has no `…`, so it is a closed list and the validator warns on other values. Either is fine.
-- From: `categories`. Write `category: a | b | c` (add `| …` to keep it open).
+- Example text: `category: waterfall | viewpoint | cave | village | root-bridge | lake-river | wildlife | temple | museum | market | tea-estate | activity | …`
+- Meaning: the kinds of place. The list ends in `…`, so it is open: the validator doesn't warn on other values.
+- From: `categories`. `init.mjs` writes `category: a | b | c | …`.
 
 ### S7. Stay: base towns
 - File: `Templates/Stay.md` (FIELD GUIDE comment)
 - Template text: `base_town: base town the stay is in  (set your list at trip setup)`
-- Example text: `base_town: Guwahati | Shillong | Sohra | Dawki | Kaziranga | …`
+- Example text: `base_town: Guwahati | Shillong | Sohra | Dawki | Mawlynnong | Kaziranga | Majuli | …`
 - Meaning: the base towns a stay can be in.
 - From: `bases`. Write `base_town: A | B | C | …`.
 
@@ -102,7 +104,8 @@ How to use this file:
 
 - Map box: `skills/add-place/scripts/validate.mjs` reads `map_box` (`{lat_min, lat_max, lng_min, lng_max}`) from `trip.md` at the vault root. When `trip.md` or `map_box` is missing or empty, the coordinate box check is skipped. Nothing to replace.
 - Regions: the validator reads `regions` (a list) from `trip.md` and warns when a Location's `state` is not in it. When absent, it falls back to the FIELD GUIDE list (S4). When `regions` is set, the S4 list is not checked.
-- Not covered here (Phase 4 fills these in): the placeholder text in `vault-template/00 Home.md`, and optional field blocks (heating, hot water, veg food, and so on) that the init skill may add or remove.
+- Trip facts in `00 Home.md`: `init.mjs` fills a line only while it still holds the starter text (`<...>` or empty). Hand-written lines are kept.
+- Field packs (`field-packs/*.json`): extra properties added before `recommended_by:` and extra FIELD GUIDE lines, plus their types in `.obsidian/types.json`. Packs not chosen are taken out again; their types stay (harmless).
 
 ## Check
 

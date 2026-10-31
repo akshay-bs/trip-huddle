@@ -17,6 +17,7 @@ Trip-Huddle is a Claude plugin (for Cowork and Claude Code) plus an Obsidian vau
 |---|---|
 | `.claude-plugin/` | Plugin manifest, plus a marketplace file so this repo can be added as a marketplace |
 | `skills/add-place/` | The skill that adds places and stays: the pipeline, a subagent prompt for researching many items in parallel, and `validate.mjs` (Node, no dependencies) |
+| `skills/trip-init/` | The skill that sets up a vault for your trip: a short interview, then `init.mjs` (Node, no dependencies) writes `trip.md` and fills the templates and Bases. Optional field sets live in `field-packs/` |
 | `vault-template/` | An empty starter vault: templates, Bases views, Obsidian property types, a home page with a **Trip facts** section, and vault rules for Claude |
 | `example-vault/` | A filled example: 60 places and 6 stays in Assam and Meghalaya, researched for a December trip |
 

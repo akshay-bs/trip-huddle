@@ -1,0 +1,49 @@
+{
+  "trip_name": "Portugal road trip",
+  "destination": "Portugal",
+  "start_date": "2027-06-05",
+  "end_date": "2027-06-14",
+  "dates_fixed": true,
+  "arrival": "Lisbon (LIS)",
+  "departure": "Faro (FAO)",
+  "travellers": 6,
+  "cost_split_units": 3,
+  "cost_split_label": "Couple",
+  "traveller_notes": "One person can't do long climbs.",
+  "pace": "Easy walks only",
+  "food_needs": "one vegetarian",
+  "group_vehicle": "hired 7-seat van",
+  "currency": "EUR",
+  "currency_symbol": "€",
+  "season": "June",
+  "daylight_hrs": 15,
+  "day_start": "08:30",
+  "sunset": "21:05",
+  "regions": [
+    "Lisbon",
+    "Alentejo",
+    "Algarve"
+  ],
+  "bases": [
+    "Lisbon",
+    "Évora",
+    "Lagos"
+  ],
+  "categories": [
+    "beach",
+    "viewpoint",
+    "old-town",
+    "castle",
+    "winery"
+  ],
+  "map_box": {
+    "lat_min": 36.9,
+    "lat_max": 39.0,
+    "lng_min": -9.6,
+    "lng_max": -7.4
+  },
+  "field_packs": [
+    "kids",
+    "self-drive"
+  ]
+}

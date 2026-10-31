@@ -46,7 +46,7 @@ tags:
 <!--
 FIELD GUIDE
 stay_type: hotel | resort | homestay | airbnb | guesthouse
-base_town: Guwahati | Shillong | Sohra | Dawki | Kaziranga | …
+base_town: Guwahati | Shillong | Sohra | Dawki | Mawlynnong | Kaziranga | Majuli | …
 location: [lat, lng]
 decision: considering | selected | backup | dropped
 booking_status: not-contacted | enquired | quoted | booked | paid | cancelled

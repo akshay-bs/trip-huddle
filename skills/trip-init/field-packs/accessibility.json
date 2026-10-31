@@ -1,0 +1,29 @@
+{
+  "description": "Someone uses a wheelchair or can't manage steps or long walks.",
+  "suggest_when": "The People answers mention mobility needs, wheelchairs, prams or knee trouble.",
+  "templates": {
+    "Location.md": {
+      "properties": {
+        "step_free_access": "",
+        "access_note": ""
+      },
+      "guide": [
+        "step_free_access: yes | partly | no | unknown   (from the drop-off point to the main sight)",
+        "access_note: ramps, handrails, seating, where a vehicle can drop people closest"
+      ]
+    },
+    "Stay.md": {
+      "properties": {
+        "step_free_room": ""
+      },
+      "guide": [
+        "step_free_room: yes | on-request | no | unknown"
+      ]
+    }
+  },
+  "types": {
+    "step_free_access": "text",
+    "access_note": "text",
+    "step_free_room": "text"
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "description": "Driving yourselves: parking at each place and the state of the roads.",
+  "suggest_when": "The group drives its own or a rented car or van.",
+  "templates": {
+    "Location.md": {
+      "properties": { "parking_at_site": "", "road_condition": "" },
+      "guide": [
+        "parking_at_site: free | paid | limited | none | unknown",
+        "road_condition: good | narrow | rough | 4x4-only | unknown   (last stretch to the place)"
+      ]
+    },
+    "Stay.md": {
+      "properties": { "parking_cost": "" },
+      "guide": ["parking_cost: plain number per night in the trip currency; 0 if free"]
+    }
+  },
+  "types": { "parking_at_site": "text", "road_condition": "text", "parking_cost": "number" }
+}

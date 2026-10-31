@@ -21,10 +21,10 @@ daylight_hrs: 9.5
 day_start: "07:00"
 sunset: "16:30"
 regions: [Assam, Meghalaya]
-bases: [Guwahati, Shillong, Sohra, Dawki, Kaziranga]
+bases: [Guwahati, Shillong, Sohra, Dawki, Mawlynnong, Kaziranga, Majuli]
 categories: [waterfall, viewpoint, cave, village, root-bridge, lake-river, wildlife, temple, museum, market, tea-estate, activity]
 map_box: {lat_min: 24, lat_max: 28.5, lng_min: 89, lng_max: 97}
-field_packs: [cold-weather]
+field_packs: []
 ---
 # Trip settings
 

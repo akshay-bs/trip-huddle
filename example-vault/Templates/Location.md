@@ -43,7 +43,7 @@ tags:
 FIELD GUIDE (delete nothing — this comment is invisible in Reading view)
 state: Assam | Meghalaya
 nearest_base: Guwahati | Shillong | Sohra | Dawki | Mawlynnong | Kaziranga | Majuli | …
-category: waterfall | viewpoint | cave | village | root-bridge | lake-river | wildlife | temple | museum | market | tea-estate | activity
+category: waterfall | viewpoint | cave | village | root-bridge | lake-river | wildlife | temple | museum | market | tea-estate | activity | …
 location: [lat, lng]  e.g. [48.8584, 2.2945]  (decimal degrees, used by the map)
 season_verdict: great | good | ok | skip   (how good is it in your travel season)
 entry_fee: plain number in the trip currency (see trip.md); no symbol or text

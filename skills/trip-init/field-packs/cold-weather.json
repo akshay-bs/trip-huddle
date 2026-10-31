@@ -1,0 +1,18 @@
+{
+  "description": "Cold-season trips: frost, snow or fog on roads, and how warm a stay really is.",
+  "suggest_when": "Nights below about 10 °C, mountains in winter, or snow or fog likely.",
+  "templates": {
+    "Location.md": {
+      "properties": { "weather_risk": "", "warm_clothes_needed": false },
+      "guide": [
+        "weather_risk: none | fog | snow | ice-on-road | closes-in-bad-weather | unknown",
+        "warm_clothes_needed: true if it is noticeably colder than the base town (altitude, wind, open water)"
+      ]
+    },
+    "Stay.md": {
+      "properties": { "room_warmth_note": "" },
+      "guide": ["room_warmth_note: what reviews say about cold rooms, blankets and heater cost"]
+    }
+  },
+  "types": { "weather_risk": "text", "warm_clothes_needed": "checkbox", "room_warmth_note": "text" }
+}

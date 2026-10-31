@@ -7,8 +7,12 @@ v0.1 is a seed: the setup from one real trip, with private details removed. The 
 - [x] Validator finds the vault from the current directory (or `TRIP_VAULT`) instead of its own location, so it works when installed as a plugin
 - [x] `vault-template/` (empty starter vault) and `example-vault/` (60 places, 6 stays)
 - [x] Plugin manifest and marketplace file
-- [ ] Test the install from GitHub in Cowork and in Claude Code, against a copy of `example-vault/`
-- [ ] Check that `${CLAUDE_PLUGIN_ROOT}` resolves in the validate command in both hosts
+- [x] Test the install from GitHub in Claude Code (2.1.316), against a copy of `example-vault/`: `claude plugin validate .` passes (only warning: no icon), marketplace add and install work, and the installed validator reports 0 errors on the copy
+- [x] `${CLAUDE_PLUGIN_ROOT}` resolves in Claude Code: the loaded skill text shows the full plugin cache path, and the command runs as written
+- [x] Fixed: the subagent prompt path in SKILL.md now uses `${CLAUDE_PLUGIN_ROOT}` (before, it pointed inside the user's vault)
+- [x] Fixed: the validator now prints a clear message instead of crashing when run outside a vault
+- [ ] Test the same in Cowork, including whether the `general-purpose` subagents in `add-place` work there
+- [ ] Add a square plugin icon at `.claude-plugin/icon.png`
 
 ## Phase 2: make it work for any trip
 These are still specific to the original trip:

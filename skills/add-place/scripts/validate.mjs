@@ -9,6 +9,11 @@ const VAULT = path.resolve(process.env.TRIP_VAULT || process.cwd());
 const rel = p => path.relative(VAULT, p).split(path.sep).join('/');
 const read = p => fs.readFileSync(p, 'utf8');
 
+if (!fs.existsSync(path.join(VAULT, 'Templates', 'Location.md'))) {
+  console.error(`Not a trip-huddle vault: ${VAULT}\n(no Templates/Location.md). Run this from the vault folder, or set TRIP_VAULT to the vault path.`);
+  process.exit(2);
+}
+
 // ---------- frontmatter parsing (the simple YAML subset this vault uses) ----------
 function parseFrontmatter(text) {
   const m = text.match(/^---\r?\n([\s\S]*?)\r?\n---(?:\r?\n|$)/);

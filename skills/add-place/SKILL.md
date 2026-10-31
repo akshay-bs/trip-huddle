@@ -43,7 +43,7 @@ Before creating anything, search for the place or stay. The user's spelling is o
 - Locations go in `Locations/` and stays go in `Stays/`. **Nothing goes in the vault root.** Only `00 Home.md` lives there.
 
 ## 4. Research and write the note
-- **Several items:** with 3 or more new items, fan out to `general-purpose` subagents, 3–5 items per agent, grouped by area. Run them in the background, in parallel. Use the prompt in `references/agent-prompt.md`, filled in.
+- **Several items:** with 3 or more new items, fan out to `general-purpose` subagents, 3–5 items per agent, grouped by area. Run them in the background, in parallel. Use the prompt in `${CLAUDE_PLUGIN_ROOT}/skills/add-place/references/agent-prompt.md`, filled in.
 - **One or two items:** do them yourself, following the same rules.
 
 **Rules for every note** (also given to agents):

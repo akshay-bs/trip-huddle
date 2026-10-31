@@ -1,0 +1,92 @@
+filters:
+  and:
+    - type == "stay"
+    - '!file.inFolder("Templates")'
+formulas:
+  cost_per_family: if(est_total_inr, est_total_inr / 4, "")
+properties:
+  formula.cost_per_family:
+    displayName: Per family ₹
+  est_total_inr:
+    displayName: Total ₹
+  price_per_night_inr:
+    displayName: ₹ / night
+views:
+  - type: table
+    name: Shortlist by town
+    filters:
+      and:
+        - decision != "dropped"
+    groupBy:
+      property: base_town
+      direction: ASC
+    order:
+      - file.name
+      - stay_type
+      - decision
+      - price_per_night_inr
+      - price_basis
+      - heating
+      - hot_water
+      - parking_for_tempo_traveller
+      - recommended_by
+  - type: table
+    name: Booking tracker
+    filters:
+      and:
+        - decision == "selected"
+    order:
+      - file.name
+      - base_town
+      - check_in
+      - check_out
+      - booking_status
+      - booking_ref
+      - est_total_inr
+      - advance_paid_inr
+      - formula.cost_per_family
+      - cancellation_policy
+    sort:
+      - property: check_in
+        direction: ASC
+    summaries:
+      est_total_inr: Sum
+      advance_paid_inr: Sum
+      formula.cost_per_family: Sum
+  - type: table
+    name: Dropped
+    filters:
+      and:
+        - decision == "dropped"
+    order:
+      - file.name
+      - base_town
+      - decision_reason
+      - decided_on
+  - type: cards
+    name: Cards
+    order:
+      - file.name
+      - base_town
+      - price_per_night_inr
+      - google_rating
+      - decision
+    image: note.cover
+  - type: table
+    name: In this itinerary
+    filters:
+      and:
+        - file.hasLink(this.file)
+    order:
+      - file.name
+      - base_town
+      - nights
+      - price_per_night_inr
+      - google_rating
+      - heating
+      - hot_water
+      - room_config
+      - decision
+  - type: map
+    name: View
+    coordinates: note.location

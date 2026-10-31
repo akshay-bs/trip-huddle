@@ -1,0 +1,7 @@
+.DS_Store
+Thumbs.db
+.obsidian/workspace*.json
+.obsidian/plugins/
+.trash/
+.claude/scratch/
+.claude/settings.local.json

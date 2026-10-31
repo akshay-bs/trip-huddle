@@ -1,0 +1,30 @@
+filters:
+  and:
+    - type == "day"
+    - '!file.inFolder("Templates")'
+formulas:
+  slack_hrs: if(daylight_hrs, daylight_hrs - (if(drive_hrs, drive_hrs, 0) + if(activity_hrs, activity_hrs, 0)), "")
+properties:
+  formula.slack_hrs:
+    displayName: Slack hrs
+views:
+  - type: table
+    name: Days
+    order:
+      - file.name
+      - date
+      - start_base
+      - end_base
+      - stay
+      - locations
+      - drive_hrs
+      - activity_hrs
+      - formula.slack_hrs
+      - total_walk_km
+    sort:
+      - property: day
+        direction: ASC
+    summaries:
+      drive_hrs: Sum
+      activity_hrs: Sum
+      total_walk_km: Sum

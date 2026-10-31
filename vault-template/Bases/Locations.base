@@ -1,0 +1,174 @@
+filters:
+  and:
+    - type == "location"
+    - '!file.inFolder("Templates")'
+formulas:
+  sources: if(recommended_by, recommended_by.length, 0)
+  priority_rank: if(priority == "must", 1, if(priority == "should", 2, if(priority == "maybe", 3, 4)))
+properties:
+  formula.sources:
+    displayName: "# Sources"
+  december_verdict:
+    displayName: Dec verdict
+  time_needed_hrs:
+    displayName: Hrs
+views:
+  - type: table
+    name: All
+    order:
+      - file.name
+      - nearest_base
+      - category
+      - december_verdict
+      - difficulty
+      - group_fit
+      - time_needed_hrs
+      - decision
+      - formula.sources
+      - decision_reason
+    sort:
+      - property: decision
+        direction: DESC
+      - property: nearest_base
+        direction: DESC
+      - property: formula.sources
+        direction: DESC
+      - property: december_verdict
+        direction: DESC
+      - property: category
+        direction: ASC
+      - property: state
+        direction: ASC
+  - type: table
+    name: To decide
+    filters:
+      and:
+        - decision == "considering"
+    order:
+      - file.name
+      - nearest_base
+      - december_verdict
+      - difficulty
+      - time_needed_hrs
+      - priority
+      - formula.sources
+    sort:
+      - property: formula.priority_rank
+        direction: ASC
+      - property: formula.sources
+        direction: DESC
+  - type: table
+    name: December-worthy
+    filters:
+      and:
+        - december_verdict != "skip"
+        - decision != "dropped"
+    order:
+      - file.name
+      - nearest_base
+      - december_verdict
+      - december_note
+      - priority
+      - decision
+    sort:
+      - property: formula.priority_rank
+        direction: ASC
+  - type: table
+    name: Easy walks
+    filters:
+      or:
+        - difficulty == "easy"
+        - walk_involved == false
+    order:
+      - file.name
+      - nearest_base
+      - walk_distance_km
+      - walk_duration_min
+      - steps_or_climb
+      - difficulty
+      - decision
+  - type: table
+    name: By base town
+    filters:
+      and:
+        - decision != "dropped"
+    groupBy:
+      property: nearest_base
+      direction: ASC
+    order:
+      - file.name
+      - decision
+      - priority
+      - time_needed_hrs
+      - december_verdict
+    summaries:
+      time_needed_hrs: Sum
+  - type: table
+    name: Selected
+    filters:
+      and:
+        - decision == "selected"
+    order:
+      - file.name
+      - nearest_base
+      - scheduled_day
+      - time_needed_hrs
+      - best_time_of_day
+  - type: table
+    name: Selected but unscheduled
+    filters:
+      and:
+        - decision == "selected"
+        - scheduled_day.isEmpty()
+    order:
+      - file.name
+      - nearest_base
+      - time_needed_hrs
+      - priority
+  - type: table
+    name: Dropped
+    filters:
+      and:
+        - decision == "dropped"
+    order:
+      - file.name
+      - decision_reason
+      - decided_on
+      - formula.sources
+  - type: cards
+    name: Cards
+    order:
+      - file.name
+      - nearest_base
+      - december_verdict
+      - difficulty
+      - decision
+    image: note.cover
+  - type: table
+    name: View
+  - type: map
+    name: View 2
+    filters:
+      and:
+        - decision == "selected"
+    coordinates: note.location
+    markerIcon: formula.priority_rank
+    center: ""
+  - type: table
+    name: In this itinerary
+    filters:
+      and:
+        - file.hasLink(this.file)
+    order:
+      - file.name
+      - nearest_base
+      - category
+      - december_verdict
+      - difficulty
+      - group_fit
+      - time_needed_hrs
+      - decision
+      - formula.sources
+    sort:
+      - property: nearest_base
+        direction: ASC

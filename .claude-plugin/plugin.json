@@ -1,0 +1,13 @@
+{
+  "name": "trip-huddle",
+  "version": "0.1.0",
+  "description": "Plan a group trip in an Obsidian vault with Claude: every suggestion traced to its source, places and stays researched and checked against templates, decisions left to the group.",
+  "author": {
+    "name": "akshay-bs",
+    "url": "https://github.com/akshay-bs"
+  },
+  "homepage": "https://github.com/akshay-bs/trip-huddle",
+  "repository": "https://github.com/akshay-bs/trip-huddle",
+  "license": "MIT",
+  "keywords": ["travel", "trip-planning", "obsidian", "group-trip", "itinerary"]
+}

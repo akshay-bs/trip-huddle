@@ -1,0 +1,14 @@
+{
+  "name": "trip-huddle",
+  "owner": {
+    "name": "akshay-bs"
+  },
+  "plugins": [
+    {
+      "name": "trip-huddle",
+      "source": "./",
+      "description": "Plan a group trip in an Obsidian vault with Claude.",
+      "version": "0.1.0"
+    }
+  ]
+}

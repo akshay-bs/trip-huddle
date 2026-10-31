@@ -18,8 +18,8 @@ best_months:
   - Aug
   - Sep
   - Oct
-december_verdict: ok
-december_note: The falls still run in the dry season but are much thinner than in the monsoon. The lower pools are clear and it is pleasant and sunny, but do not expect a roaring waterfall. Crowds build during Christmas week.
+season_verdict: ok
+season_note: The falls still run in the dry season but are much thinner than in the monsoon. The lower pools are clear and it is pleasant and sunny, but do not expect a roaring waterfall. Crowds build during Christmas week.
 walk_involved: true
 walk_distance_km: 0.6
 walk_duration_min: 45
@@ -32,7 +32,7 @@ opening_hours: About 9:00/10:00–17:00 (varies by source)
 closed_days:
 last_mile: Paved road via Upper Shillong (Shillong–Sohra road side); parking at the gate; tempo traveller OK
 permits: None
-entry_fee_inr: 100
+entry_fee: 100
 other_fees: Parking; camera fee sometimes charged; Khasi costume photo about ₹50–100 (optional)
 toilets: Yes, basic at the entrance
 food_nearby: Snack and tea stalls and souvenir shops at the entrance
@@ -56,7 +56,7 @@ state: Assam | Meghalaya
 nearest_base: Guwahati | Shillong | Sohra | Dawki | Mawlynnong | Kaziranga | Majuli | …
 category: waterfall | viewpoint | cave | village | root-bridge | lake-river | wildlife | temple | museum | market | tea-estate | activity
 location: [lat, lng]  e.g. [25.1884, 92.0206]  (decimal degrees, used by the map)
-december_verdict: great | good | ok | skip
+season_verdict: great | good | ok | skip
 walk_distance_km / walk_duration_min: ROUND TRIP
 difficulty: easy | moderate | strenuous
 group_fit: good | ok | poor   (for the group described in 00 Home → Trip facts)
@@ -79,7 +79,7 @@ A stepped waterfall in Upper Shillong, about 12 km from the city centre, just of
 - **Teens:** photo spots at each tier, Khasi costume photo booths, souvenir stalls.
 - **Adults:** the first tier needs almost no effort. Anyone can go as far down as they are comfortable.
 
-## December reality
+## Season reality
 December is the dry season, so the falls are **thin**. Water still flows, but it is a trickle compared with the monsoon photos. The lower pool is usually clear and green. It is pleasant in the sun and chilly in the shade. It is very busy with city-tour groups around Christmas, so go in the morning if possible. It is worth a quick stop because it is on the way, but it is not a highlight in December.
 
 ## Access & walk

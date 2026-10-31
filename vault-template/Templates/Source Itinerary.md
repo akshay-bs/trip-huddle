@@ -18,7 +18,7 @@ processed: tick once every place below has a Location note with this source in i
 # {{title}}
 
 ## Route summary
-<!-- e.g. Guwahati (1N) → Shillong (3N) → Sohra (2N) → Kaziranga (2N) -->
+<!-- e.g. Town A (2N) → Town B (3N) → Town C (2N) -->
 
 ## Day by day (as given)
 - **Day 1:** 

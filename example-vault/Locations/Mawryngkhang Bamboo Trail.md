@@ -21,8 +21,8 @@ best_months:
   - Feb
   - Mar
   - Apr
-december_verdict: good
-december_note: October–April is the season. Dry bamboo walkways are safer than in the monsoon and views are clear, but the trail is still exposed and physically demanding.
+season_verdict: good
+season_note: October–April is the season. Dry bamboo walkways are safer than in the monsoon and views are clear, but the trail is still exposed and physically demanding.
 walk_involved: true
 walk_distance_km: 3.5
 walk_duration_min: 240
@@ -35,7 +35,7 @@ opening_hours:
 closed_days:
 last_mile: Wahkhen village (map pin is the village trailhead, not the rock), about 45 km (1.5–2 hrs) from Shillong; about 60 km (2–2.5 hrs) from Sohra via Pynursla
 permits:
-entry_fee_inr:
+entry_fee:
 other_fees: Village entry and guide fees likely; not confirmed
 toilets: Basic, at the village
 food_nearby: Village shops only
@@ -59,7 +59,7 @@ state: Assam | Meghalaya
 nearest_base: Guwahati | Shillong | Sohra | Dawki | Mawlynnong | Kaziranga | Majuli | …
 category: waterfall | viewpoint | cave | village | root-bridge | lake-river | wildlife | temple | museum | market | tea-estate | activity
 location: [lat, lng]  e.g. [25.1884, 92.0206]  (decimal degrees, used by the map)
-december_verdict: great | good | ok | skip
+season_verdict: great | good | ok | skip
 walk_distance_km / walk_duration_min: ROUND TRIP
 difficulty: easy | moderate | strenuous
 group_fit: good | ok | poor   (for the group described in 00 Home → Trip facts)
@@ -84,7 +84,7 @@ A trail from Wahkhen village, East Khasi Hills, along hand-built bamboo walkways
 - **Teens:** swaying bamboo bridges on a cliff face, the most "adventure" walk in the region.
 - **Adults:** the gorge scenery and the Khasi legend of the rock. But it is a real trek, not a stroll.
 
-## December reality
+## Season reality
 Dry season, so the bamboo is less slippery and the river is low and clear. Short days mean starting by about 9 AM to finish well before the 4:30 PM sunset, which is hard to combine with Mawkdok and the 90 km drive on the same day.
 
 ## Access & walk

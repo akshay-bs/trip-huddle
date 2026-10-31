@@ -20,8 +20,8 @@ best_months:
   - Jan
   - Feb
   - Mar
-december_verdict: good
-december_note: Dry, clear weather gives the best Khatarshnong valley views and the rough road is at its most passable. The main risk is visiting at midday, when most villagers are out in the fields and there is little whistling to hear
+season_verdict: good
+season_note: Dry, clear weather gives the best Khatarshnong valley views and the rough road is at its most passable. The main risk is visiting at midday, when most villagers are out in the fields and there is little whistling to hear
 walk_involved: true
 walk_distance_km:
 walk_duration_min: 45
@@ -34,7 +34,7 @@ opening_hours: Village; no fixed hours (daylight for day visitors)
 closed_days:
 last_mile: About 25 km of narrow, partly rough/rocky road via the Khatarshnong road off the Shillong–Sohra side (turn near Mawjrong). Tempo traveller probably possible but slow; confirm with the driver
 permits: None for Indian citizens
-entry_fee_inr:
+entry_fee:
 other_fees: No fixed entry fee found in sources; a local guide or a tip/donation to the host family is customary
 toilets: Basic, at the homestay only
 food_nearby: Meals at Kongthong Traveller's Nest (pre-arrange); eat properly before leaving the main road
@@ -58,7 +58,7 @@ state: Assam | Meghalaya
 nearest_base: Guwahati | Shillong | Sohra | Dawki | Mawlynnong | Kaziranga | Majuli | …
 category: waterfall | viewpoint | cave | village | root-bridge | lake-river | wildlife | temple | museum | market | tea-estate | activity
 location: [lat, lng]  e.g. [25.1884, 92.0206]  (decimal degrees, used by the map)
-december_verdict: great | good | ok | skip
+season_verdict: great | good | ok | skip
 walk_distance_km / walk_duration_min: ROUND TRIP
 difficulty: easy | moderate | strenuous
 group_fit: good | ok | poor   (for the group described in 00 Home → Trip facts)
@@ -81,7 +81,7 @@ A small Khasi village (about 600–700 people) on a ridge in the Khatarshnong ar
 - **Recognition:** it was India's nominee for the UNWTO (now UN Tourism) **Best Tourism Villages** contest in 2021. It was nominated but did not win. It also won **Best Tourism Village (Bronze)** at India's National Tourism Awards 2023. It is **not** a UNESCO site; a UNESCO intangible-heritage listing has been talked about but not granted.
 - **Khatarshnong valley:** the drive in runs along ridges above deep green valleys dropping toward the Bangladesh plains. Many visitors say the scenery is as much of a reward as the village. Adults will enjoy the views and the calm; teens will enjoy the novelty of having a family "whistle" their names.
 
-## December reality
+## Season reality
 December is a good month. The dry, clear weather means long views over the Khatarshnong valleys, and the rough last stretch of road is at its safest (landslides are a monsoon problem). Mornings and evenings are cold on the ridge. The village is well off the Christmas-week tourist circuit, so crowds are not an issue, but it is a Christian community: expect little activity around church services on Sundays and on 24–25 Dec. The real December risk is simply hearing nothing: on a weekday midday visit, the men are in the fields and the children are at school.
 
 ## Access & walk

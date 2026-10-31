@@ -19,8 +19,8 @@ best_months:
   - Jan
   - Feb
   - Mar
-december_verdict: good
-december_note: Dry, mostly clear winter skies give the best views of the year, but morning fog or afternoon haze can hide the view. It is cold and windy at the top, and the gate closes around 3:30 pm.
+season_verdict: good
+season_note: Dry, mostly clear winter skies give the best views of the year, but morning fog or afternoon haze can hide the view. It is cold and windy at the top, and the gate closes around 3:30 pm.
 walk_involved: true
 walk_distance_km: 0.3
 walk_duration_min: 15
@@ -33,7 +33,7 @@ opening_hours: About 9:00–15:30 (last entry; timings set by the Air Force)
 closed_days: Wednesday (reported by several sources; confirm locally)
 last_mile: Paved road via Upper Shillong into the Indian Air Force station, with a security check at the gate; tempo traveller OK
 permits: Original photo ID for every visitor at the IAF checkpoint; foreigners reportedly not allowed
-entry_fee_inr: 30
+entry_fee: 30
 other_fees: Vehicle about ₹30; telescope about ₹10–20 per person
 toilets: Basic
 food_nearby: Tea and snack stalls at the viewpoint
@@ -57,7 +57,7 @@ state: Assam | Meghalaya
 nearest_base: Guwahati | Shillong | Sohra | Dawki | Mawlynnong | Kaziranga | Majuli | …
 category: waterfall | viewpoint | cave | village | root-bridge | lake-river | wildlife | temple | museum | market | tea-estate | activity
 location: [lat, lng]  e.g. [25.1884, 92.0206]  (decimal degrees, used by the map)
-december_verdict: great | good | ok | skip
+season_verdict: great | good | ok | skip
 walk_distance_km / walk_duration_min: ROUND TRIP
 difficulty: easy | moderate | strenuous
 group_fit: good | ok | poor   (for the group described in 00 Home → Trip facts)
@@ -82,7 +82,7 @@ At about 1,965 m, this is the highest point around Shillong and in Meghalaya. It
 - **Teens:** the telescope tower and photos of the city from above. Some vendors also rent traditional Khasi costumes for photos.
 - **Adults:** an easy, low-effort viewpoint with almost no walking. It is a good first look at Meghalaya.
 
-## December reality
+## Season reality
 December is one of the best months for visibility because the air is dry and the skies are often clear. Still, fog and cloud can roll in at any time, and afternoon haze reduces the view. It is cold and windy at the top, so carry jackets. Christmas-week crowds are moderate because it is on the standard city-tour route. **Timing risk:** the gate reportedly closes around 3:30 pm. Check this when planning the day, or move the visit to a morning.
 
 ## Access & walk

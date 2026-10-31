@@ -19,8 +19,8 @@ best_months:
   - Mar
   - Apr
   - May
-december_verdict: good
-december_note: Falls shrink to a thin ribbon (Wikipedia notes they lose power Dec–Feb), but the 340 m drop and the green-blue plunge pool are still visible. Morning or afternoon fog can hide it for a while
+season_verdict: good
+season_note: Falls shrink to a thin ribbon (Wikipedia notes they lose power Dec–Feb), but the 340 m drop and the green-blue plunge pool are still visible. Morning or afternoon fog can hide it for a while
 walk_involved: true
 walk_distance_km: 0.4
 walk_duration_min: 20
@@ -33,7 +33,7 @@ opening_hours: About 9:00 am – 5:00 pm
 closed_days:
 last_mile: Paved road from Sohra town (about 5 km) to the viewpoint parking; tempo traveller OK
 permits: None
-entry_fee_inr: 20
+entry_fee: 20
 other_fees: Camera about ₹20; parking charged. Fees vary between sources (₹10–50), so carry cash
 toilets: Yes, at the viewpoint complex (paid)
 food_nearby: Many stalls and small eateries at the viewpoint (tea, snacks, local cinnamon, bay leaf, honey)
@@ -57,7 +57,7 @@ state: Assam | Meghalaya
 nearest_base: Guwahati | Shillong | Sohra | Dawki | Mawlynnong | Kaziranga | Majuli | …
 category: waterfall | viewpoint | cave | village | root-bridge | lake-river | wildlife | temple | museum | market | tea-estate | activity
 location: [lat, lng]  e.g. [25.1884, 92.0206]  (decimal degrees, used by the map)
-december_verdict: great | good | ok | skip
+season_verdict: great | good | ok | skip
 walk_distance_km / walk_duration_min: ROUND TRIP
 difficulty: easy | moderate | strenuous
 group_fit: good | ok | poor   (for the group described in 00 Home → Trip facts)
@@ -81,7 +81,7 @@ India's tallest plunge waterfall. It drops about 340 m (1,115 ft) off the Sohra 
 - Almost no walking needed, so the whole group can go.
 - Teens: dramatic scale and photos. Adults: the view plus local spice and honey shopping at the stalls.
 
-## December reality
+## Season reality
 - **Flow:** In the dry season (Dec–Feb) the falls lose most of their power. Expect a thin white ribbon, not a torrent. The plunge pool is at its most vivid colour in winter, and the gorge is still spectacular.
 - **Fog:** Sohra often has fog or cloud. On a bad day the gorge is a white wall for 15–60 min and then clears briefly. Late morning to early afternoon is usually the best bet; be ready to wait.
 - **Crowds:** One of the busiest stops in Sohra. Very crowded 24 Dec – 1 Jan, with parking jams around midday.

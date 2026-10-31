@@ -20,8 +20,8 @@ best_months:
   - Feb
   - Mar
   - Apr
-december_verdict: great
-december_note: Lower, calmer flow but the plunge pool is at its most vivid blue and swimming and boating are allowed (it is the monsoon that brings restrictions). Water is cold, so the swim is short and bracing
+season_verdict: great
+season_note: Lower, calmer flow but the plunge pool is at its most vivid blue and swimming and boating are allowed (it is the monsoon that brings restrictions). Water is cold, so the swim is short and bracing
 walk_involved: true
 walk_distance_km:
 walk_duration_min: 40
@@ -34,7 +34,7 @@ opening_hours: About 7:00 am – 6:00 pm (one source) or 9:00 am – 5:00 pm (Mu
 closed_days:
 last_mile: Jowai → Amlarem road, then a short road to the parking area; paved. Tempo traveller OK (confirm)
 permits: None
-entry_fee_inr: 40
+entry_fee: 40
 other_fees: Life jacket about ₹100 (compulsory for swimming and boating); boat ride about ₹100 per person; parking may be charged
 toilets: Yes, basic, plus separate changing rooms
 food_nearby: Small café and snack stalls near the parking area; limited
@@ -58,7 +58,7 @@ state: Assam | Meghalaya
 nearest_base: Guwahati | Shillong | Sohra | Dawki | Mawlynnong | Kaziranga | Majuli | …
 category: waterfall | viewpoint | cave | village | root-bridge | lake-river | wildlife | temple | museum | market | tea-estate | activity
 location: [lat, lng]  e.g. [25.1884, 92.0206]  (decimal degrees, used by the map)
-december_verdict: great | good | ok | skip
+season_verdict: great | good | ok | skip
 walk_distance_km / walk_duration_min: ROUND TRIP
 difficulty: easy | moderate | strenuous
 group_fit: good | ok | poor   (for the group described in 00 Home → Trip facts)
@@ -81,7 +81,7 @@ A curtain-like waterfall about 40 ft high, dropping into a deep turquoise pool, 
 - **Teens:** a swim or boat ride in the pool with a life jacket, and the path that goes behind and around the falls (where open).
 - **Adults:** a well-built path, a viewpoint partway down, a café at the top. It is one of the easier "real" waterfalls in Meghalaya.
 
-## December reality
+## Season reality
 The best season for the colour. The flow is lower and calmer than in the monsoon (a gentle curtain rather than a thundering torrent), and the pool is clearest and most vivid, especially around midday sun. Swimming and boating are regulated with compulsory life jackets and are restricted in the monsoon, not in winter. The water is cold (air temperatures are about 5–15 °C), so a swim will be short. It is popular with locals and tourists, so expect moderate crowds; weekends and the 24 Dec – 1 Jan week are busier. No official closed day was found in any source.
 
 ## Access & walk

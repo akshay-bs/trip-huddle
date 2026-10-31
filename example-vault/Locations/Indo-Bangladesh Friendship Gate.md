@@ -21,8 +21,8 @@ best_months:
   - Feb
   - Mar
   - Apr
-december_verdict: good
-december_note: Dry and clear. A 15–20 min add-on to Dawki; the Dawki road jams in Christmas week
+season_verdict: good
+season_note: Dry and clear. A 15–20 min add-on to Dawki; the Dawki road jams in Christmas week
 walk_involved: false
 walk_distance_km:
 walk_duration_min:
@@ -35,7 +35,7 @@ opening_hours: About 06:00–18:00
 closed_days:
 last_mile: Dawki–Tamabil road past the bridge; truck queues, tight parking
 permits: Carry photo ID; follow BSF rules
-entry_fee_inr: 0
+entry_fee: 0
 other_fees:
 toilets:
 food_nearby:
@@ -59,7 +59,7 @@ state: Assam | Meghalaya
 nearest_base: Guwahati | Shillong | Sohra | Dawki | Mawlynnong | Kaziranga | Majuli | …
 category: waterfall | viewpoint | cave | village | root-bridge | lake-river | wildlife | temple | museum | market | tea-estate | activity
 location: [lat, lng]  e.g. [25.1884, 92.0206]  (decimal degrees, used by the map)
-december_verdict: great | good | ok | skip
+season_verdict: great | good | ok | skip
 walk_distance_km / walk_duration_min: ROUND TRIP
 difficulty: easy | moderate | strenuous
 group_fit: good | ok | poor   (for the group described in 00 Home → Trip facts)
@@ -81,7 +81,7 @@ The border gate at the Dawki (India) – Tamabil (Bangladesh) Integrated Check P
 - A short stop to see the international border.
 - **Teens:** standing at the border and seeing Bangladesh. **Adults:** the history, and seeing the cross-border trade.
 
-## December reality
+## Season reality
 Dry and clear. The Dawki road and bridge jam badly in Christmas week (see [[Umngot River (Dawki)]]), so this is a 15–20 min add-on to the river visit, not a separate trip.
 
 ## Access & walk

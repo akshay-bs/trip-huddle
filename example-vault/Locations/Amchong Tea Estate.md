@@ -20,8 +20,8 @@ best_months:
   - Jan
   - Feb
   - Mar
-december_verdict: good
-december_note: Pleasant, dry and mild (about 12–25 °C), good for a garden walk. But Assam's plucking season ends around late November or early December, and the bushes are pruned over winter, so the gardens look less lush and the factory may not be processing leaf. Confirm what the factory tour shows in mid-December
+season_verdict: good
+season_note: Pleasant, dry and mild (about 12–25 °C), good for a garden walk. But Assam's plucking season ends around late November or early December, and the bushes are pruned over winter, so the gardens look less lush and the factory may not be processing leaf. Confirm what the factory tour shows in mid-December
 walk_involved: true
 walk_distance_km:
 walk_duration_min: 60
@@ -34,7 +34,7 @@ opening_hours: Amchong Leaf about 9 AM – 6 PM (the website also says 10 AM –
 closed_days:
 last_mile: About 48 km from Guwahati airport (about 1.5 hrs through city traffic). Take NH-27 east to Sonapur, then the Sonapur–Digaru road into the estate. Tempo traveller OK (paved estate road; confirm parking)
 permits:
-entry_fee_inr:
+entry_fee:
 other_fees: "Not free. Visits are booked packages (Silver, Gold, Platinum, Black Diamond tiers) through amchongtea.com. OTA listings show about $11 (₹900) per adult for a 2 hr walk-through, $16 (₹1,350) with the factory visit and hi-tea, and $29 (₹2,400) with lunch. Under-6s free."
 toilets: Yes (experience centre and restaurant)
 food_nearby: Steep House restaurant on the estate (Assamese and global food; has vegetarian dishes but is not a pure-veg kitchen)
@@ -58,7 +58,7 @@ state: Assam | Meghalaya
 nearest_base: Guwahati | Shillong | Sohra | Dawki | Mawlynnong | Kaziranga | Majuli | …
 category: waterfall | viewpoint | cave | village | root-bridge | lake-river | wildlife | temple | museum | market | tea-estate | activity
 location: [lat, lng]  e.g. [25.1884, 92.0206]  (decimal degrees, used by the map)
-december_verdict: great | good | ok | skip
+season_verdict: great | good | ok | skip
 walk_distance_km / walk_duration_min: ROUND TRIP
 difficulty: easy | moderate | strenuous
 group_fit: good | ok | poor   (for the group described in 00 Home → Trip facts)
@@ -85,7 +85,7 @@ A working tea estate of about 1,780 acres run by the Khemka family since 1958, i
 - **Teens:** photos among the bushes, the hilltop gazebo and, by some reports, ATV and jeep rides on the estate (confirm).
 - It breaks up the airport → Pobitora drive on arrival day with a proper lunch.
 
-## December reality
+## Season reality
 The weather is dry and comfortable, which suits the walk. The catch is the season: plucking usually ends by late November or early December and the bushes are cut back over winter. The garden will be green but not in flush, and there may be no leaf being processed in the factory. The experience centre, tastings and restaurant run year-round.
 
 ## Access & walk

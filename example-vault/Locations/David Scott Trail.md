@@ -20,8 +20,8 @@ best_months:
   - Feb
   - Mar
   - Apr
-december_verdict: good
-december_note: Ideal trekking weather (dry, cool, clear) and the trail is not muddy. But the full walk is 5–6 hrs and daylight ends about 4:30 pm, so you must start by 9 am. Streams are low and the natural pools too cold to swim.
+season_verdict: good
+season_note: Ideal trekking weather (dry, cool, clear) and the trail is not muddy. But the full walk is 5–6 hrs and daylight ends about 4:30 pm, so you must start by 9 am. Streams are low and the natural pools too cold to swim.
 walk_involved: true
 walk_distance_km: 16
 walk_duration_min: 330
@@ -34,7 +34,7 @@ opening_hours: Daylight only
 closed_days:
 last_mile: "Starts near Mawphlang (about 25 km / 1 hr from Shillong)."
 permits: Local guide recommended (required by most operators)
-entry_fee_inr: 150
+entry_fee: 150
 other_fees: Entry fee reports vary (about ₹150 per person; another source says ₹560 for 2). Guide fee separate, ask locally. Packed lunch and water must be carried
 toilets: None along the trail
 food_nearby: None on the trail after the first villages; carry lunch and water
@@ -58,7 +58,7 @@ state: Assam | Meghalaya
 nearest_base: Guwahati | Shillong | Sohra | Dawki | Mawlynnong | Kaziranga | Majuli | …
 category: waterfall | viewpoint | cave | village | root-bridge | lake-river | wildlife | temple | museum | market | tea-estate | activity
 location: [lat, lng]  e.g. [25.1884, 92.0206]  (decimal degrees, used by the map)
-december_verdict: great | good | ok | skip
+season_verdict: great | good | ok | skip
 walk_distance_km / walk_duration_min: ROUND TRIP
 difficulty: easy | moderate | strenuous
 group_fit: good | ok | poor   (for the group described in 00 Home → Trip facts)
@@ -81,7 +81,7 @@ A historic trail through the Khasi Hills, built in the 1820s–30s by David Scot
 - **Teens:** a real adventure day: streams, stone bridges, open hills.
 - **Adults:** only for the fit ones who actually want a 5–6 hr hike.
 
-## December reality
+## Season reality
 Weather-wise December is one of the best months. But the full trail takes the whole day, leaving no time for [[Laitlum Canyons]]. If anyone does it, it should replace everything else that day.
 
 ## Access & walk

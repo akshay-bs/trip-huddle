@@ -19,8 +19,8 @@ best_months:
   - Jan
   - Feb
   - Mar
-december_verdict: good
-december_note: "Pleasant, dry weather for walking around the open-air campus. Mostly outdoors and indoors galleries, so no weather issues. Closed on Mondays; both proposed days are fine."
+season_verdict: good
+season_note: "Pleasant, dry weather for walking around the open-air campus. Mostly outdoors and indoors galleries, so no weather issues. Closed on Mondays; both proposed days are fine."
 walk_involved: true
 walk_distance_km: 1
 walk_duration_min: 60
@@ -33,7 +33,7 @@ opening_hours: About 10:00 AM – 7:00 PM (galleries may close earlier, around 4
 closed_days: Monday
 last_mile: On the Panjabari road in east Guwahati, about 5–6 km from GS Road; parking on site. Tempo traveller OK
 permits: None
-entry_fee_inr: 30
+entry_fee: 30
 other_fees: Children up to 14 ₹10. Camera/video fees extra. Some galleries and the heritage park may charge separately
 toilets: Yes
 food_nearby: Canteen / Assamese food stalls on the premises
@@ -57,7 +57,7 @@ state: Assam | Meghalaya
 nearest_base: Guwahati | Shillong | Sohra | Dawki | Mawlynnong | Kaziranga | Majuli | …
 category: waterfall | viewpoint | cave | village | root-bridge | lake-river | wildlife | temple | museum | market | tea-estate | activity
 location: [lat, lng]  e.g. [25.1884, 92.0206]  (decimal degrees, used by the map)
-december_verdict: great | good | ok | skip
+season_verdict: great | good | ok | skip
 walk_distance_km / walk_duration_min: ROUND TRIP
 difficulty: easy | moderate | strenuous
 group_fit: good | ok | poor   (for the group described in 00 Home → Trip facts)
@@ -81,7 +81,7 @@ A large cultural complex in Panjabari, east Guwahati, named after the 15th–16t
 - **Adults:** the museum and art gallery; Assamese snacks at the stalls.
 - It's on the Guwahati–Kaziranga side of the city, so it fits on the airport → Kaziranga drive or the city tour.
 
-## December reality
+## Season reality
 Good any time in December. Mild and dry. Check for special cultural events or fairs held around winter.
 
 ## Access & walk

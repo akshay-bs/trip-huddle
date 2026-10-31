@@ -13,17 +13,17 @@ decided_on:
 booking_status: not-contacted
 booking_ref:
 nights_booked:
-advance_paid_inr:
+advance_paid:
 cancellation_policy:
 check_in:
 check_out:
 room_config:
 rooms_needed:
-extra_bed_inr:
-price_per_night_inr:
+extra_bed:
+price_per_night:
 price_basis:
 nights:
-est_total_inr:
+est_total:
 meals_included:
 google_rating:
 booking_rating:
@@ -32,7 +32,7 @@ review_count:
 heating:
 hot_water:
 power_backup: false
-parking_for_tempo_traveller: false
+parking_for_group_vehicle: false
 restaurant_onsite: false
 veg_food:
 wifi: false
@@ -46,14 +46,16 @@ tags:
 <!--
 FIELD GUIDE
 stay_type: hotel | resort | homestay | airbnb | guesthouse
-base_town: Guwahati | Shillong | Sohra | Dawki | Kaziranga | …
+base_town: base town the stay is in  (set your list at trip setup)
 location: [lat, lng]
 decision: considering | selected | backup | dropped
 booking_status: not-contacted | enquired | quoted | booked | paid | cancelled
-price_basis: per-room | whole-unit   (what price_per_night_inr refers to)
-est_total_inr: total for the whole group for all nights (cost per family is computed in the Stays base)
+price_basis: per-room | whole-unit   (what price_per_night refers to)
+est_total: total for the whole group for all nights, in the trip currency (the per-split cost is computed in the Stays base)
+price_per_night / extra_bed / advance_paid: plain numbers in the trip currency (see trip.md); no symbol or text
+parking_for_group_vehicle: true if your group's vehicle can park on site
 room_config: e.g. "4 doubles + 1 family room (3 beds)" or "whole villa, sleeps 14"
-heating: room-heater | fireplace | central | none | unknown   (Dec nights in Shillong ~4–8 °C)
+heating: room-heater | fireplace | central | none | unknown   (matters for cold-season trips)
 hot_water: 24h | geyser | limited | unknown
 meals_included: none | breakfast | MAP | AP
 veg_food: good | limited | unknown
@@ -71,7 +73,7 @@ veg_food: good | limited | unknown
 - 
 
 ## Room plan for the group
-| Family / people | Room | Beds | Notes |
+| Group / people | Room | Beds | Notes |
 | ------ | ---- | ---- | ----- |
 |        |      |      |       |
 |        |      |      |       |

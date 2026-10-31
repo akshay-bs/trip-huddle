@@ -8,8 +8,8 @@ formulas:
 properties:
   formula.sources:
     displayName: "# Sources"
-  december_verdict:
-    displayName: Dec verdict
+  season_verdict:
+    displayName: Season verdict
   time_needed_hrs:
     displayName: Hrs
 views:
@@ -19,7 +19,7 @@ views:
       - file.name
       - nearest_base
       - category
-      - december_verdict
+      - season_verdict
       - difficulty
       - group_fit
       - time_needed_hrs
@@ -33,7 +33,7 @@ views:
         direction: DESC
       - property: formula.sources
         direction: DESC
-      - property: december_verdict
+      - property: season_verdict
         direction: DESC
       - property: category
         direction: ASC
@@ -47,7 +47,7 @@ views:
     order:
       - file.name
       - nearest_base
-      - december_verdict
+      - season_verdict
       - difficulty
       - time_needed_hrs
       - priority
@@ -58,16 +58,16 @@ views:
       - property: formula.sources
         direction: DESC
   - type: table
-    name: December-worthy
+    name: Season-worthy
     filters:
       and:
-        - december_verdict != "skip"
+        - season_verdict != "skip"
         - decision != "dropped"
     order:
       - file.name
       - nearest_base
-      - december_verdict
-      - december_note
+      - season_verdict
+      - season_note
       - priority
       - decision
     sort:
@@ -100,7 +100,7 @@ views:
       - decision
       - priority
       - time_needed_hrs
-      - december_verdict
+      - season_verdict
     summaries:
       time_needed_hrs: Sum
   - type: table
@@ -140,7 +140,7 @@ views:
     order:
       - file.name
       - nearest_base
-      - december_verdict
+      - season_verdict
       - difficulty
       - decision
     image: note.cover
@@ -163,7 +163,7 @@ views:
       - file.name
       - nearest_base
       - category
-      - december_verdict
+      - season_verdict
       - difficulty
       - group_fit
       - time_needed_hrs

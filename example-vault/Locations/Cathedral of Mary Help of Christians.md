@@ -20,8 +20,8 @@ best_months:
   - Jan
   - Feb
   - Mar
-december_verdict: great
-december_note: "Christmas week is the best time to see it."
+season_verdict: great
+season_note: "Christmas week is the best time to see it."
 walk_involved: true
 walk_distance_km: 0.3
 walk_duration_min: 30
@@ -34,7 +34,7 @@ opening_hours: About 7:00 AM – 5:00 PM daily
 closed_days:
 last_mile: On Laitumkhrah Main Road in central Shillong; drop-off at the gate, limited parking. About 1 km from Valmere Chery Blossom Suites
 permits: None
-entry_fee_inr: 0
+entry_fee: 0
 other_fees:
 toilets: Limited; use cafés in Laitumkhrah
 food_nearby: Many cafés, bakeries and restaurants in Laitumkhrah
@@ -58,7 +58,7 @@ state: Assam | Meghalaya
 nearest_base: Guwahati | Shillong | Sohra | Dawki | Mawlynnong | Kaziranga | Majuli | …
 category: waterfall | viewpoint | cave | village | root-bridge | lake-river | wildlife | temple | museum | market | tea-estate | activity
 location: [lat, lng]  e.g. [25.1884, 92.0206]  (decimal degrees, used by the map)
-december_verdict: great | good | ok | skip
+season_verdict: great | good | ok | skip
 walk_distance_km / walk_duration_min: ROUND TRIP
 difficulty: easy | moderate | strenuous
 group_fit: good | ok | poor   (for the group described in 00 Home → Trip facts)
@@ -81,7 +81,7 @@ The Catholic cathedral of Shillong, in Laitumkhrah. The present building dates f
 - In the week before Christmas it gives a feel for Shillong's Christmas: lights, carols, cribs and decorated streets around Laitumkhrah.
 - **Teens:** the Christmas atmosphere and cafés nearby. **Adults:** architecture and the quiet interior.
 
-## December reality
+## Season reality
 The run-up to Christmas is the best time of year to see it. Be respectful during Mass.
 
 ## Access & walk

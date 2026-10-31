@@ -20,8 +20,8 @@ best_months:
   - Jan
   - Feb
   - Mar
-december_verdict: good
-december_note: The river is calm and low in winter, so the ferry crossing is easy and short. Government ferries stop by about 2–2:40 PM, so go in the morning. Chilly on the water early.
+season_verdict: good
+season_note: The river is calm and low in winter, so the ferry crossing is easy and short. Government ferries stop by about 2–2:40 PM, so go in the morning. Chilly on the water early.
 walk_involved: true
 walk_distance_km: 0.4
 walk_duration_min: 30
@@ -34,7 +34,7 @@ opening_hours: Temple about 5:30 AM – 6:00 PM. Government ferries from Umanand
 closed_days:
 last_mile: Ferry from Umananda Ghat / Kachari Ghat on MG Road (opposite the Kamrup DC office), about 8–10 min crossing. Tempo traveller drops at the ghat
 permits: None
-entry_fee_inr: 0
+entry_fee: 0
 other_fees: Government ferry about ₹30–40 per person each way; private boat about ₹100–250 per person return. Shoe deposit at the temple
 toilets: Basic, near the ghats
 food_nearby: Stalls at the ghat; very little on the island
@@ -58,7 +58,7 @@ state: Assam | Meghalaya
 nearest_base: Guwahati | Shillong | Sohra | Dawki | Mawlynnong | Kaziranga | Majuli | …
 category: waterfall | viewpoint | cave | village | root-bridge | lake-river | wildlife | temple | museum | market | tea-estate | activity
 location: [lat, lng]  e.g. [25.1884, 92.0206]  (decimal degrees, used by the map)
-december_verdict: great | good | ok | skip
+season_verdict: great | good | ok | skip
 walk_distance_km / walk_duration_min: ROUND TRIP
 difficulty: easy | moderate | strenuous
 group_fit: good | ok | poor   (for the group described in 00 Home → Trip facts)
@@ -81,7 +81,7 @@ A Shiva temple on Umananda (Peacock) Island in the middle of the Brahmaputra at 
 - **Teens:** boat ride, island setting, possibly monkeys (the island is known for langurs, though few remain).
 - **Adults:** an important Shiva shrine with carvings, and a peaceful spot mid-river.
 
-## December reality
+## Season reality
 Low, calm water and clear weather make the crossing easy. The main constraint is the **government ferry schedule** (roughly 9 AM – 2 PM), so plan it for the morning of the city-tour day. Private boats run later but cost more.
 
 ## Access & walk

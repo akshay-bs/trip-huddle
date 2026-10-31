@@ -21,8 +21,8 @@ best_months:
   - Jan
   - Feb
   - Mar
-december_verdict: good
-december_note: Dry season, so the 4x4 track is usually open, the river is clear turquoise and the cave raft trip runs (it is closed in the monsoon). The falls are thinner than after the rains. The water is very cold
+season_verdict: good
+season_note: Dry season, so the 4x4 track is usually open, the river is clear turquoise and the cave raft trip runs (it is closed in the monsoon). The falls are thinner than after the rains. The water is very cold
 walk_involved: true
 walk_distance_km:
 walk_duration_min: 90
@@ -35,7 +35,7 @@ opening_hours: No fixed hours; go with a guide in daylight
 closed_days: Closed in the monsoon (about Jun–Sep) because of flash floods
 last_mile: NH-6 to Lumshnong, then about 7 km on a rough dirt road to Brichyrnot (Brishyrnot) village. A tempo traveller is unlikely to manage this; use local 4x4s or pickups (about ₹1,500–5,000 round trip). Not on Google Maps; a guide is needed
 permits: Registration at a checkpoint on the trail (no Inner Line Permit needed for Indian citizens)
-entry_fee_inr: 50
+entry_fee: 50
 other_fees: Local guide mandatory, about ₹2,000 per group (includes the bamboo raft and safety gear; some say ₹1,000 per person). 4x4 pickup about ₹1,500–5,000 round trip. UPI accepted at the registration point
 toilets: None reported
 food_nearby: None; carry food and water. Homestays can be arranged through guides
@@ -59,7 +59,7 @@ state: Assam | Meghalaya
 nearest_base: Guwahati | Shillong | Sohra | Dawki | Mawlynnong | Kaziranga | Majuli | …
 category: waterfall | viewpoint | cave | village | root-bridge | lake-river | wildlife | temple | museum | market | tea-estate | activity
 location: [lat, lng]  e.g. [25.1884, 92.0206]  (decimal degrees, used by the map)
-december_verdict: great | good | ok | skip
+season_verdict: great | good | ok | skip
 walk_distance_km / walk_duration_min: ROUND TRIP
 difficulty: easy | moderate | strenuous
 group_fit: good | ok | poor   (for the group described in 00 Home → Trip facts)
@@ -83,7 +83,7 @@ A waterfall at the mouth of Krem Chympe, a limestone river cave near Khaddum and
 - **Teens:** a real adventure (4x4 ride, suspension bridge, raft, cave).
 - **Adults:** a beautiful, remote spot with few visitors, but only for those happy with a long, rough day.
 
-## December reality
+## Season reality
 December is in the right season. The cave is closed in the monsoon because of flash floods, and in the dry months the river is clear turquoise and the raft trip runs. A dry track also means the 4x4 pickup can usually drive most of the way, which cuts the walk sharply. If it has rained recently, the track becomes impassable and the walk grows to 7–8 km each way. The falls are thinner than after the monsoon. The water is very cold, so anyone going into the cave will get soaked in cold water. Sunset is around 4:30 pm, and the round trip (drive plus walk plus cave) takes most of a day.
 
 ## Access & walk

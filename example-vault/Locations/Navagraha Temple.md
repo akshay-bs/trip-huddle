@@ -19,8 +19,8 @@ best_months:
   - Jan
   - Feb
   - Mar
-december_verdict: good
-december_note: Cool and pleasant; no seasonal issues. Morning aarti brings the most devotees; mid-morning is calmer.
+season_verdict: good
+season_note: Cool and pleasant; no seasonal issues. Morning aarti brings the most devotees; mid-morning is calmer.
 walk_involved: true
 walk_distance_km: 0.3
 walk_duration_min: 30
@@ -33,7 +33,7 @@ opening_hours: Early morning to evening (reported as about 4–5 AM to 8–9 PM)
 closed_days:
 last_mile: Up Navagraha Road on Chitrachal Hill, about 2 km east of Pan Bazar. The road to the top is narrow; a tempo traveller may have to stop lower down (unconfirmed)
 permits: None
-entry_fee_inr: 0
+entry_fee: 0
 other_fees: Puja charges if you book a special puja; shoe deposit
 toilets: Basic
 food_nearby: Small stalls; restaurants in Silpukhuri / Chandmari below
@@ -57,7 +57,7 @@ state: Assam | Meghalaya
 nearest_base: Guwahati | Shillong | Sohra | Dawki | Mawlynnong | Kaziranga | Majuli | …
 category: waterfall | viewpoint | cave | village | root-bridge | lake-river | wildlife | temple | museum | market | tea-estate | activity
 location: [lat, lng]  e.g. [25.1884, 92.0206]  (decimal degrees, used by the map)
-december_verdict: great | good | ok | skip
+season_verdict: great | good | ok | skip
 walk_distance_km / walk_duration_min: ROUND TRIP
 difficulty: easy | moderate | strenuous
 group_fit: good | ok | poor   (for the group described in 00 Home → Trip facts)
@@ -81,7 +81,7 @@ A temple to the nine planets (Navagraha) on top of Chitrachal Hill in east-centr
 - **Teens:** the hilltop and the story; otherwise a quick visit.
 - City views from the hill.
 
-## December reality
+## Season reality
 No seasonal issues. Pleasant weather for the short climb.
 
 ## Access & walk

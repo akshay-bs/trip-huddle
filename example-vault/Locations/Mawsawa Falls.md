@@ -19,8 +19,8 @@ best_months:
   - Feb
   - Mar
   - Apr
-december_verdict: good
-december_note: Lower flow, but clear pools and a dry trail
+season_verdict: good
+season_note: Lower flow, but clear pools and a dry trail
 walk_involved: true
 walk_distance_km:
 walk_duration_min: 25
@@ -33,7 +33,7 @@ opening_hours:
 closed_days:
 last_mile: Local road near Sohra; confirm big-vehicle parking
 permits: None
-entry_fee_inr:
+entry_fee:
 other_fees:
 toilets: Unknown
 food_nearby: None; carry snacks
@@ -57,7 +57,7 @@ state: Assam | Meghalaya
 nearest_base: Guwahati | Shillong | Sohra | Dawki | Mawlynnong | Kaziranga | Majuli | …
 category: waterfall | viewpoint | cave | village | root-bridge | lake-river | wildlife | temple | museum | market | tea-estate | activity
 location: [lat, lng]  e.g. [25.1884, 92.0206]  (decimal degrees, used by the map)
-december_verdict: great | good | ok | skip
+season_verdict: great | good | ok | skip
 walk_distance_km / walk_duration_min: ROUND TRIP
 difficulty: easy | moderate | strenuous
 group_fit: good | ok | poor   (for the group described in 00 Home → Trip facts)
@@ -82,7 +82,7 @@ A lesser-known, multi-tier waterfall with clear pools and forest around it, west
 - Quiet, uncrowded, and a short walk from the road. Blue pools for photos.
 - **Teens:** pools and rocks. **Adults:** an easy walk to a pretty fall.
 
-## December reality
+## Season reality
 Lower flow, but the pools are at their clearest and the trail is dry. October–April is the recommended season.
 
 ## Access & walk

@@ -18,8 +18,8 @@ best_months:
   - Jan
   - Feb
   - Mar
-december_verdict: great
-december_note: Peak season (park reopens after the monsoon, usually Oct–Nov). Dry, pleasant days and good rhino sightings, but early-morning fog and mist are common, and Christmas week is busy, so book jeeps in advance.
+season_verdict: great
+season_note: Peak season (park reopens after the monsoon, usually Oct–Nov). Dry, pleasant days and good rhino sightings, but early-morning fog and mist are common, and Christmas week is busy, so book jeeps in advance.
 walk_involved: false
 walk_distance_km: 0.3
 walk_duration_min: 10
@@ -32,7 +32,7 @@ opening_hours: About 7:00 AM – 4:00 PM. Jeep slots run about 7:00 AM – 3:00 
 closed_days: Closed for the monsoon (roughly May/June to October). Open daily in season
 last_mile: About 45–50 km east of Guwahati (1.5 hrs) via Jagiroad/Mayong roads. The rural road is fine for a tempo traveller
 permits: Entry ticket and safari permit bought at the range office or through online agents. Carry photo ID
-entry_fee_inr: 50
+entry_fee: 50
 other_fees: Jeep about ₹2,000 per jeep (older blogs) to ₹3,200–3,400 per jeep through online agents incl. permits, max 6 per jeep. Elephant ride about ₹800–1,700 per seat. Guide about ₹300. Camera fee possible
 toilets: Basic, at the range office or entry area
 food_nearby: Few options. Small dhabas and eco-resorts around Pobitora and Mayong. Carry snacks and water
@@ -56,7 +56,7 @@ state: Assam | Meghalaya
 nearest_base: Guwahati | Shillong | Sohra | Dawki | Mawlynnong | Kaziranga | Majuli | …
 category: waterfall | viewpoint | cave | village | root-bridge | lake-river | wildlife | temple | museum | market | tea-estate | activity
 location: [lat, lng]  e.g. [25.1884, 92.0206]  (decimal degrees, used by the map)
-december_verdict: great | good | ok | skip
+season_verdict: great | good | ok | skip
 walk_distance_km / walk_duration_min: ROUND TRIP
 difficulty: easy | moderate | strenuous
 group_fit: good | ok | poor   (for the group described in 00 Home → Trip facts)
@@ -79,7 +79,7 @@ Pobitora is a small (about 39 km²) grassland and wetland sanctuary on the south
 - Teens: an open jeep safari, rhinos and wild buffalo up close, and migratory birds on the beels (wetlands) in winter.
 - Adults: a short, low-effort outing of about 1 hr in the jeep with almost no walking.
 
-## December reality
+## Season reality
 - **Season:** December is peak season. The park reopens after the monsoon, usually in October or November (the 2024-25 season opened on 14 Oct), and closes again around May or June.
 - **Weather:** days are dry and pleasant. Mornings are cold (about 10–12 °C) and often foggy, so the first slot can be misty, which is atmospheric but hazy for photos. Carry jackets for the open jeep.
 - **Grass:** some grassland is still tall in December because controlled burning usually happens Jan–Feb, but rhinos are regularly seen near the tracks.

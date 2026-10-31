@@ -19,8 +19,8 @@ best_months:
   - Feb
   - Mar
   - Apr
-december_verdict: good
-december_note: Thinner curtain but a clear blue-green pool; dry, easy trail. The walk-behind-the-falls path is the highlight. Water too cold to swim
+season_verdict: good
+season_note: Thinner curtain but a clear blue-green pool; dry, easy trail. The walk-behind-the-falls path is the highlight. Water too cold to swim
 walk_involved: true
 walk_distance_km:
 walk_duration_min: 50
@@ -33,7 +33,7 @@ opening_hours: 07:00–18:00
 closed_days:
 last_mile: Road to the car park at Laitduh / Laitlyndop village (Plus Code 8M7R+8MV); confirm big-vehicle parking with the driver
 permits: None
-entry_fee_inr: 50
+entry_fee: 50
 other_fees:
 toilets: Yes, at the entrance
 food_nearby: None at the falls; eat in Sohra or at Lyngksiar
@@ -57,7 +57,7 @@ state: Assam | Meghalaya
 nearest_base: Guwahati | Shillong | Sohra | Dawki | Mawlynnong | Kaziranga | Majuli | …
 category: waterfall | viewpoint | cave | village | root-bridge | lake-river | wildlife | temple | museum | market | tea-estate | activity
 location: [lat, lng]  e.g. [25.1884, 92.0206]  (decimal degrees, used by the map)
-december_verdict: great | good | ok | skip
+season_verdict: great | good | ok | skip
 walk_distance_km / walk_duration_min: ROUND TRIP
 difficulty: easy | moderate | strenuous
 group_fit: good | ok | poor   (for the group described in 00 Home → Trip facts)
@@ -82,7 +82,7 @@ A 40 m curtain waterfall on the Wah Urwan river at **Laitlyndop village** (Laitd
 - A thin curtain fall over limestone into a clear blue-green pool, and **a path that goes behind the waterfall**.
 - **Teens:** walking behind the falls. **Adults:** a short paved walk and a quiet spot (4.8 on Google from about 800 reviews).
 
-## December reality
+## Season reality
 Lower flow, so a thinner curtain, but the pool is clear and the trail is dry. Walking behind the falls is easier and safer when the flow is low. Too cold to swim. Crowds are low, though it is getting more popular.
 
 ## Access & walk

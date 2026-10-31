@@ -21,8 +21,8 @@ best_months:
   - Mar
   - Apr
   - May
-december_verdict: ok
-december_note: Few orchids in flower in December (peak is Mar–May), but the museum, food and evening cultural programme run all year
+season_verdict: ok
+season_note: Few orchids in flower in December (peak is Mar–May), but the museum, food and evening cultural programme run all year
 walk_involved: true
 walk_distance_km: 1
 walk_duration_min: 45
@@ -35,7 +35,7 @@ opening_hours: Until about 5 pm (confirm the show time)
 closed_days:
 last_mile: On the main road at Kohora; any vehicle
 permits: None
-entry_fee_inr: 100
+entry_fee: 100
 other_fees:
 toilets: Yes
 food_nearby: Food stall inside (Assamese snacks)
@@ -59,7 +59,7 @@ state: Assam | Meghalaya
 nearest_base: Guwahati | Shillong | Sohra | Dawki | Mawlynnong | Kaziranga | Majuli | …
 category: waterfall | viewpoint | cave | village | root-bridge | lake-river | wildlife | temple | museum | market | tea-estate | activity
 location: [lat, lng]  e.g. [25.1884, 92.0206]  (decimal degrees, used by the map)
-december_verdict: great | good | ok | skip
+season_verdict: great | good | ok | skip
 walk_distance_km / walk_duration_min: ROUND TRIP
 difficulty: easy | moderate | strenuous
 group_fit: good | ok | poor   (for the group described in 00 Home → Trip facts)
@@ -81,7 +81,7 @@ Kaziranga National Orchid and Biodiversity Park, at Durgapur near Kohora, a few 
 - A relaxed evening activity at Kaziranga after the drive from Guwahati.
 - **Teens:** the cultural dance show and the Assamese food stall. **Adults:** the orchids, the museum and the handicrafts.
 
-## December reality
+## Season reality
 Few orchids flower in December (the main season is March–May), so the garden is greener than it is colourful. The cultural programme and the museum run all year. Evenings are cool (about 10 °C).
 
 ## Access & walk

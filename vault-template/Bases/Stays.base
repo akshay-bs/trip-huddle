@@ -3,14 +3,14 @@ filters:
     - type == "stay"
     - '!file.inFolder("Templates")'
 formulas:
-  cost_per_family: if(est_total_inr, est_total_inr / 4, "")
+  cost_per_split: if(est_total, est_total / 1, "")
 properties:
-  formula.cost_per_family:
-    displayName: Per family ₹
-  est_total_inr:
-    displayName: Total ₹
-  price_per_night_inr:
-    displayName: ₹ / night
+  formula.cost_per_split:
+    displayName: Per person
+  est_total:
+    displayName: Total
+  price_per_night:
+    displayName: Per night
 views:
   - type: table
     name: Shortlist by town
@@ -24,11 +24,11 @@ views:
       - file.name
       - stay_type
       - decision
-      - price_per_night_inr
+      - price_per_night
       - price_basis
       - heating
       - hot_water
-      - parking_for_tempo_traveller
+      - parking_for_group_vehicle
       - recommended_by
   - type: table
     name: Booking tracker
@@ -42,17 +42,17 @@ views:
       - check_out
       - booking_status
       - booking_ref
-      - est_total_inr
-      - advance_paid_inr
-      - formula.cost_per_family
+      - est_total
+      - advance_paid
+      - formula.cost_per_split
       - cancellation_policy
     sort:
       - property: check_in
         direction: ASC
     summaries:
-      est_total_inr: Sum
-      advance_paid_inr: Sum
-      formula.cost_per_family: Sum
+      est_total: Sum
+      advance_paid: Sum
+      formula.cost_per_split: Sum
   - type: table
     name: Dropped
     filters:
@@ -68,7 +68,7 @@ views:
     order:
       - file.name
       - base_town
-      - price_per_night_inr
+      - price_per_night
       - google_rating
       - decision
     image: note.cover
@@ -81,7 +81,7 @@ views:
       - file.name
       - base_town
       - nights
-      - price_per_night_inr
+      - price_per_night
       - google_rating
       - heating
       - hot_water

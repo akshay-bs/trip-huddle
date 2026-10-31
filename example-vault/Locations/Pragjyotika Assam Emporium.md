@@ -14,8 +14,8 @@ location:
 maps_link: https://www.google.com/maps/search/?api=1&query=26.1849,91.7548
 altitude_m:
 best_months: []
-december_verdict: good
-december_note: "Indoor shop, no seasonal issues."
+season_verdict: good
+season_note: "Indoor shop, no seasonal issues."
 walk_involved: false
 walk_distance_km:
 walk_duration_min:
@@ -28,7 +28,7 @@ opening_hours: Not verified (government showroom; usually about 10 AM – 7 PM).
 closed_days: "Not verified; may be closed on Sundays"
 last_mile: GNB Road, Ambari, by the Assam Textile Institute, about 1 km from Kachari / Umananda Ghat and next to Panbazar. Tempo traveller drop-off on GNB Road; parking is tight
 permits:
-entry_fee_inr: 0
+entry_fee: 0
 other_fees: Fixed government prices
 toilets:
 food_nearby: Panbazar and Ambari restaurants (pure-veg options such as Bhartiya Jalpan and Sachika are suggested in the source; not verified)
@@ -52,7 +52,7 @@ state: Assam | Meghalaya
 nearest_base: Guwahati | Shillong | Sohra | Dawki | Mawlynnong | Kaziranga | Majuli | …
 category: waterfall | viewpoint | cave | village | root-bridge | lake-river | wildlife | temple | museum | market | tea-estate | activity
 location: [lat, lng]  e.g. [25.1884, 92.0206]  (decimal degrees, used by the map)
-december_verdict: great | good | ok | skip
+season_verdict: great | good | ok | skip
 walk_distance_km / walk_duration_min: ROUND TRIP
 difficulty: easy | moderate | strenuous
 group_fit: good | ok | poor   (for the group described in 00 Home → Trip facts)
@@ -75,7 +75,7 @@ The Assam government's handicraft and handloom showroom in central Guwahati, on 
 - **Teens:** small gifts (gamosas, japi hats, bamboo crafts).
 - It is about 1 km from the Umananda ferry ghat, so it fits the last morning before the airport.
 
-## December reality
+## Season reality
 
 ## Access & walk
 - **Walk:** none beyond the shop.

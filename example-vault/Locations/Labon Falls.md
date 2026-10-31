@@ -22,8 +22,8 @@ best_months:
   - Jan
   - Feb
   - Mar
-december_verdict: ok
-december_note: The waterfall is seasonal (monsoon-fed) and can be completely dry in December; one December visitor found no falls at all. The blue spring-fed pool at the cave mouth stays, and is at its clearest and bluest. Dry trail and road. Water very cold
+season_verdict: ok
+season_note: The waterfall is seasonal (monsoon-fed) and can be completely dry in December; one December visitor found no falls at all. The blue spring-fed pool at the cave mouth stays, and is at its clearest and bluest. Dry trail and road. Water very cold
 walk_involved: true
 walk_distance_km:
 walk_duration_min: 120
@@ -36,7 +36,7 @@ opening_hours: Google lists 8 am opening (no gate reported)
 closed_days:
 last_mile: NH-6 via Khliehriat to Saipung and Sakhain (Plus Code 7FP5+3F, Tangsko), about 140 km / 4–5 hrs from Shillong. The last stretch is a bad road; a 4x4 can get closer, otherwise it adds walking. A tempo traveller is unlikely to manage; confirm with the driver
 permits: None
-entry_fee_inr:
+entry_fee:
 other_fees: Local guide needed (no trail markings); fee not published. Tours sell Labon + Moopun from Saipung at about ₹2,200 per person
 toilets: None
 food_nearby: None; carry water and food
@@ -60,7 +60,7 @@ state: Assam | Meghalaya
 nearest_base: Guwahati | Shillong | Sohra | Dawki | Mawlynnong | Kaziranga | Majuli | …
 category: waterfall | viewpoint | cave | village | root-bridge | lake-river | wildlife | temple | museum | market | tea-estate | activity
 location: [lat, lng]  e.g. [25.1884, 92.0206]  (decimal degrees, used by the map)
-december_verdict: great | good | ok | skip
+season_verdict: great | good | ok | skip
 walk_distance_km / walk_duration_min: ROUND TRIP
 difficulty: easy | moderate | strenuous
 group_fit: good | ok | poor   (for the group described in 00 Home → Trip facts)
@@ -87,7 +87,7 @@ A 30 m seasonal waterfall and a vivid blue pool at the mouth of **Krem Labon**, 
 - **Teens:** a real forest trek, the cave mouth, and a (very cold) swim.
 - **Adults:** only for those comfortable with a 2 hr round-trip trek on rough ground and a steep climb back.
 
-## December reality
+## Season reality
 Dry season, so the road and trail are at their best and the pool is clearest. But the waterfall itself may not be flowing at all: the cave survey calls it "seasonally active", and a December reviewer found no falls. Expect a blue pool at a cave mouth rather than a waterfall. The water is very cold. The day is short, and the round trip from Jowai or Shillong is long, so start early.
 
 ## Access & walk

@@ -9,8 +9,8 @@ location: []
 maps_link:
 altitude_m:
 best_months: []
-december_verdict:
-december_note:
+season_verdict:
+season_note:
 walk_involved: false
 walk_distance_km:
 walk_duration_min:
@@ -23,7 +23,7 @@ opening_hours:
 closed_days:
 last_mile:
 permits:
-entry_fee_inr:
+entry_fee:
 other_fees:
 toilets:
 food_nearby:
@@ -41,11 +41,12 @@ tags:
 ---
 <!--
 FIELD GUIDE (delete nothing — this comment is invisible in Reading view)
-state: Assam | Meghalaya
-nearest_base: Guwahati | Shillong | Sohra | Dawki | Mawlynnong | Kaziranga | Majuli | …
-category: waterfall | viewpoint | cave | village | root-bridge | lake-river | wildlife | temple | museum | market | tea-estate | activity
-location: [lat, lng]  e.g. [25.1884, 92.0206]  (decimal degrees, used by the map)
-december_verdict: great | good | ok | skip
+state: region, state or province the place is in  (set your list at trip setup)
+nearest_base: base town you would stay in to visit this place  (set your list at trip setup)
+category: viewpoint | nature | old-town | museum | market | food | activity | beach | hike | …
+location: [lat, lng]  e.g. [48.8584, 2.2945]  (decimal degrees, used by the map)
+season_verdict: great | good | ok | skip   (how good is it in your travel season)
+entry_fee: plain number in the trip currency (see trip.md); no symbol or text
 walk_distance_km / walk_duration_min: ROUND TRIP
 difficulty: easy | moderate | strenuous
 group_fit: good | ok | poor   (for the group described in 00 Home → Trip facts)
@@ -64,10 +65,10 @@ cover: image URL, or "[[Attachments/filename.jpg]]"  (shown on the Cards view)
 <!-- 2–3 lines: what it is, where it is. -->
 
 ## Why go
-<!-- What makes it special; what the teens vs adults will enjoy. -->
+<!-- What makes it special; who in the group will enjoy it. -->
 
-## December reality
-<!-- Water levels, fog, cold, closures, crowds around Christmas/New Year. Worth it in Dec? -->
+## Season reality
+<!-- Weather, water levels, daylight, closures and crowds in your travel season. Is it good in your travel season? -->
 
 ## Access & walk
 - **Walk:** 

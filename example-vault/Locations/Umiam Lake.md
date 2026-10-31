@@ -21,8 +21,8 @@ best_months:
   - Feb
   - Mar
   - Apr
-december_verdict: good
-december_note: Dry and sunny, with a lower water level that shows blue-green water and exposed banks. Early mornings can be misty or foggy over the lake. Water sports run about 9 AM – 5 PM, and it is cold on the water. Weekends and Christmas week bring more visitors, but it is a quick stop.
+season_verdict: good
+season_note: Dry and sunny, with a lower water level that shows blue-green water and exposed banks. Early mornings can be misty or foggy over the lake. Water sports run about 9 AM – 5 PM, and it is cold on the water. Weekends and Christmas week bring more visitors, but it is a quick stop.
 walk_involved: false
 walk_distance_km: 0.3
 walk_duration_min: 10
@@ -35,7 +35,7 @@ opening_hours: The viewpoint is roadside and open anytime. Water sports run abou
 closed_days:
 last_mile: Directly on NH-6 (Guwahati–Shillong highway) at Barapani, about 15–17 km north of Shillong. Tempo traveller OK, with roadside and complex parking
 permits: None
-entry_fee_inr: 50
+entry_fee: 50
 other_fees: Water sports complex entry about ₹50 per head plus about ₹50 car parking (2024 report). Rides are extra, and reported prices vary widely (pedal boat or kayak about ₹20–100, motorboat about ₹200 per head, water scooter about ₹400, full 10-seat speed boat about ₹1,200–1,500). The roadside viewpoint is free
 toilets: At the water sports complex and Orchid Lake Resort. Basic at roadside stops
 food_nearby: Orchid Lake Resort restaurant (lake views), plus roadside tea and snack stalls on NH-6
@@ -59,7 +59,7 @@ state: Assam | Meghalaya
 nearest_base: Guwahati | Shillong | Sohra | Dawki | Mawlynnong | Kaziranga | Majuli | …
 category: waterfall | viewpoint | cave | village | root-bridge | lake-river | wildlife | temple | museum | market | tea-estate | activity
 location: [lat, lng]  e.g. [25.1884, 92.0206]  (decimal degrees, used by the map)
-december_verdict: great | good | ok | skip
+season_verdict: great | good | ok | skip
 walk_distance_km / walk_duration_min: ROUND TRIP
 difficulty: easy | moderate | strenuous
 group_fit: good | ok | poor   (for the group described in 00 Home → Trip facts)
@@ -84,7 +84,7 @@ Umiam Lake, locally called Barapani, is a large reservoir created by damming the
 - Teens: speed boat, water scooter and kayaks at the water sports complex.
 - Adults: tea with a view at the viewpoint or the Orchid Lake Resort restaurant. It is a relaxing break on the Guwahati–Shillong drive.
 
-## December reality
+## Season reality
 - The lake is at its dry-season level, and the clear skies give strong blue colours on sunny days.
 - Mornings can be foggy or misty over the water, which clears by late morning.
 - It is cold, especially on the water or in a speed boat (about 8–18 °C). Bring windproof layers.

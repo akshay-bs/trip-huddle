@@ -21,8 +21,8 @@ best_months:
   - Feb
   - Mar
   - Apr
-december_verdict: good
-december_note: Usually clear in the dry season with some morning mist in the gorge; a quick roadside stop. Busy with tour vehicles in Christmas week
+season_verdict: good
+season_note: Usually clear in the dry season with some morning mist in the gorge; a quick roadside stop. Busy with tour vehicles in Christmas week
 walk_involved: true
 walk_distance_km: 0.3
 walk_duration_min: 15
@@ -35,7 +35,7 @@ opening_hours: About 6 AM – 6 PM
 closed_days:
 last_mile: Directly on the Shillong–Sohra road; roadside parking. Tempo traveller OK
 permits: None
-entry_fee_inr:
+entry_fee:
 other_fees: Zipline (Pioneer Adventure Tours) ₹1,000 small line / ₹1,500 big line per person (operator site); Khasi costume photo rental; parking
 toilets: Basic (at the café / stalls)
 food_nearby: Café opposite the viewpoint (Maggi, tea, simple lunch) and snack stalls
@@ -59,7 +59,7 @@ state: Assam | Meghalaya
 nearest_base: Guwahati | Shillong | Sohra | Dawki | Mawlynnong | Kaziranga | Majuli | …
 category: waterfall | viewpoint | cave | village | root-bridge | lake-river | wildlife | temple | museum | market | tea-estate | activity
 location: [lat, lng]  e.g. [25.1884, 92.0206]  (decimal degrees, used by the map)
-december_verdict: great | good | ok | skip
+season_verdict: great | good | ok | skip
 walk_distance_km / walk_duration_min: ROUND TRIP
 difficulty: easy | moderate | strenuous
 group_fit: good | ok | poor   (for the group described in 00 Home → Trip facts)
@@ -82,7 +82,7 @@ A roadside viewpoint on the Shillong–Sohra (Cherrapunji) road, about 30 km fro
 - **Teens:** the **zipline** across the valley, run by Pioneer Adventure Tours and billed as one of the longest in the North-East, is the big draw.
 - **Adults:** views, tea at the café, and photos in rented traditional Khasi dress.
 
-## December reality
+## Season reality
 - Dry-season visibility is generally good. There can be mist in the gorge early in the morning, which usually lifts by mid-morning and adds drama rather than blocking the view.
 - The valley is less lush than in the monsoon, but it is still green (forested).
 - The zipline operates in the dry season. Weather or wind can pause it, so confirm on the day.

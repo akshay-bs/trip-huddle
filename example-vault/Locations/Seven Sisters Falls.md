@@ -20,8 +20,8 @@ best_months:
   - Sep
   - Oct
   - Nov
-december_verdict: skip
-december_note: Monsoon-fed. In December it is usually dry or down to one or two faint streaks. Worth it only as a 10–15 min roadside view stop if already passing to Mawsmai Cave
+season_verdict: skip
+season_note: Monsoon-fed. In December it is usually dry or down to one or two faint streaks. Worth it only as a 10–15 min roadside view stop if already passing to Mawsmai Cave
 walk_involved: false
 walk_distance_km: 0.2
 walk_duration_min: 10
@@ -34,7 +34,7 @@ opening_hours: Daylight hours (roadside); eco-park gate roughly 8 am – 5 pm
 closed_days:
 last_mile: On the paved Sohra–Mawsmai road; tempo traveller can pull over at the roadside parking
 permits: None
-entry_fee_inr: 0
+entry_fee: 0
 other_fees: Roadside viewpoint free; small parking charge possible. The nearby Mawsmai Nongthymmai Eco Park charges a small entry fee (amount unverified)
 toilets: None at the roadside viewpoint; basic ones at the eco park / Mawsmai Cave area
 food_nearby: Tea stalls at the viewpoint; more at Mawsmai Cave parking
@@ -58,7 +58,7 @@ state: Assam | Meghalaya
 nearest_base: Guwahati | Shillong | Sohra | Dawki | Mawlynnong | Kaziranga | Majuli | …
 category: waterfall | viewpoint | cave | village | root-bridge | lake-river | wildlife | temple | museum | market | tea-estate | activity
 location: [lat, lng]  e.g. [25.1884, 92.0206]  (decimal degrees, used by the map)
-december_verdict: great | good | ok | skip
+season_verdict: great | good | ok | skip
 walk_distance_km / walk_duration_min: ROUND TRIP
 difficulty: easy | moderate | strenuous
 group_fit: good | ok | poor   (for the group described in 00 Home → Trip facts)
@@ -81,7 +81,7 @@ Nohsngithiang Falls ("Seven Sisters", also called Mawsmai Falls) is a seven-segm
 - In the monsoon it is one of India's tallest falls, with seven parallel streams along the cliff.
 - In December the reason to stop is the **view**: the long cliff line and, on a clear day, the Bangladesh plains in the distance. It is a quick photo stop on the way to [[Mawsmai Cave]], not a destination.
 
-## December reality
+## Season reality
 Be honest with the group: **there is little or no waterfall to see in December.** Wikipedia notes it flows "only during the rainy season". Several Tripadvisor reviews from December visits are titled along the lines of "No water in December" and "Don't go in December". At best you may see one or two faint trickles on the cliff. Morning haze or fog can also hide the cliff. Treat it as a free roadside viewpoint, not a waterfall. Don't make a separate trip for it.
 
 ## Access & walk

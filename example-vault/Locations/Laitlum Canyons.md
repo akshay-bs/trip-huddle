@@ -20,8 +20,8 @@ best_months:
   - Jan
   - Feb
   - Mar
-december_verdict: great
-december_note: Dry and mostly clear; mornings/evenings can be foggy, so go early-mid afternoon. Sunset ~4:37 PM and it gets cold and windy fast after 3:30
+season_verdict: great
+season_note: Dry and mostly clear; mornings/evenings can be foggy, so go early-mid afternoon. Sunset ~4:37 PM and it gets cold and windy fast after 3:30
 walk_involved: true
 walk_distance_km: 1
 walk_duration_min: 45
@@ -34,7 +34,7 @@ opening_hours: About 6 AM – 5 PM
 closed_days:
 last_mile: Via Smit; paved but narrow hill road to the parking at the canyon top. Tempo traveller OK
 permits: None
-entry_fee_inr: 0
+entry_fee: 0
 other_fees: Parking (small fee, about ₹10–30 for cars reported; more for a tempo traveller)
 toilets: Very basic or none; plan a stop before
 food_nearby: A tea/snack stall or two at the top; no proper restaurant
@@ -58,7 +58,7 @@ state: Assam | Meghalaya
 nearest_base: Guwahati | Shillong | Sohra | Dawki | Mawlynnong | Kaziranga | Majuli | …
 category: waterfall | viewpoint | cave | village | root-bridge | lake-river | wildlife | temple | museum | market | tea-estate | activity
 location: [lat, lng]  e.g. [25.1884, 92.0206]  (decimal degrees, used by the map)
-december_verdict: great | good | ok | skip
+season_verdict: great | good | ok | skip
 walk_distance_km / walk_duration_min: ROUND TRIP
 difficulty: easy | moderate | strenuous
 group_fit: good | ok | poor   (for the group described in 00 Home → Trip facts)
@@ -80,7 +80,7 @@ Laitlum ("end of the hills") is a grassy ridge on the edge of a deep, forested g
 - One of the most dramatic big-landscape views near Shillong, reached with almost no effort.
 - Adults can enjoy an easy wander along open grassy ridges with huge views. Teens get cliff-edge photos, wide-open space to roam, and the "Rock On 2" filming-location angle.
 
-## December reality
+## Season reality
 - The dry season brings good visibility. Guides consistently say afternoons are clearest, because fog often sits in the canyon in the morning and returns by evening.
 - **Sunset is around 4:37 PM**. After about 3:30 PM the ridge gets cold and windy, so carry a jacket.
 - Grass is golden-brown rather than monsoon-green, and the waterfalls on the far walls are thin or dry.

@@ -18,8 +18,8 @@ best_months:
   - Aug
   - Sep
   - Oct
-december_verdict: skip
-december_note: Monsoon-fed; usually very thin or dry in December. Thangkharang Park's views of the plains are still nice on a clear day
+season_verdict: skip
+season_note: Monsoon-fed; usually very thin or dry in December. Thangkharang Park's views of the plains are still nice on a clear day
 walk_involved: false
 walk_distance_km:
 walk_duration_min: 10
@@ -32,7 +32,7 @@ opening_hours:
 closed_days:
 last_mile: On the Sohra–Laitkynsew road; any vehicle
 permits: None
-entry_fee_inr: 20
+entry_fee: 20
 other_fees:
 toilets:
 food_nearby:
@@ -56,7 +56,7 @@ state: Assam | Meghalaya
 nearest_base: Guwahati | Shillong | Sohra | Dawki | Mawlynnong | Kaziranga | Majuli | …
 category: waterfall | viewpoint | cave | village | root-bridge | lake-river | wildlife | temple | museum | market | tea-estate | activity
 location: [lat, lng]  e.g. [25.1884, 92.0206]  (decimal degrees, used by the map)
-december_verdict: great | good | ok | skip
+season_verdict: great | good | ok | skip
 walk_distance_km / walk_duration_min: ROUND TRIP
 difficulty: easy | moderate | strenuous
 group_fit: good | ok | poor   (for the group described in 00 Home → Trip facts)
@@ -78,7 +78,7 @@ A three-tier waterfall, about **305 m** in total (one of the tallest in India), 
 - Big views from the park: Kynrem across the gorge and the Bangladesh plains below.
 - A quick stop if the route goes via Laitkynsew.
 
-## December reality
+## Season reality
 Monsoon-fed. **In December it is usually very thin or dry**, like [[Seven Sisters Falls]]. The views of the plains from Thangkharang Park are still good on a clear day.
 
 ## Access & walk

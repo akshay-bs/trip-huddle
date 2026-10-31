@@ -33,4 +33,4 @@ decision: considering | selected | backup | dropped
 ## Practical
 - **Seating for the whole group?** 
 - **Reservation needed?** 
-- **Cash / UPI:** 
+- **Payment methods (cash / card / other):** 

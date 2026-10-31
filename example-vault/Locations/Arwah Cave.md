@@ -20,8 +20,8 @@ best_months:
   - Feb
   - Mar
   - Apr
-december_verdict: good
-december_note: Dry season is the best time for caves; floors less wet. Cold inside, and busy on Christmas-week afternoons
+season_verdict: good
+season_note: Dry season is the best time for caves; floors less wet. Cold inside, and busy on Christmas-week afternoons
 walk_involved: true
 walk_distance_km: 1.5
 walk_duration_min: 75
@@ -34,7 +34,7 @@ opening_hours: About 9:00 am – 5:00 pm (verify locally)
 closed_days:
 last_mile: Paved road from Sohra town (about 3.5 km) to parking at Lumshynna; tempo traveller OK
 permits: None
-entry_fee_inr: 50
+entry_fee: 50
 other_fees: Children under 12 about ₹10; parking and camera charges may apply; optional local guide ₹100–200
 toilets: Basic toilets near parking (unverified)
 food_nearby: Small tea and snack stalls near parking; proper meals in Sohra town
@@ -58,7 +58,7 @@ state: Assam | Meghalaya
 nearest_base: Guwahati | Shillong | Sohra | Dawki | Mawlynnong | Kaziranga | Majuli | …
 category: waterfall | viewpoint | cave | village | root-bridge | lake-river | wildlife | temple | museum | market | tea-estate | activity
 location: [lat, lng]  e.g. [25.1884, 92.0206]  (decimal degrees, used by the map)
-december_verdict: great | good | ok | skip
+season_verdict: great | good | ok | skip
 walk_distance_km / walk_duration_min: ROUND TRIP
 difficulty: easy | moderate | strenuous
 group_fit: good | ok | poor   (for the group described in 00 Home → Trip facts)
@@ -81,7 +81,7 @@ A limestone cave above Lumshynna village, about 3.5 km from Sohra (Cherrapunji) 
 - Teens: a proper cave feel with dark chambers, dripping rock and fossil hunting, but with a fixed path and lighting.
 - Adults: less cramped and less crowded than [[Mawsmai Cave]], and the forest walk itself is scenic.
 
-## December reality
+## Season reality
 December is a good time to go. The cave and path are drier and less slippery than in the monsoon, and there is no fog issue inside. It is cold and damp in the chambers, so wear a jacket. Crowds rise around Christmas week but it is usually calmer than Mawsmai.
 
 ## Access & walk

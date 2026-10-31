@@ -20,8 +20,8 @@ best_months:
   - Feb
   - Mar
   - Apr
-december_verdict: good
-december_note: Dry season is the recommended time (Oct–Apr); calm water and safe rocks for kayaking and boating. The water is cold, so swimming and pack-rafting are for the brave; boating and kayaking are fine
+season_verdict: good
+season_note: Dry season is the recommended time (Oct–Apr); calm water and safe rocks for kayaking and boating. The water is cold, so swimming and pack-rafting are for the brave; boating and kayaking are fine
 walk_involved: true
 walk_distance_km:
 walk_duration_min: 20
@@ -34,7 +34,7 @@ opening_hours: About 9:00 am – 5:00 pm
 closed_days:
 last_mile: Via Mawsynram road to Mawlyngbna; the final stretch is narrow but motorable. Tempo traveller should be OK (confirm)
 permits: None
-entry_fee_inr: 10
+entry_fee: 10
 other_fees: Kayak / row-boat hire and guide charged separately (rates not published; ask at Mawlyngbna Traveller's Nest)
 toilets: Basic (unverified)
 food_nearby: Mawlyngbna Traveller's Nest / village eateries
@@ -58,7 +58,7 @@ state: Assam | Meghalaya
 nearest_base: Guwahati | Shillong | Sohra | Dawki | Mawlynnong | Kaziranga | Majuli | …
 category: waterfall | viewpoint | cave | village | root-bridge | lake-river | wildlife | temple | museum | market | tea-estate | activity
 location: [lat, lng]  e.g. [25.1884, 92.0206]  (decimal degrees, used by the map)
-december_verdict: great | good | ok | skip
+season_verdict: great | good | ok | skip
 walk_distance_km / walk_duration_min: ROUND TRIP
 difficulty: easy | moderate | strenuous
 group_fit: good | ok | poor   (for the group described in 00 Home → Trip facts)
@@ -82,7 +82,7 @@ A small man-made reservoir formed by a dam on the Umkhakoi river, next to Mawlyn
 - **Picnic setting:** a viewing deck and a quiet spot with few outside tourists.
 - There is no clear evidence of a reed lake; sources describe open water with rocky, forested banks.
 
-## December reality
+## Season reality
 Dry season is the recommended season (Oct–Apr). The water is calm and the rocks are dry, so kayaking and boating are at their safest. The water will be cold. Temperatures are not published, but expect it to feel chilly in late December: fine for kayaking, very cold for swimming or pack-rafting. It is well off the Christmas-week crowd circuit. Operators do not run activities in bad weather, and the community may be quieter on Sundays and around 24–25 Dec, so pre-book through Mawlyngbna Traveller's Nest.
 
 ## Access & walk

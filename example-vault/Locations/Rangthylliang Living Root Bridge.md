@@ -20,8 +20,8 @@ best_months:
   - Jan
   - Feb
   - Mar
-december_verdict: good
-december_note: Dry season, so the steps are less slippery and the stream is low. Cool mornings. The walk is the problem, not the weather.
+season_verdict: good
+season_note: Dry season, so the steps are less slippery and the stream is low. Cool mornings. The walk is the problem, not the weather.
 walk_involved: true
 walk_distance_km:
 walk_duration_min: 180
@@ -34,7 +34,7 @@ opening_hours:
 closed_days:
 last_mile: Trailhead in Rangthylliang village, on the Pynursla–Dawki road, close to [[Conara Resort]] (whose address is listed as Rangthylliang)
 permits: None known. A local guide is recommended
-entry_fee_inr:
+entry_fee:
 other_fees: Village fee and guide fee likely; not confirmed
 toilets: None on the trail
 food_nearby: Village shops at the trailhead
@@ -58,7 +58,7 @@ state: Assam | Meghalaya
 nearest_base: Guwahati | Shillong | Sohra | Dawki | Mawlynnong | Kaziranga | Majuli | …
 category: waterfall | viewpoint | cave | village | root-bridge | lake-river | wildlife | temple | museum | market | tea-estate | activity
 location: [lat, lng]  e.g. [25.1884, 92.0206]  (decimal degrees, used by the map)
-december_verdict: great | good | ok | skip
+season_verdict: great | good | ok | skip
 walk_distance_km / walk_duration_min: ROUND TRIP
 difficulty: easy | moderate | strenuous
 group_fit: good | ok | poor   (for the group described in 00 Home → Trip facts)
@@ -80,7 +80,7 @@ The "Rangthylliang 1" root bridge near Mawkyrnot village, Pynursla area, East Kh
 - **Teens and keen adults:** the "world's longest" claim, a quiet forest trail, and far fewer tourists than Riwai or Nongriat.
 - Meghalaya Tourism runs a guided walk with a "root bridge architect" that passes several bridges.
 
-## December reality
+## Season reality
 Dry, cool and clear: the best time for the steps. Daylight is the constraint.
 
 ## Access & walk

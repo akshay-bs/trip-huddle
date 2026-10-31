@@ -20,8 +20,8 @@ best_months:
   - Feb
   - Mar
   - Apr
-december_verdict: good
-december_note: Dry and pleasant. Only worth it if the route goes to Kaziranga (it's on the Guwahati–Kaziranga highway)
+season_verdict: good
+season_note: Dry and pleasant. Only worth it if the route goes to Kaziranga (it's on the Guwahati–Kaziranga highway)
 walk_involved: false
 walk_distance_km:
 walk_duration_min:
@@ -34,7 +34,7 @@ opening_hours:
 closed_days:
 last_mile: Just off the Guwahati–Kaziranga highway; any vehicle OK
 permits: None
-entry_fee_inr: 0
+entry_fee: 0
 other_fees:
 toilets:
 food_nearby:
@@ -58,7 +58,7 @@ state: Assam | Meghalaya
 nearest_base: Guwahati | Shillong | Sohra | Dawki | Mawlynnong | Kaziranga | Majuli | …
 category: waterfall | viewpoint | cave | village | root-bridge | lake-river | wildlife | temple | museum | market | tea-estate | activity
 location: [lat, lng]  e.g. [25.1884, 92.0206]  (decimal degrees, used by the map)
-december_verdict: great | good | ok | skip
+season_verdict: great | good | ok | skip
 walk_distance_km / walk_duration_min: ROUND TRIP
 difficulty: easy | moderate | strenuous
 group_fit: good | ok | poor   (for the group described in 00 Home → Trip facts)
@@ -80,7 +80,7 @@ A new Shiva temple at Puranigudam, about 12 km from Nagaon town in Assam. It was
 - An easy, striking stop that breaks the 5–6 hr drive to Kaziranga.
 - **Adults:** darshan and the scale of the building. **Teens:** the size and the photos.
 
-## December reality
+## Season reality
 Dry, pleasant weather; no seasonal issues. Only useful if the route goes to Kaziranga: it isn't on the way to Pobitora or Meghalaya.
 
 ## Access & walk

@@ -19,8 +19,8 @@ best_months:
   - Jan
   - Feb
   - Mar
-december_verdict: good
-december_note: Dry season with calm river and mostly clear evenings, but sunset is early (about 4:25 PM), so winter sailings leave around 4 PM. Winter haze or smoke can mute the colours, and it turns chilly on deck after sunset. 24 Dec (Christmas Eve) is busy, so book ahead.
+season_verdict: good
+season_note: Dry season with calm river and mostly clear evenings, but sunset is early (about 4:25 PM), so winter sailings leave around 4 PM. Winter haze or smoke can mute the colours, and it turns chilly on deck after sunset. 24 Dec (Christmas Eve) is busy, so book ahead.
 walk_involved: true
 walk_distance_km: 0.3
 walk_duration_min: 10
@@ -33,7 +33,7 @@ opening_hours: Daily sailings. The Alfresco Grand sunset cruise leaves around 4:
 closed_days: May be cancelled in bad weather or high water (mainly in the monsoon)
 last_mile: City road to the riverfront on MG Road (Panbazar/Fancy Bazar). City traffic is heavy in the evening, so allow 45–60 min. The tempo traveller drops at the terminal or ghat
 permits: None
-entry_fee_inr: 700
+entry_fee: 700
 other_fees: Alfresco Grand adults ₹700 (middle deck) or ₹850 (upper deck), children ₹600 or ₹700. Food and drinks are à la carte on board. Other operators charge about ₹700–750
 toilets: Yes, on board and at the terminal
 food_nearby: On-board bar and restaurant. Plenty of eateries in Panbazar and Fancy Bazar
@@ -57,7 +57,7 @@ state: Assam | Meghalaya
 nearest_base: Guwahati | Shillong | Sohra | Dawki | Mawlynnong | Kaziranga | Majuli | …
 category: waterfall | viewpoint | cave | village | root-bridge | lake-river | wildlife | temple | museum | market | tea-estate | activity
 location: [lat, lng]  e.g. [25.1884, 92.0206]  (decimal degrees, used by the map)
-december_verdict: great | good | ok | skip
+season_verdict: great | good | ok | skip
 walk_distance_km / walk_duration_min: ROUND TRIP
 difficulty: easy | moderate | strenuous
 group_fit: good | ok | poor   (for the group described in 00 Home → Trip facts)
@@ -80,7 +80,7 @@ This is a 1-hour sunset cruise on the Brahmaputra from Guwahati's riverfront (MG
 - Teens: music, a DJ, decks to roam and snacks on board. Adults: sunset views, a drink, and Umananda island and the city skyline.
 - It works well as a closing-evening group activity.
 
-## December reality
+## Season reality
 - December is dry season, so the river is calm and lower. It is a comfortable month for cruising.
 - Sunset in Guwahati in late December is around 4:25 PM, which is why winter sailings leave around 4:00 PM. A late arrival from Shillong could miss it, so plan to reach Guwahati by 3:00 PM.
 - Winter haze and smoke can make the sunset hazy and orange rather than vivid.

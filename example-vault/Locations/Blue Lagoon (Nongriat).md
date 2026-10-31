@@ -19,8 +19,8 @@ best_months:
   - Jan
   - Feb
   - Mar
-december_verdict: good
-december_note: The dry season is when the water is clearest and bluest. It is icy cold, so swimming is short and only for the brave
+season_verdict: good
+season_note: The dry season is when the water is clearest and bluest. It is icy cold, so swimming is short and only for the brave
 walk_involved: true
 walk_distance_km:
 walk_duration_min: 420
@@ -33,7 +33,7 @@ opening_hours: Daylight only
 closed_days:
 last_mile: Same as the [[Double Decker Living Root Bridge]]: Sohra → Tyrna by road (about 12 km), then on foot via Nongriat
 permits: None
-entry_fee_inr: 0
+entry_fee: 0
 other_fees: No separate fee reported beyond the Nongriat village fee (₹20–50). Guide optional
 toilets: None; basic in Nongriat
 food_nearby: Small stalls in Nongriat; carry snacks and water
@@ -57,7 +57,7 @@ state: Assam | Meghalaya
 nearest_base: Guwahati | Shillong | Sohra | Dawki | Mawlynnong | Kaziranga | Majuli | …
 category: waterfall | viewpoint | cave | village | root-bridge | lake-river | wildlife | temple | museum | market | tea-estate | activity
 location: [lat, lng]  e.g. [25.1884, 92.0206]  (decimal degrees, used by the map)
-december_verdict: great | good | ok | skip
+season_verdict: great | good | ok | skip
 walk_distance_km / walk_duration_min: ROUND TRIP
 difficulty: easy | moderate | strenuous
 group_fit: good | ok | poor   (for the group described in 00 Home → Trip facts)
@@ -88,7 +88,7 @@ A natural pool of clear, bright blue water in the forest beyond Nongriat village
 - A good turnaround point for trekkers who want more than the Double Decker but not the full Rainbow Falls trek.
 - **Teens:** a (very cold) swim.
 
-## December reality
+## Season reality
 Dry season, so the water is at its clearest and bluest and the trail is dry. The water is icy, so a swim will be quick. Reaching it adds about an hour to the Double Decker round trip, which is still possible in a December day with an early start from Tyrna.
 
 ## Access & walk

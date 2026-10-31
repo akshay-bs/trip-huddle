@@ -20,8 +20,8 @@ best_months:
   - Jan
   - Feb
   - Mar
-december_verdict: great
-december_note: Christmas lights and decorations make mid/late December the most festive time to visit. It is very crowded in the week before Christmas, cold after dark, and most shops close by about 8 pm.
+season_verdict: great
+season_note: Christmas lights and decorations make mid/late December the most festive time to visit. It is very crowded in the week before Christmas, cold after dark, and most shops close by about 8 pm.
 walk_involved: true
 walk_distance_km: 1.5
 walk_duration_min: 90
@@ -34,7 +34,7 @@ opening_hours: Shops about 10:00–20:00; street food stalls mostly in the eveni
 closed_days: Sunday (many shops and eateries shut or keep short hours; varies by shop)
 last_mile: City centre; one-way streets and heavy traffic. Drop off at Police Point and walk; parking is very limited for a tempo traveller.
 permits: None
-entry_fee_inr:
+entry_fee:
 other_fees:
 toilets: Public and restaurant toilets only
 food_nearby: Many restaurants, cafés, bakeries and street stalls
@@ -58,7 +58,7 @@ state: Assam | Meghalaya
 nearest_base: Guwahati | Shillong | Sohra | Dawki | Mawlynnong | Kaziranga | Majuli | …
 category: waterfall | viewpoint | cave | village | root-bridge | lake-river | wildlife | temple | museum | market | tea-estate | activity
 location: [lat, lng]  e.g. [25.1884, 92.0206]  (decimal degrees, used by the map)
-december_verdict: great | good | ok | skip
+season_verdict: great | good | ok | skip
 walk_distance_km / walk_duration_min: ROUND TRIP
 difficulty: easy | moderate | strenuous
 group_fit: good | ok | poor   (for the group described in 00 Home → Trip facts)
@@ -81,7 +81,7 @@ Shillong's main shopping and eating district, also called Khyndailad, centred on
 - **Teens:** cheap winter wear, sneakers, Korean and Japanese cosmetics, momos, and cafés.
 - **Adults:** handicrafts, local produce (Khasi honey, tea, pickles, bay leaf, cinnamon), and Khasi food such as jadoh.
 
-## December reality
+## Season reality
 This is the best time of year to visit. Shillong is strongly Christian, and the streets are decorated with Christmas lights and stars from early December. The week before Christmas is **very crowded**, with shoppers, traffic jams and full restaurants. It gets cold after sunset (roughly 5–8 °C), so wear warm layers.
 
 ## Access & walk

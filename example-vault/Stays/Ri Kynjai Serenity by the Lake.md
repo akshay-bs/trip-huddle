@@ -17,17 +17,17 @@ decided_on:
 booking_status: not-contacted
 booking_ref:
 nights_booked:
-advance_paid_inr:
+advance_paid:
 cancellation_policy:
 check_in:
 check_out:
 room_config: "17 cottage rooms in three categories (Supreme, Superior, Lake View Cottage)."
 rooms_needed:
-extra_bed_inr:
-price_per_night_inr: 9500
+extra_bed:
+price_per_night: 9500
 price_basis: per-room
 nights:
-est_total_inr:
+est_total:
 meals_included:
 google_rating:
 booking_rating:
@@ -36,7 +36,7 @@ review_count:
 heating: fireplace
 hot_water: 24h
 power_backup:
-parking_for_tempo_traveller:
+parking_for_group_vehicle:
 restaurant_onsite: true
 veg_food: unknown
 wifi:
@@ -56,8 +56,8 @@ base_town: Guwahati | Shillong | Sohra | Dawki | Kaziranga | …
 location: [lat, lng]
 decision: considering | selected | backup | dropped
 booking_status: not-contacted | enquired | quoted | booked | paid | cancelled
-price_basis: per-room | whole-unit   (what price_per_night_inr refers to)
-est_total_inr: total for the whole group for all nights (cost per family is computed in the Stays base)
+price_basis: per-room | whole-unit   (what price_per_night refers to)
+est_total: total for the whole group for all nights (cost per family is computed in the Stays base)
 room_config: e.g. "4 doubles + 1 family room (3 beds)" or "whole villa, sleeps 14"
 heating: room-heater | fireplace | central | none | unknown   (Dec nights in Shillong ~4–8 °C)
 hot_water: 24h | geyser | limited | unknown

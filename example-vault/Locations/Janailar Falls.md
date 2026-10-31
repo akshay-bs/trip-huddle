@@ -19,8 +19,8 @@ best_months:
   - Feb
   - Mar
   - Apr
-december_verdict: ok
-december_note: Thin flow, clear water, dry trail. Little information available
+season_verdict: ok
+season_note: Thin flow, clear water, dry trail. Little information available
 walk_involved: true
 walk_distance_km:
 walk_duration_min:
@@ -33,7 +33,7 @@ opening_hours:
 closed_days:
 last_mile: Local road near Mawkma; confirm with the driver
 permits: None
-entry_fee_inr:
+entry_fee:
 other_fees:
 toilets: Unknown
 food_nearby: None
@@ -57,7 +57,7 @@ state: Assam | Meghalaya
 nearest_base: Guwahati | Shillong | Sohra | Dawki | Mawlynnong | Kaziranga | Majuli | …
 category: waterfall | viewpoint | cave | village | root-bridge | lake-river | wildlife | temple | museum | market | tea-estate | activity
 location: [lat, lng]  e.g. [25.1884, 92.0206]  (decimal degrees, used by the map)
-december_verdict: great | good | ok | skip
+season_verdict: great | good | ok | skip
 walk_distance_km / walk_duration_min: ROUND TRIP
 difficulty: easy | moderate | strenuous
 group_fit: good | ok | poor   (for the group described in 00 Home → Trip facts)
@@ -82,7 +82,7 @@ A small, uncommercialised waterfall near Mawkma, west of Sohra, with a natural p
 - Quiet and uncrowded; a natural pool above the falls.
 - **Teens:** the pool. **Adults:** a calm spot away from the crowds.
 
-## December reality
+## Season reality
 Thin flow, but clear water. The trail is dry. Details are scarce, so treat it as optional.
 
 ## Access & walk

@@ -2,6 +2,8 @@
 // Usage (from the vault root): node "${CLAUDE_PLUGIN_ROOT}/skills/add-place/scripts/validate.mjs" [note.md ...]
 // With no arguments it checks every note in Locations/ and Stays/, plus vault-wide checks.
 // The vault is the current directory, or TRIP_VAULT if set.
+// Optional trip.md at the vault root can provide `map_box` ({lat_min, lat_max, lng_min, lng_max})
+// and `regions` (list). Those checks are skipped when trip.md or the property is missing.
 import fs from 'node:fs';
 import path from 'node:path';
 
@@ -15,7 +17,7 @@ if (!fs.existsSync(path.join(VAULT, 'Templates', 'Location.md'))) {
 }
 
 // ---------- frontmatter parsing (the simple YAML subset this vault uses) ----------
-function parseFrontmatter(text) {
+function parseFrontmatter(text, stripComments = false) {
   const m = text.match(/^---\r?\n([\s\S]*?)\r?\n---(?:\r?\n|$)/);
   if (!m) return null;
   const keys = [], data = {};
@@ -24,11 +26,19 @@ function parseFrontmatter(text) {
     const kv = line.match(/^([A-Za-z_][\w-]*):\s?(.*)$/);
     if (kv) {
       last = kv[1]; keys.push(last);
-      const v = kv[2].trim();
+      let v = kv[2].trim();
+      if (stripComments && !/^["']/.test(v)) v = v.replace(/\s+#.*$/, '');
       if (v === '' ) data[last] = null;
       else if (v === '[]') data[last] = [];
+      else if (/^\{.*\}$/.test(v)) data[last] = parseInlineMap(v);
       else if (/^\[.*\]$/.test(v)) data[last] = v.slice(1, -1).split(',').map(s => unquote(s.trim())).filter(Boolean);
       else data[last] = unquote(v);
+      continue;
+    }
+    const sub = line.match(/^\s+([A-Za-z_][\w-]*):\s*(.*)$/);
+    if (sub && last && (data[last] === null || (data[last] && !Array.isArray(data[last]) && typeof data[last] === 'object'))) {
+      data[last] = data[last] || {};
+      data[last][sub[1]] = unquote(sub[2].trim());
       continue;
     }
     const item = line.match(/^\s+-\s+(.*)$/);
@@ -38,6 +48,14 @@ function parseFrontmatter(text) {
     }
   }
   return { keys, data, body: text.slice(m[0].length) };
+}
+function parseInlineMap(v) {
+  const out = {};
+  for (const part of v.slice(1, -1).split(',')) {
+    const [k, ...rest] = part.split(':');
+    if (k && k.trim() && rest.length) out[k.trim()] = unquote(rest.join(':').trim());
+  }
+  return out;
 }
 const unquote = s => s.replace(/^"(.*)"$/, '$1').replace(/^'(.*)'$/, '$1');
 
@@ -78,6 +96,19 @@ const types = (() => {
   try { return JSON.parse(read(path.join(VAULT, '.obsidian/types.json')).replace(/,\s*}/g, '}')).types; }
   catch { return {}; }
 })();
+
+// ---------- optional trip settings (trip.md at the vault root) ----------
+const trip = (() => {
+  try { return parseFrontmatter(read(path.join(VAULT, 'trip.md')), true)?.data || {}; }
+  catch { return {}; }
+})();
+const mapBox = (() => {
+  const b = trip.map_box;
+  if (!b || typeof b !== 'object' || Array.isArray(b)) return null;
+  const n = ['lat_min', 'lat_max', 'lng_min', 'lng_max'].map(k => Number(b[k]));
+  return n.every(Number.isFinite) && b.lat_min !== '' ? { latMin: n[0], latMax: n[1], lngMin: n[2], lngMax: n[3] } : null;
+})();
+const regions = Array.isArray(trip.regions) && trip.regions.length ? trip.regions.map(String) : null;
 
 const TEMPLATES = {
   location: { folder: 'Locations', file: 'Templates/Location.md' },
@@ -133,16 +164,25 @@ for (const f of targets) {
   for (const [k, allowed] of Object.entries(t.enums)) {
     const v = fm.data[k];
     if (v === null || v === undefined || Array.isArray(v) || k === 'decision') continue;
+    if (k === 'state' && regions) continue; // checked against trip.md regions below
     if (!allowed.has(String(v))) warn(f, `${k} "${v}" is not one of: ${[...allowed].join(' | ')}`);
   }
 
-  // coordinates (rough NE India bounding box)
+  // regions from trip.md (skipped when trip.md has none)
+  if (regions && fm.data.type === 'location' && fm.data.state && !regions.some(r => r.toLowerCase() === String(fm.data.state).toLowerCase())) {
+    warn(f, `state "${fm.data.state}" is not one of the trip regions: ${regions.join(' | ')}`);
+  }
+
+  // coordinates (bounding box from trip.md map_box; skipped when absent)
   const loc = fm.data.location;
   if (!Array.isArray(loc) || !loc.length) warn(f, 'no coordinates yet (will not show on the map)');
   else if (loc.length !== 2) err(f, 'location must be [lat, lng]');
   else {
     const [lat, lng] = loc.map(Number);
-    if (!(lat > 24 && lat < 28.5 && lng > 89 && lng < 97)) err(f, `location ${loc} is outside Assam/Meghalaya`);
+    if (!Number.isFinite(lat) || !Number.isFinite(lng)) err(f, `location ${loc} must be two numbers`);
+    else if (mapBox && !(lat >= mapBox.latMin && lat <= mapBox.latMax && lng >= mapBox.lngMin && lng <= mapBox.lngMax)) {
+      err(f, `location ${loc} is outside the trip map_box in trip.md`);
+    }
   }
 
   // planning fields
@@ -176,7 +216,7 @@ if (!args.length) {
     const md = ps.filter(p => p.endsWith('.md'));
     if (md.length > 1) errors.push(`duplicate note name "${b}": ${md.map(rel).join(', ')}`);
   }
-  for (const p of mdFiles.filter(p => path.dirname(p) === VAULT && path.basename(p) !== '00 Home.md')) {
+  for (const p of mdFiles.filter(p => path.dirname(p) === VAULT && !['00 Home.md', 'trip.md'].includes(path.basename(p)))) {
     const size = fs.statSync(p).size;
     if (size) warnings.push(`note in vault root: ${rel(p)} (has content; the user's own note? leave it unless asked)`);
     else errors.push(`stray EMPTY note in vault root: ${rel(p)} (created by clicking a link; safe to delete)`);

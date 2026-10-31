@@ -18,7 +18,7 @@ tags:
 ---
 <!--
 veg_options: good | limited | none
-price_band: ₹ | ₹₹ | ₹₹₹
+price_band: low | mid | high
 decision: considering | selected | backup | dropped
 -->
 
@@ -33,4 +33,4 @@ decision: considering | selected | backup | dropped
 ## Practical
 - **Seating for the whole group?** 
 - **Reservation needed?** 
-- **Cash / UPI:** 
+- **Payment methods (cash / card / other):** 

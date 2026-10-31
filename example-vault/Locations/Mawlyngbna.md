@@ -21,8 +21,8 @@ best_months:
   - Feb
   - Mar
   - Apr
-december_verdict: good
-december_note: Dry season is the recommended time for canyoning, the split-rock crevice and fossil trails (rock is dry, streams are low and safe). But the water is cold for snorkelling, canyoning swims and cliff jumps, and the river canyoning is a monsoon/post-monsoon highlight that is gentler in December
+season_verdict: good
+season_note: Dry season is the recommended time for canyoning, the split-rock crevice and fossil trails (rock is dry, streams are low and safe). But the water is cold for snorkelling, canyoning swims and cliff jumps, and the river canyoning is a monsoon/post-monsoon highlight that is gentler in December
 walk_involved: true
 walk_distance_km:
 walk_duration_min: 60
@@ -35,7 +35,7 @@ opening_hours: Activities by prior booking, daylight only
 closed_days:
 last_mile: Shillong → Mawsynram → Mawlyngbna (about 75–80 km, 2–2.5 hrs from Shillong). The last stretch is narrow but motorable; tempo traveller should manage (confirm)
 permits: None for Indian citizens (carry photo ID)
-entry_fee_inr: 10
+entry_fee: 10
 other_fees: Guide fee per activity plus gear (life jackets, knee pads, water shoes) for canyoning; kayak hire. Rates on request from Traveller's Nest
 toilets: At Traveller's Nest / homestays
 food_nearby: Meals at Traveller's Nest (Khasi food; pre-order); no restaurants of note
@@ -59,7 +59,7 @@ state: Assam | Meghalaya
 nearest_base: Guwahati | Shillong | Sohra | Dawki | Mawlynnong | Kaziranga | Majuli | …
 category: waterfall | viewpoint | cave | village | root-bridge | lake-river | wildlife | temple | museum | market | tea-estate | activity
 location: [lat, lng]  e.g. [25.1884, 92.0206]  (decimal degrees, used by the map)
-december_verdict: great | good | ok | skip
+season_verdict: great | good | ok | skip
 walk_distance_km / walk_duration_min: ROUND TRIP
 difficulty: easy | moderate | strenuous
 group_fit: good | ok | poor   (for the group described in 00 Home → Trip facts)
@@ -84,7 +84,7 @@ A Khasi village on a plateau edge above the Bangladesh plains, about 15 km beyon
 - **"Fossil park":** fossils are visible in rock across the village and around the lake. The longer Iew Luri Lura trail (about 3 hrs, canopy walk → Umdingkain waterfall → Pitcher Plant Park) passes preserved "footprint" fossils. There is also a Pitcher Plant Park with carnivorous plants.
 - Confirm what is actually offered.
 
-## December reality
+## Season reality
 Dry season (Oct–Apr) is the recommended time: dry rock, low and safe streams, clear skies over the plains. The catch is **cold water**. No temperature data is published, but late-December mountain stream and reservoir water will be cold (likely well below comfortable swimming temperature). Wetsuits are not mentioned by any source, so expect only life jackets. Kayaking and boating are fine; canyoning, cliff jumping and snorkelling will be bracing and short. Plan them for midday sun. Also note that the canyoning is most dramatic in monsoon/post-monsoon; in December the stream is lower and gentler, which is safer but less exciting. It is off the Christmas-week crowd circuit, but it is a Christian village: expect less activity on Sundays and 24–25 Dec.
 
 ## Access & walk

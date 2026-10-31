@@ -40,7 +40,7 @@ Before creating anything, search for the place or stay. The user's spelling is o
 - File name = the H1 heading = the canonical English name in Title Case, e.g. `Krang Suri Falls.md`, `Hotel Sapphire Shillong.md`.
 - Add a parenthetical when the bare name is ambiguous or generic: `Balancing Rock (Mawlynnong)`, `Blue Lagoon (Nongriat)`, `River Dolphin Point (Mayong)`.
 - No `[ ] # ^ | : / \ ?` characters in names. Spellings the user used, and local names, go in `aliases`.
-- Locations go in `Locations/` and stays go in `Stays/`. **Nothing goes in the vault root.** Only `00 Home.md` lives there.
+- Locations go in `Locations/` and stays go in `Stays/`. **Nothing goes in the vault root.** Only `00 Home.md` and `trip.md` live there.
 
 ## 4. Research and write the note
 - **Several items:** with 3 or more new items, fan out to `general-purpose` subagents, 3–5 items per agent, grouped by area. Run them in the background, in parallel. Use the prompt in `${CLAUDE_PLUGIN_ROOT}/skills/add-place/references/agent-prompt.md`, filled in.
@@ -50,7 +50,7 @@ Before creating anything, search for the place or stay. The user's spelling is o
 - **Start from the template.** Keep **every property, in template order**, and keep the FIELD GUIDE comment block. Replace `{{title}}` with the name.
 - **Values:**
   - Enum properties use the values from the FIELD GUIDE. Unknowns: blank, or `unknown` where the guide allows it.
-  - Number, checkbox and date properties hold plain values only: no units, no "approx", no text (types are in `.obsidian/types.json`). Put caveats in the body.
+  - Number, checkbox and date properties hold plain values only: no units, no "approx", no text (types are in `.obsidian/types.json`). Money fields (`entry_fee`, `price_per_night`, `est_total` and so on) are plain numbers in the trip currency from `trip.md`, with no symbol. Put caveats in the body.
   - Leave a value blank rather than guess. Say what's uncertain in the body.
 - **Location fields:**
   - `location` is `[lat, lng]`, decimal degrees with 4 decimals, as a YAML list. Verify it with OpenStreetMap (Nominatim), Wikipedia or an official page. For places, use the spot the group actually stands at (viewpoint, ghat, trailhead); give other points in the body.
@@ -60,7 +60,7 @@ Before creating anything, search for the place or stay. The user's spelling is o
   - `recommended_by` is a list of quoted wikilinks to source notes: `- "[[Alex - Additions 2Oct]]"`.
   - `tags` keeps `location` or `stay`, plus the source tag.
 - **Judging fit:**
-  - `december_verdict`, `difficulty` and `group_fit` are honest judgements for the group in Trip facts (ages, fitness, how much walking and how many steps they accept, vehicle size). Think about the travel season: for a December trip in the hills that means the dry season, thin waterfalls, fog, cold, and Christmas-week crowds.
+  - `season_verdict`, `difficulty` and `group_fit` are honest judgements for the group in Trip facts (ages, fitness, how much walking and how many steps they accept, vehicle size). `season_verdict` is about the travel season in Trip facts: weather, water levels, daylight, closures and crowds on those dates.
   - Walk distance and duration are **round trip**.
 - **Stays:**
   - Size `room_config` and `rooms_needed` for the group in Trip facts.
@@ -93,7 +93,7 @@ After the notes are written:
 3. **Don't touch** `Itinerary/Route.md`, the Day notes or any `decision` fields unless the user asks.
 
 ## 6. Validate (required)
-Run the validator from the vault root. It checks property order against the templates, types, FIELD GUIDE values, coordinates, link resolution, back-links, duplicates and stray files in the root:
+Run the validator from the vault root. It checks property order against the templates, types, FIELD GUIDE values, coordinates (against `map_box` in `trip.md`, if set), link resolution, back-links, duplicates and stray files in the root:
 ```bash
 node "${CLAUDE_PLUGIN_ROOT}/skills/add-place/scripts/validate.mjs"
 ```
@@ -103,7 +103,7 @@ node "${CLAUDE_PLUGIN_ROOT}/skills/add-place/scripts/validate.mjs"
 
 ## 7. Report to the user
 Keep it short:
-- A table: note | new or existing | December verdict | difficulty | group_fit | photos.
+- A table: note | new or existing | Season verdict | difficulty | group_fit | photos.
 - Then the flags that matter for the group's decision.
 - Then the doubts: assumed identities, unverified coordinates or fees.
 - Mention anything you added to the home page's open questions.

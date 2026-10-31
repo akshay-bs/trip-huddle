@@ -18,8 +18,8 @@ best_months:
   - Jan
   - Feb
   - Mar
-december_verdict: good
-december_note: Peak season. The water is normally at its clearest and calmest, and every activity runs. But the water is cold (wetsuits for scuba, a quick chill for snorkelling), and Christmas week is very busy with picnickers and campers. In autumn 2025 highway construction silt made the Umngot murky, though it was expected to clear by late November, so check recent photos in early December 2026
+season_verdict: good
+season_note: Peak season. The water is normally at its clearest and calmest, and every activity runs. But the water is cold (wetsuits for scuba, a quick chill for snorkelling), and Christmas week is very busy with picnickers and campers. In autumn 2025 highway construction silt made the Umngot murky, though it was expected to clear by late November, so check recent photos in early December 2026
 walk_involved: true
 walk_distance_km: 0.8
 walk_duration_min: 30
@@ -32,7 +32,7 @@ opening_hours: Activities about 8–10 AM to 4–6 PM, depending on operator and
 closed_days:
 last_mile: About 8 km upstream of Dawki by a narrow, winding village road off the Shillong–Dawki highway. Tempo traveller OK with care. Parking near the top of the village is limited on peak days
 permits: None for Indian citizens (border area, carry photo ID)
-entry_fee_inr:
+entry_fee:
 other_fees: Everything is paid per activity (see Activities). Parking and village fees are small and collected locally. The suspension bridge walk is described as free
 toilets: At campsites and homestays (basic)
 food_nearby: Camp kitchens and homestays serve simple meals (rice, dal, chicken, fish, Maggi, tea). More choice in Dawki market
@@ -56,7 +56,7 @@ state: Assam | Meghalaya
 nearest_base: Guwahati | Shillong | Sohra | Dawki | Mawlynnong | Kaziranga | Majuli | …
 category: waterfall | viewpoint | cave | village | root-bridge | lake-river | wildlife | temple | museum | market | tea-estate | activity
 location: [lat, lng]  e.g. [25.1884, 92.0206]  (decimal degrees, used by the map)
-december_verdict: great | good | ok | skip
+season_verdict: great | good | ok | skip
 walk_distance_km / walk_duration_min: ROUND TRIP
 difficulty: easy | moderate | strenuous
 group_fit: good | ok | poor   (for the group described in 00 Home → Trip facts)
@@ -79,7 +79,7 @@ Shnongpdeng is a small village on the Umngot River about 8 km upstream of Dawki,
 - **Adults:** a traditional boat ride or kayak on the same clear water as Dawki with fewer boats around, plus the suspension bridge, the riverbank and tea at a camp. Nobody has to do anything strenuous.
 - It is a better place than Dawki ghat to spend a few hours. Dawki is mainly for the classic boat photo and the border view.
 
-## December reality
+## Season reality
 - **Water clarity:** normally excellent from November to February. However, in October–November 2025 the Umngot turned murky from Shillong–Dawki highway construction silt, and Meghalaya's pollution board flagged debris dumping. Clarity was expected to return by late November. Road work continues into 2026, so check recent Instagram or Google photos in early December 2026 before paying for scuba or snorkelling.
 - **Cold:** days are about 10–22 °C, and the river water is cold. No reliable measured water temperature was found. Scuba operators supply wetsuits. Snorkelling and cliff jumps will feel chilly, so bring a towel and warm dry clothes. Morning mist can lie over the river.
 - **Crowds:** weekends, Christmas and New Year are the busiest. Picnic groups, music and full camps are common.

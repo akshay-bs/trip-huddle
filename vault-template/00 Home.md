@@ -43,7 +43,7 @@ To insert a template by hand, use the Command palette → *Templates: Insert tem
 - [ ] 
 
 ## Budget snapshot
-- **Stays:** total and per-family split come from the *Booking tracker* summary above.
+- **Stays:** total and per-unit split come from the *Booking tracker* summary above.
 - **Transport:** 
 - **Activities / entry fees:** 
 

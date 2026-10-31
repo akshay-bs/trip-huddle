@@ -17,8 +17,8 @@ best_months:
   - Oct
   - Nov
   - Dec
-december_verdict: ok
-december_note: Online accounts name September–October as the best season near Mayong, and say sightings continue "until November–December". In December the river is low and dolphins are fewer and less predictable. Not guaranteed.
+season_verdict: ok
+season_note: Online accounts name September–October as the best season near Mayong, and say sightings continue "until November–December". In December the river is low and dolphins are fewer and less predictable. Not guaranteed.
 walk_involved: false
 walk_distance_km:
 walk_duration_min:
@@ -31,7 +31,7 @@ opening_hours:
 closed_days:
 last_mile: Exact spot not confirmed (map pin is Mayong village, approximate). Described as about 1 km from Mayong village, at a river confluence near Pobitora
 permits:
-entry_fee_inr:
+entry_fee:
 other_fees: Country-boat hire possible; not confirmed
 toilets: None expected
 food_nearby: Mayong village
@@ -55,7 +55,7 @@ state: Assam | Meghalaya
 nearest_base: Guwahati | Shillong | Sohra | Dawki | Mawlynnong | Kaziranga | Majuli | …
 category: waterfall | viewpoint | cave | village | root-bridge | lake-river | wildlife | temple | museum | market | tea-estate | activity
 location: [lat, lng]  e.g. [25.1884, 92.0206]  (decimal degrees, used by the map)
-december_verdict: great | good | ok | skip
+season_verdict: great | good | ok | skip
 walk_distance_km / walk_duration_min: ROUND TRIP
 difficulty: easy | moderate | strenuous
 group_fit: good | ok | poor   (for the group described in 00 Home → Trip facts)
@@ -80,7 +80,7 @@ The Ganges river dolphin (*xihu* or *sihu* in Assamese), Assam's state aquatic a
 - **Everyone:** a short, easy riverside stop and a chance to see a rare freshwater dolphin.
 - Low effort, fits between the morning safari and the drive.
 
-## December reality
+## Season reality
 After the monsoon (Sept–Oct) is best. By December the water is lower and sightings are less reliable. Treat it as a bonus, not a highlight. The better-known site, the Kulsi river at Kukurmara (about 40 km west of Guwahati), is in the wrong direction for this route.
 
 ## Access & walk

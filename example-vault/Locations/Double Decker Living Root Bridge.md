@@ -21,8 +21,8 @@ best_months:
   - Jan
   - Feb
   - Mar
-december_verdict: good
-december_note: The best trekking weather. The steps are dry and the air is cool for the climb, and the pools under the bridge are clear blue. The streams and Rainbow Falls are thinner than after the monsoon. Expect crowds on weekends and in Christmas week
+season_verdict: good
+season_note: The best trekking weather. The steps are dry and the air is cool for the climb, and the pools under the bridge are clear blue. The streams and Rainbow Falls are thinner than after the monsoon. Expect crowds on weekends and in Christmas week
 walk_involved: true
 walk_distance_km: 6
 walk_duration_min: 300
@@ -35,7 +35,7 @@ opening_hours: Daylight hours; start early
 closed_days:
 last_mile: Sohra → Tyrna village, about 12 km (30–40 min) on a paved road. Tempo traveller OK to the Tyrna parking area; everything after that is on foot
 permits: None
-entry_fee_inr: 20
+entry_fee: 20
 other_fees: Village maintenance or entry fee reported at ₹20–50 per person (sometimes more for cameras). Optional guide about ₹500–1,000 from Tyrna. Parking at Tyrna
 toilets: Basic, at Tyrna and in Nongriat village
 food_nearby: Tea, snacks and water at small shops along the steps and in Nongriat; simple meals at the Nongriat homestays
@@ -59,7 +59,7 @@ state: Assam | Meghalaya
 nearest_base: Guwahati | Shillong | Sohra | Dawki | Mawlynnong | Kaziranga | Majuli | …
 category: waterfall | viewpoint | cave | village | root-bridge | lake-river | wildlife | temple | museum | market | tea-estate | activity
 location: [lat, lng]  e.g. [25.1884, 92.0206]  (decimal degrees, used by the map)
-december_verdict: great | good | ok | skip
+season_verdict: great | good | ok | skip
 walk_distance_km / walk_duration_min: ROUND TRIP
 difficulty: easy | moderate | strenuous
 group_fit: good | ok | poor   (for the group described in 00 Home → Trip facts)
@@ -83,7 +83,7 @@ The famous two-level living root bridge over the Umshiang River at Nongriat vill
 - **Teens:** a real adventure trek, a swim in the pools and, for the fit, an extra hike to Rainbow Falls.
 - **Adults:** a bucket-list sight, but only for those who can climb back up thousands of steps.
 
-## December reality
+## Season reality
 The best season for the trek. The steps are dry, the air is cool (comfortable for climbing) and the pools under the bridge are at their clearest. Rainbow Falls and the streams carry less water than after the monsoon, but the rainbow over the pool still appears on sunny late mornings. It is one of Meghalaya's busiest spots, so expect queues at the bridges on weekends and in the 24 Dec – 1 Jan week. With sunset around 4:30 pm, start early and start back up by about 1 pm.
 
 ## Access & walk

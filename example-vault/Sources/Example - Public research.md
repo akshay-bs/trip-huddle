@@ -95,7 +95,7 @@ Not a real itinerary. This note stands in for the friends' messages, agency quot
 - [x] [[Sohra Plaza]]
 
 ## Notes / opinions from the source
-- The notes were researched for a group trip in mid-December. That's why the `december_*` fields and the "December reality" sections exist.
+- The notes were researched for a group trip in mid-December. That's why the `season_*` fields and the "Season reality" sections exist.
 - Trip dates, group details, names and private sources were removed. `decision` is reset to `considering` everywhere.
 
 ## Original text / attachment

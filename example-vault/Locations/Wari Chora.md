@@ -19,8 +19,8 @@ best_months:
   - Jan
   - Feb
   - Mar
-december_verdict: great
-december_note: Peak season. The canyon is open only Nov–Mar, when the Rongdik runs low, slow and emerald green. Sun reaches the canyon floor around midday. Water is cold and daylight is short, so start early
+season_verdict: great
+season_note: Peak season. The canyon is open only Nov–Mar, when the Rongdik runs low, slow and emerald green. Sun reaches the canyon floor around midday. Water is cold and daylight is short, so start early
 walk_involved: true
 walk_distance_km: 3
 walk_duration_min: 120
@@ -33,7 +33,7 @@ opening_hours: 8 am – 2 pm (boating)
 closed_days: Closed Apr–Oct (monsoon water levels)
 last_mile: Emangre village is 36 km from Baghmara and 7–9 hrs by road from Guwahati (about 231 km) or Shillong (about 272 km, via Nongstoin). From Emangre, about 15 km of very bad off-road track (45–55 min) to the trailhead needs local 4x4s; the tempo traveller cannot do it
 permits:
-entry_fee_inr:
+entry_fee:
 other_fees: A local guide is required (the trail isn't marked). Boat, guide and 4x4 fees aren't published; tour packages bundle them (e.g. about ₹9,450 per person for a 3D/2N trip from Guwahati for 8+ people)
 toilets: None reported at the river
 food_nearby: Snack stalls and bamboo huts at the parking area (sometimes closed in the morning); carry water and food
@@ -57,7 +57,7 @@ state: Assam | Meghalaya
 nearest_base: Guwahati | Shillong | Sohra | Dawki | Mawlynnong | Kaziranga | Majuli | …
 category: waterfall | viewpoint | cave | village | root-bridge | lake-river | wildlife | temple | museum | market | tea-estate | activity
 location: [lat, lng]  e.g. [25.1884, 92.0206]  (decimal degrees, used by the map)
-december_verdict: great | good | ok | skip
+season_verdict: great | good | ok | skip
 walk_distance_km / walk_duration_min: ROUND TRIP
 difficulty: easy | moderate | strenuous
 group_fit: good | ok | poor   (for the group described in 00 Home → Trip facts)
@@ -83,7 +83,7 @@ A narrow gorge cut by the Rongdik river (a tributary of the Simsang) near Emangr
 - **Teens:** a real adventure: 4x4 ride, jungle walk, bamboo ladders, kayaking, and optional swimming with the guides.
 - **Adults:** one of the most striking and least crowded places in Meghalaya, but only for those happy with a long, rough two-day detour.
 
-## December reality
+## Season reality
 December is the best time to go. The canyon is closed April–October because the monsoon swells the river; in the dry months the water is low, calm and at its greenest. The dry track also helps the 4x4s. The water is cold, so anyone who swims or wades will be chilly, and the canyon floor gets sun only around midday. Boating stops at 2 pm and sunset is around 4:30 pm, so the day has to start early from Emangre. Christmas-week crowds are not an issue here; few people make the trip.
 
 ## Access & walk

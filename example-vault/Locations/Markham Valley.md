@@ -21,8 +21,8 @@ best_months:
   - Jan
   - Feb
   - Mar
-december_verdict: ok
-december_note: Dry, clear days, but meadows are golden-brown (not the green of photos) and the famous morning mist needs a sunrise visit. Far west of Shillong, so it clashes with a Nongjrong + Laitlum day
+season_verdict: ok
+season_note: Dry, clear days, but meadows are golden-brown (not the green of photos) and the famous morning mist needs a sunrise visit. Far west of Shillong, so it clashes with a Nongjrong + Laitlum day
 walk_involved: true
 walk_distance_km:
 walk_duration_min: 45
@@ -35,7 +35,7 @@ opening_hours: Daylight hours
 closed_days:
 last_mile: About 52 km on the Shillong–Mairang–Nongstoin road (NH-106) to Shyrwang, then 10–15 km of narrow village road (gravel/stone patches, poor signage). Confirm tempo traveller access with the driver
 permits: None
-entry_fee_inr:
+entry_fee:
 other_fees: Nominal entry and parking fee collected by the local Markham tourist committee (amount not verified)
 toilets: Basic toilets reported
 food_nearby: A few small shops with local snacks; a couple of village homestays
@@ -59,7 +59,7 @@ state: Assam | Meghalaya
 nearest_base: Guwahati | Shillong | Sohra | Dawki | Mawlynnong | Kaziranga | Majuli | …
 category: waterfall | viewpoint | cave | village | root-bridge | lake-river | wildlife | temple | museum | market | tea-estate | activity
 location: [lat, lng]  e.g. [25.1884, 92.0206]  (decimal degrees, used by the map)
-december_verdict: great | good | ok | skip
+season_verdict: great | good | ok | skip
 walk_distance_km / walk_duration_min: ROUND TRIP
 difficulty: easy | moderate | strenuous
 group_fit: good | ok | poor   (for the group described in 00 Home → Trip facts)
@@ -84,7 +84,7 @@ Markham Valley is an offbeat landscape of rolling grassy hills and meadows near 
 - Wide-open, uncrowded meadow scenery that is quite different from the gorges and waterfalls elsewhere on the trip. There are few tourists.
 - Teens will like the space to run around and climb the grassy hillocks. Adults get a peaceful, "off the tourist circuit" countryside feel with views of Khasi villages.
 
-## December reality
+## Season reality
 - The dry season brings clear visibility and pleasant days, with cold early mornings.
 - The famous photos show **green** meadows (monsoon to autumn). By late December the grass is mostly **golden-brown**, which is still pretty but different.
 - The "sea of clouds" and misty-meadow effect is a **sunrise** thing.

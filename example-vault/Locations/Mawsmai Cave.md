@@ -18,8 +18,8 @@ best_months:
   - Jan
   - Feb
   - Mar
-december_verdict: good
-december_note: Dry season means less water and mud inside, but this is the most crowded cave in Meghalaya. Expect queues in the one-way passage in Christmas week
+season_verdict: good
+season_note: Dry season means less water and mud inside, but this is the most crowded cave in Meghalaya. Expect queues in the one-way passage in Christmas week
 walk_involved: true
 walk_distance_km: 0.5
 walk_duration_min: 45
@@ -32,7 +32,7 @@ opening_hours: About 9:00 am – 5:00 pm (some sources say 9:30 am – 5:30 pm)
 closed_days:
 last_mile: Paved road via Mawsmai village, about 6 km south of Sohra town; tempo traveller OK
 permits: None
-entry_fee_inr: 20
+entry_fee: 20
 other_fees: Children about ₹5–10; camera about ₹20, video about ₹50; parking charged. Fees vary between sources, so carry cash
 toilets: Yes, near the parking/stall area (paid, basic)
 food_nearby: Many stalls and small eateries at the parking area; restaurants on the Sohra–Mawsmai road
@@ -56,7 +56,7 @@ state: Assam | Meghalaya
 nearest_base: Guwahati | Shillong | Sohra | Dawki | Mawlynnong | Kaziranga | Majuli | …
 category: waterfall | viewpoint | cave | village | root-bridge | lake-river | wildlife | temple | museum | market | tea-estate | activity
 location: [lat, lng]  e.g. [25.1884, 92.0206]  (decimal degrees, used by the map)
-december_verdict: great | good | ok | skip
+season_verdict: great | good | ok | skip
 walk_distance_km / walk_duration_min: ROUND TRIP
 difficulty: easy | moderate | strenuous
 group_fit: good | ok | poor   (for the group described in 00 Home → Trip facts)
@@ -79,7 +79,7 @@ A limestone cave at Mawsmai village, about 6 km south of Sohra (Cherrapunji) tow
 - Short and lit, so it gives a caving taste with no gear and no guide needed.
 - Easy to pair with [[Seven Sisters Falls]] and the Mawsmai side of Sohra in one stop.
 
-## December reality
+## Season reality
 December is a good time: the passages are drier, with less dripping water and mud than in the monsoon. The catch is crowds. Mawsmai is on every package itinerary, and in Christmas week the narrow one-way passage can back up into slow queues of 15–30 min at the tight spots. Go at opening time.
 
 ## Access & walk

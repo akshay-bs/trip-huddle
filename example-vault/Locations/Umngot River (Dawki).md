@@ -20,8 +20,8 @@ best_months:
   - Jan
   - Feb
   - Mar
-december_verdict: good
-december_note: The dry season normally gives the clearest water and the famous "floating boat" look. But Christmas week is the peak of the peak, with boat queues, packed ghats and long traffic jams on the narrow road and 1932 bridge, made worse by border trucks and ongoing Shillong–Dawki highway works. In autumn 2025 construction silt turned the river murky for weeks, so check recent photos before going
+season_verdict: good
+season_note: The dry season normally gives the clearest water and the famous "floating boat" look. But Christmas week is the peak of the peak, with boat queues, packed ghats and long traffic jams on the narrow road and 1932 bridge, made worse by border trucks and ongoing Shillong–Dawki highway works. In autumn 2025 construction silt turned the river murky for weeks, so check recent photos before going
 walk_involved: true
 walk_distance_km: 0.4
 walk_duration_min: 15
@@ -34,7 +34,7 @@ opening_hours: Boats run about 7–8 AM to 4–5 PM (daylight, weather permittin
 closed_days:
 last_mile: On the Shillong–Dawki highway (NH-206, old NH-40), about 80–90 km from Shillong. Tempo traveller can reach the riverside parking below the bridge, but the approach road and bridge jam badly in peak season
 permits: None for Indian citizens. It is a border area, so carry photo ID. Foreigners need a passport
-entry_fee_inr:
+entry_fee:
 other_fees: "Boat ride per boat, not per person. The official cooperative counter rate is widely quoted at ₹800 per boat for about 30–50 min (other reports range from ₹400–1,200). Each boat takes 3–4 passengers. Parking fee extra. Life jackets included"
 toilets: Basic paid toilets near the ghat and in Dawki market
 food_nearby: Dawki market (Bengali-style rice and fish thalis, e.g. Tiewlily and LT Hotel, plus multicuisine at Chyn's), and snack stalls at the ghat
@@ -58,7 +58,7 @@ state: Assam | Meghalaya
 nearest_base: Guwahati | Shillong | Sohra | Dawki | Mawlynnong | Kaziranga | Majuli | …
 category: waterfall | viewpoint | cave | village | root-bridge | lake-river | wildlife | temple | museum | market | tea-estate | activity
 location: [lat, lng]  e.g. [25.1884, 92.0206]  (decimal degrees, used by the map)
-december_verdict: great | good | ok | skip
+season_verdict: great | good | ok | skip
 walk_distance_km / walk_duration_min: ROUND TRIP
 difficulty: easy | moderate | strenuous
 group_fit: good | ok | poor   (for the group described in 00 Home → Trip facts)
@@ -82,7 +82,7 @@ The Umngot (also called Wah Umngot or the Dawki River) flows out of the Khasi–
 - The India–Bangladesh border is right there. The Bangladeshi bank and Jaflong's stone-collecting boats are visible from the water, and the "white water" line marks the unofficial border.
 - Teens: the calmer, more active version (kayak, snorkel, scuba, zipline) is 8 km upstream at [[Shnongpdeng]].
 
-## December reality
+## Season reality
 - **Clarity:** normally at its best from November to February. **Caveat:** in October–November 2025, hill-cutting and debris from the Shillong–Dawki highway widening turned the river brown for weeks, and the Meghalaya pollution board flagged violations. It was expected to clear from late November. The road works are still going on in 2026, so check recent Google Maps or Instagram photos in early December 2026. Some visitors in winter 2025–26 still found murky water near the busy jetties, but it was clearer upstream.
 - **Crowds:** Christmas to New Year is the busiest week of the year. Expect long queues at the boat counter, dozens of boats jostling at the ghat (which spoils the "lonely boat" photo), and a crowded bridge.
 - **Traffic:** the approach road is narrow and shared with long lines of trucks carrying limestone and coal to the Bangladesh land port, and the old single-lane bridge is a bottleneck. Highway widening brings sudden stoppages. Reports describe vehicles stranded for hours during road-work blockades, and long tourist jams in peak season. No hard figures were found, so plan a buffer of 1–2 hrs. Weekdays have *more* truck traffic, while weekends and holidays have more tourists.

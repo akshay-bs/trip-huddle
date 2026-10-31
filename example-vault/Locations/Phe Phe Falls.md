@@ -19,8 +19,8 @@ best_months:
   - Jan
   - Feb
   - Mar
-december_verdict: good
-december_note: Falls flow year-round but are much thinner in December; the two-tier cascade is gentler and the pool is clear turquoise. Steps are dry and safer than in monsoon. Water is too cold for a comfortable swim
+season_verdict: good
+season_note: Falls flow year-round but are much thinner in December; the two-tier cascade is gentler and the pool is clear turquoise. Steps are dry and safer than in monsoon. Water is too cold for a comfortable swim
 walk_involved: true
 walk_distance_km:
 walk_duration_min: 80
@@ -33,7 +33,7 @@ opening_hours: About 8:00 am – 5:00 pm (verify locally)
 closed_days:
 last_mile: Jowai–Amlarem/Dawki side road to the Paradise Adventure Camp area near Shkentalang village; paved (tempo traveller OK, confirm the final stretch)
 permits: None
-entry_fee_inr: 50
+entry_fee: 50
 other_fees: River crossing by shared boat about ₹50–100 per person; life jacket about ₹100; parking may be charged
 toilets: Basic at the campsite; bamboo changing rooms near the pool
 food_nearby: Eatery at Paradise Adventure Camp (trailhead)
@@ -57,7 +57,7 @@ state: Assam | Meghalaya
 nearest_base: Guwahati | Shillong | Sohra | Dawki | Mawlynnong | Kaziranga | Majuli | …
 category: waterfall | viewpoint | cave | village | root-bridge | lake-river | wildlife | temple | museum | market | tea-estate | activity
 location: [lat, lng]  e.g. [25.1884, 92.0206]  (decimal degrees, used by the map)
-december_verdict: great | good | ok | skip
+season_verdict: great | good | ok | skip
 walk_distance_km / walk_duration_min: ROUND TRIP
 difficulty: easy | moderate | strenuous
 group_fit: good | ok | poor   (for the group described in 00 Home → Trip facts)
@@ -80,7 +80,7 @@ A two-tiered waterfall with a turquoise plunge pool near Shkentalang village in 
 - **Teens:** the boat crossing, the bamboo-forest descent and scrambling on the rocks by the pool.
 - **Adults:** a pretty setting, but only worth it for those happy to climb back up a few hundred steps.
 
-## December reality
+## Season reality
 The falls do not dry up, but in late December the flow is much thinner than in the monsoon, so expect a gentle two-tier cascade rather than a torrent. The pool is at its clearest and bluest, the steps are dry and less slippery, and it is pleasant and cool for walking. The water is cold, so swimming in December is only for the very brave (the chalbanjare guide says swimming is generally not recommended). It is off the main Christmas-week circuit, so crowds should be light. The gorge gets shade and dark early; finish by about 3:30 pm.
 
 ## Access & walk

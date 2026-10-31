@@ -20,8 +20,8 @@ best_months:
   - Jan
   - Feb
   - Mar
-december_verdict: ok
-december_note: Clear days give views over the Bangladesh plains, but the park's streams and the Seven Sisters Falls it sits above run thin in December. A short, pleasant stop rather than a highlight.
+season_verdict: ok
+season_note: Clear days give views over the Bangladesh plains, but the park's streams and the Seven Sisters Falls it sits above run thin in December. A short, pleasant stop rather than a highlight.
 walk_involved: true
 walk_distance_km: 1
 walk_duration_min: 45
@@ -34,7 +34,7 @@ opening_hours: About 8:00 AM – 5:00 PM
 closed_days:
 last_mile: On the Sohra–Mawsmai road near the top of Seven Sisters Falls; parking at the gate. Tempo traveller OK
 permits: None
-entry_fee_inr: 20
+entry_fee: 20
 other_fees: Parking and camera fees possible
 toilets: Yes, basic
 food_nearby: Tea/snack stalls near the gate; more in Sohra and at Mawsmai
@@ -58,7 +58,7 @@ state: Assam | Meghalaya
 nearest_base: Guwahati | Shillong | Sohra | Dawki | Mawlynnong | Kaziranga | Majuli | …
 category: waterfall | viewpoint | cave | village | root-bridge | lake-river | wildlife | temple | museum | market | tea-estate | activity
 location: [lat, lng]  e.g. [25.1884, 92.0206]  (decimal degrees, used by the map)
-december_verdict: great | good | ok | skip
+season_verdict: great | good | ok | skip
 walk_distance_km / walk_duration_min: ROUND TRIP
 difficulty: easy | moderate | strenuous
 group_fit: good | ok | poor   (for the group described in 00 Home → Trip facts)
@@ -81,7 +81,7 @@ A government-run park on the plateau edge at Mawsmai, south of Sohra (Cherrapunj
 - **Teens:** stream-side paths, rock perches and the "edge of the plateau" views.
 - **Adults:** a relaxed, flat stop between the caves and falls.
 
-## December reality
+## Season reality
 Views are good on clear days, but the streams and the falls below are low in the dry season. Morning fog is common in Sohra, so go late morning or early afternoon. Worth it only because it's on the same road as [[Mawsmai Cave]] and [[Seven Sisters Falls]].
 
 ## Access & walk

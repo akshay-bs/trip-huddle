@@ -18,8 +18,8 @@ best_months:
   - Dec
   - Jan
   - Feb
-december_verdict: good
-december_note: Flow much thinner than post-monsoon, but the turquoise pools are at their clearest and the trail is drier (safer). Late December may be down to thin streams on each tier
+season_verdict: good
+season_note: Flow much thinner than post-monsoon, but the turquoise pools are at their clearest and the trail is drier (safer). Late December may be down to thin streams on each tier
 walk_involved: true
 walk_distance_km:
 walk_duration_min: 75
@@ -32,7 +32,7 @@ opening_hours: About 8:00 am – 5:00 pm (verify locally)
 closed_days:
 last_mile: Paved road from Sohra toward Dainthlen, then a short side road to the trailhead parking; tempo traveller OK (verify the final stretch)
 permits: None
-entry_fee_inr: 50
+entry_fee: 50
 other_fees: Parking may be charged
 toilets: None at the falls; basic at best near parking (unverified)
 food_nearby: A few tea/snack stalls at the trailhead; meals in Sohra
@@ -56,7 +56,7 @@ state: Assam | Meghalaya
 nearest_base: Guwahati | Shillong | Sohra | Dawki | Mawlynnong | Kaziranga | Majuli | …
 category: waterfall | viewpoint | cave | village | root-bridge | lake-river | wildlife | temple | museum | market | tea-estate | activity
 location: [lat, lng]  e.g. [25.1884, 92.0206]  (decimal degrees, used by the map)
-december_verdict: great | good | ok | skip
+season_verdict: great | good | ok | skip
 walk_distance_km / walk_duration_min: ROUND TRIP
 difficulty: easy | moderate | strenuous
 group_fit: good | ok | poor   (for the group described in 00 Home → Trip facts)
@@ -79,7 +79,7 @@ A three-tiered "step" waterfall in the forest west of Sohra (Cherrapunji), off t
 - Teens will love the scramble down and the bottom pool.
 - Adults: beautiful, but only worth it for those comfortable with a steep climb back up.
 
-## December reality
+## Season reality
 Dry season. Flow is far thinner than in Oct–Nov, and by late December each tier may be a thin stream or a few ribbons. The upside is that the pools are clearest and bluest and the trail is drier, so it is less slippery than in the monsoon. Christmas-week crowds are moderate, as it is less famous than Nohkalikai.
 
 ## Access & walk

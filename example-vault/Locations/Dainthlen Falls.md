@@ -20,8 +20,8 @@ best_months:
   - Feb
   - Mar
   - Apr
-december_verdict: ok
-december_note: "Much thinner flow; the rock shelves are dry and easy to walk on, but less dramatic."
+season_verdict: ok
+season_note: "Much thinner flow; the rock shelves are dry and easy to walk on, but less dramatic."
 walk_involved: false
 walk_distance_km:
 walk_duration_min: 15
@@ -34,7 +34,7 @@ opening_hours:
 closed_days:
 last_mile: Paved road from Sohra (same road as the Wei Sawdong turn-off)
 permits: None
-entry_fee_inr: 0
+entry_fee: 0
 other_fees:
 toilets: Unknown
 food_nearby: A few stalls
@@ -58,7 +58,7 @@ state: Assam | Meghalaya
 nearest_base: Guwahati | Shillong | Sohra | Dawki | Mawlynnong | Kaziranga | Majuli | …
 category: waterfall | viewpoint | cave | village | root-bridge | lake-river | wildlife | temple | museum | market | tea-estate | activity
 location: [lat, lng]  e.g. [25.1884, 92.0206]  (decimal degrees, used by the map)
-december_verdict: great | good | ok | skip
+season_verdict: great | good | ok | skip
 walk_distance_km / walk_duration_min: ROUND TRIP
 difficulty: easy | moderate | strenuous
 group_fit: good | ok | poor   (for the group described in 00 Home → Trip facts)
@@ -83,7 +83,7 @@ A wide, stepped waterfall about 10 km from Sohra. By Khasi legend, this is where
 - An easy, flat, roadside waterfall with a good story.
 - **Teens:** the Thlen legend and the rock carvings. **Adults:** an easy stop with no big climb.
 
-## December reality
+## Season reality
 Flow is much thinner. The wide rock shelves are dry and easy to walk on, but the falls are less dramatic.
 
 ## Access & walk

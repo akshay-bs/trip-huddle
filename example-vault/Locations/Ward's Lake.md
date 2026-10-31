@@ -19,8 +19,8 @@ best_months:
   - Oct
   - Nov
   - Dec
-december_verdict: ok
-december_note: Pleasant, sunny winter afternoons, but the gardens are less in bloom and the park closes early (around 5–5:30 pm). A calm half-hour stop in town, not a highlight.
+season_verdict: ok
+season_note: Pleasant, sunny winter afternoons, but the gardens are less in bloom and the park closes early (around 5–5:30 pm). A calm half-hour stop in town, not a highlight.
 walk_involved: true
 walk_distance_km: 1
 walk_duration_min: 30
@@ -33,7 +33,7 @@ opening_hours: About 8:30–17:30 in winter (Nov–Feb); about 8:30–19:00 in s
 closed_days: Tuesday
 last_mile: In central Shillong near Raj Bhavan, a short walk from Police Bazaar; city traffic; drop-off at the gate
 permits: None
-entry_fee_inr: 10
+entry_fee: 10
 other_fees: Paddle boat charged separately (rate not verified); camera fee may apply; fish feed (puffed rice) sold at the gate
 toilets: Yes
 food_nearby: Cafeteria inside; Police Bazaar eateries a short walk away
@@ -57,7 +57,7 @@ state: Assam | Meghalaya
 nearest_base: Guwahati | Shillong | Sohra | Dawki | Mawlynnong | Kaziranga | Majuli | …
 category: waterfall | viewpoint | cave | village | root-bridge | lake-river | wildlife | temple | museum | market | tea-estate | activity
 location: [lat, lng]  e.g. [25.1884, 92.0206]  (decimal degrees, used by the map)
-december_verdict: great | good | ok | skip
+season_verdict: great | good | ok | skip
 walk_distance_km / walk_duration_min: ROUND TRIP
 difficulty: easy | moderate | strenuous
 group_fit: good | ok | poor   (for the group described in 00 Home → Trip facts)
@@ -80,7 +80,7 @@ A small, horseshoe-shaped artificial lake in central Shillong, next to Raj Bhava
 - **Teens:** paddle boating, feeding the fish from the bridge, photos.
 - **Adults:** an easy, flat stroll with benches and a café. It is a good wind-down after a long drive.
 
-## December reality
+## Season reality
 The weather is fine: sunny afternoons and cold in the shade. Fewer flowers are in bloom than in spring, and the lake is just pleasant rather than special. The main catch is the **early winter closing time (around 5–5:30 pm)**. It can be busy with locals and families on Christmas-week afternoons.
 
 ## Access & walk

@@ -20,8 +20,8 @@ best_months:
   - Jan
   - Feb
   - Mar
-december_verdict: good
-december_note: Waterfalls are thin streams, but the caves, pools and bridges are still worth it and the trail is drier
+season_verdict: good
+season_note: Waterfalls are thin streams, but the caves, pools and bridges are still worth it and the trail is drier
 walk_involved: true
 walk_distance_km: 1.5
 walk_duration_min: 60
@@ -34,7 +34,7 @@ opening_hours: 08:30–17:30 (confirm)
 closed_days: Probably open daily (Capture A Trip lists Sundays about 09:00–17:00); one older source says Mon–Sat only. Confirm
 last_mile: Short side road off the Shillong–Sohra road at Laitmawsiang
 permits: None
-entry_fee_inr: 20
+entry_fee: 20
 other_fees: Camera/phone about ₹20; some reports of ₹100 entry
 toilets: Basic, at the entrance
 food_nearby: Small stalls at the entrance
@@ -58,7 +58,7 @@ state: Assam | Meghalaya
 nearest_base: Guwahati | Shillong | Sohra | Dawki | Mawlynnong | Kaziranga | Majuli | …
 category: waterfall | viewpoint | cave | village | root-bridge | lake-river | wildlife | temple | museum | market | tea-estate | activity
 location: [lat, lng]  e.g. [25.1884, 92.0206]  (decimal degrees, used by the map)
-december_verdict: great | good | ok | skip
+season_verdict: great | good | ok | skip
 walk_distance_km / walk_duration_min: ROUND TRIP
 difficulty: easy | moderate | strenuous
 group_fit: good | ok | poor   (for the group described in 00 Home → Trip facts)
@@ -80,7 +80,7 @@ cover: image URL, or "[[Attachments/filename.jpg]]"  (shown on the Cards view)
 - Lots of variety in a short, easy loop: caves, bridges and pools.
 - **Teens:** the caves and the bamboo bridges. **Adults:** the photos, and it's far easier than the deeper Sohra waterfall treks.
 
-## December reality
+## Season reality
 The flow is much lower than after the monsoon, so the waterfalls are thin streams. The caves and pools are still worth it, and the trail is drier (safer). Visitors report seeing the caves and several falls in December.
 
 ## Access & walk

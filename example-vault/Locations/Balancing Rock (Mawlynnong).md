@@ -20,8 +20,8 @@ best_months:
   - Jan
   - Feb
   - Mar
-december_verdict: good
-december_note: No seasonal issues. Dry and easy underfoot in December. It is a quick curiosity stop, not a destination, and can get briefly crowded when tour vehicles doing the Mawlynnong–Riwai loop arrive together
+season_verdict: good
+season_note: No seasonal issues. Dry and easy underfoot in December. It is a quick curiosity stop, not a destination, and can get briefly crowded when tour vehicles doing the Mawlynnong–Riwai loop arrive together
 walk_involved: true
 walk_distance_km: 0.2
 walk_duration_min: 10
@@ -34,7 +34,7 @@ opening_hours: About 6 AM – 5 PM
 closed_days:
 last_mile: Village road between Mawlynnong and Riwai/Nohwet. Tempo traveller OK, with roadside or small-lot parking
 permits: None
-entry_fee_inr: 20
+entry_fee: 20
 other_fees: Reported ₹10–20 per person (one listing says free)
 toilets: None reliable on site. Use Mawlynnong or the Riwai car park
 food_nearby: Mawlynnong village (about 1 km) or the stalls at the Riwai root bridge car park
@@ -58,7 +58,7 @@ state: Assam | Meghalaya
 nearest_base: Guwahati | Shillong | Sohra | Dawki | Mawlynnong | Kaziranga | Majuli | …
 category: waterfall | viewpoint | cave | village | root-bridge | lake-river | wildlife | temple | museum | market | tea-estate | activity
 location: [lat, lng]  e.g. [25.1884, 92.0206]  (decimal degrees, used by the map)
-december_verdict: great | good | ok | skip
+season_verdict: great | good | ok | skip
 walk_distance_km / walk_duration_min: ROUND TRIP
 difficulty: easy | moderate | strenuous
 group_fit: good | ok | poor   (for the group described in 00 Home → Trip facts)
@@ -81,7 +81,7 @@ A natural curiosity: a large boulder resting at an odd angle on a much smaller s
 - Adults: the local lore. One story says it was a place of ancient sacrifices to a deity. Guides describe it as an old Khasi shrine abandoned after Christianity came to the area. Treat both as folklore.
 - Teens: a quick photo. On its own it isn't worth a detour.
 
-## December reality
+## Season reality
 Weather makes no difference here. December is dry and pleasant. It is a small site, so a few tour vehicles arriving together make it feel busy for 10 minutes. Verdict: good as a quick add-on. It is a minor sight, so keep it only if it's on the way.
 
 ## Access & walk

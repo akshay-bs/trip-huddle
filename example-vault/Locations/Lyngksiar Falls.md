@@ -19,8 +19,8 @@ best_months:
   - Feb
   - Mar
   - Apr
-december_verdict: good
-december_note: Lower flow but a clear pool; swimming allowed with a life jacket (cold)
+season_verdict: good
+season_note: Lower flow but a clear pool; swimming allowed with a life jacket (cold)
 walk_involved: true
 walk_distance_km: 2
 walk_duration_min: 50
@@ -33,7 +33,7 @@ opening_hours: 07:00–18:00 (Google shows 9:30 am opening; verify)
 closed_days:
 last_mile: Road to the entrance; confirm big-vehicle parking
 permits: None
-entry_fee_inr: 50
+entry_fee: 50
 other_fees: Life jacket hire for swimming
 toilets: Yes, at the entrance
 food_nearby: Limited
@@ -57,7 +57,7 @@ state: Assam | Meghalaya
 nearest_base: Guwahati | Shillong | Sohra | Dawki | Mawlynnong | Kaziranga | Majuli | …
 category: waterfall | viewpoint | cave | village | root-bridge | lake-river | wildlife | temple | museum | market | tea-estate | activity
 location: [lat, lng]  e.g. [25.1884, 92.0206]  (decimal degrees, used by the map)
-december_verdict: great | good | ok | skip
+season_verdict: great | good | ok | skip
 walk_distance_km / walk_duration_min: ROUND TRIP
 difficulty: easy | moderate | strenuous
 group_fit: good | ok | poor   (for the group described in 00 Home → Trip facts)
@@ -82,7 +82,7 @@ A three-tier waterfall near Mawkma, west of Sohra, with a swimming pool at the b
 - One of the easiest "real" waterfalls in the chain, with a proper trail.
 - **Teens:** swimming in the roped-off pool with a life jacket. **Adults:** the tiers and the well-kept path. Fossils are visible in the rocks (don't touch or remove them).
 
-## December reality
+## Season reality
 Flow is lower, but the pool is clear. Swimming is allowed with a life jacket; the water is cold.
 
 ## Access & walk

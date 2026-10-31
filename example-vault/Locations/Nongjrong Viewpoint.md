@@ -17,8 +17,8 @@ best_months:
   - Dec
   - Jan
   - Feb
-december_verdict: great
-december_note: Peak season for the sunrise "sea of clouds" (dry, clear, cold nights). Likely but not guaranteed; sunrise ~6:00 AM, dawn around 3–8 °C with wind
+season_verdict: great
+season_note: Peak season for the sunrise "sea of clouds" (dry, clear, cold nights). Likely but not guaranteed; sunrise ~6:00 AM, dawn around 3–8 °C with wind
 walk_involved: true
 walk_distance_km:
 walk_duration_min: 30
@@ -31,7 +31,7 @@ opening_hours: Open access; visited pre-dawn
 closed_days:
 last_mile: Village roads beyond Mawkynrew; narrow in places, final stretch reported as rough. Tempo traveller is used by groups, but confirm with the driver
 permits: None
-entry_fee_inr: 30
+entry_fee: 30
 other_fees: Parking (reported ₹50 per car, about ₹100 per tempo traveller); guides/village committee may ask a small contribution
 toilets: None at the viewpoint; use a homestay in the village
 food_nearby: "Tea and Khasi breakfast at village homestays or stalls (arrange in advance for a big group)"
@@ -55,7 +55,7 @@ state: Assam | Meghalaya
 nearest_base: Guwahati | Shillong | Sohra | Dawki | Mawlynnong | Kaziranga | Majuli | …
 category: waterfall | viewpoint | cave | village | root-bridge | lake-river | wildlife | temple | museum | market | tea-estate | activity
 location: [lat, lng]  e.g. [25.1884, 92.0206]  (decimal degrees, used by the map)
-december_verdict: great | good | ok | skip
+season_verdict: great | good | ok | skip
 walk_distance_km / walk_duration_min: ROUND TRIP
 difficulty: easy | moderate | strenuous
 group_fit: good | ok | poor   (for the group described in 00 Home → Trip facts)
@@ -78,7 +78,7 @@ A hilltop sunrise viewpoint above Nongjrong village (Mawkynrew block, East Khasi
 - Adults get the view and the quiet. Teens get a genuinely unusual sight and great photos, and can say they were above the clouds.
 - A Khasi village breakfast afterwards is part of the experience.
 
-## December reality
+## Season reality
 - **Sea of clouds:** December to February is the best window. Clear skies and cold, still nights make valley fog most likely. Guides call the chances "high", but it is weather-dependent. Some mornings the ridge itself is fogged in and you see nothing, and on others the sky is clear with no cloud layer. Build in a backup morning if this is a must.
 - The itineraries' "5 AM arrival" is earlier than strictly needed. Being at the top by **5:30 AM** is enough to see the pre-dawn colours.
 - **Cold:** Shillong December nights drop to about 4–7 °C, and an exposed ridge at dawn with wind feels colder. Expect roughly 3–8 °C. This is an estimate, as no local measurement was found. Bring thermals, a down jacket, cap and gloves.

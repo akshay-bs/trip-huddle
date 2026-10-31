@@ -20,11 +20,11 @@ You are adding notes to an Obsidian trip-planning vault at <absolute vault path>
 - Added on: <YYYY-MM-DD>
 
 Items:
-1. `<Locations|Stays>/<Exact Name>.md`: <what the user said, e.g. "laboon falls">, <state/district/base town if known>, <day/nights in the source, if given>. <Any specific questions, e.g. "is it dry in December?", "can it house the whole group?">
+1. `<Locations|Stays>/<Exact Name>.md`: <what the user said, e.g. "laboon falls">, <state/district/base town if known>, <day/nights in the source, if given>. <Any specific questions, e.g. "is it good in the travel season?", "can it house the whole group?">
 2. …
 
 Other notes that already exist and that you may cross-link to with [[wikilinks]]: <comma-separated list of Locations/ and Stays/ note names, or "see the Locations/ and Stays/ folders">.
 
 **When you're done,** reply with:
-- A table: note | coordinates (and their source) | december_verdict | difficulty | group_fit | #photos.
+- A table: note | coordinates (and their source) | season_verdict | difficulty | group_fit | #photos.
 - Your doubts: assumed identity, conflicting fees, unverified pins, and anything the group must know.

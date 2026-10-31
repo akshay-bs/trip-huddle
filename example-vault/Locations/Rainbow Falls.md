@@ -19,8 +19,8 @@ best_months:
   - Jan
   - Feb
   - Mar
-december_verdict: good
-december_note: Dry trails and clear, deep-blue water in the pool. The flow is lower than after the monsoon, but the rainbow in the spray still shows on sunny mornings. It is the far end of the Nongriat trek, so a December day is barely long enough
+season_verdict: good
+season_note: Dry trails and clear, deep-blue water in the pool. The flow is lower than after the monsoon, but the rainbow in the spray still shows on sunny mornings. It is the far end of the Nongriat trek, so a December day is barely long enough
 walk_involved: true
 walk_distance_km: 12
 walk_duration_min: 540
@@ -33,7 +33,7 @@ opening_hours: About 6:00 am – 5:00 pm (one source); in practice, daylight onl
 closed_days:
 last_mile: Same as the [[Double Decker Living Root Bridge]]: Sohra → Tyrna by road (about 12 km), then on foot via Nongriat
 permits: None
-entry_fee_inr: 0
+entry_fee: 0
 other_fees: No separate fee reported beyond the Nongriat village fee (₹20–50). A guide from Tyrna is recommended, about ₹1,000–2,000 including Rainbow Falls
 toilets: None at the falls; basic in Nongriat
 food_nearby: A few small stalls on the way; fewer after the Double Decker bridge, so carry snacks and water
@@ -57,7 +57,7 @@ state: Assam | Meghalaya
 nearest_base: Guwahati | Shillong | Sohra | Dawki | Mawlynnong | Kaziranga | Majuli | …
 category: waterfall | viewpoint | cave | village | root-bridge | lake-river | wildlife | temple | museum | market | tea-estate | activity
 location: [lat, lng]  e.g. [25.1884, 92.0206]  (decimal degrees, used by the map)
-december_verdict: great | good | ok | skip
+season_verdict: great | good | ok | skip
 walk_distance_km / walk_duration_min: ROUND TRIP
 difficulty: easy | moderate | strenuous
 group_fit: good | ok | poor   (for the group described in 00 Home → Trip facts)
@@ -81,7 +81,7 @@ An 80 ft waterfall in the forest beyond Nongriat village, below Sohra in East Kh
 - **Teens:** the full adventure trek, with suspension bridges, root bridges and a jungle walk.
 - **Adults:** only for those fit enough for a 9-hour day of steps.
 
-## December reality
+## Season reality
 Good trekking season: dry paths, cool air and clear water. The flow is thinner than after the monsoon, but the rainbow still appears when the morning sun hits the spray. The problem is daylight. With sunset around 4:30 pm, the round trip from Tyrna (about 7–9 hrs) only works with a 6:30–7 am start and no long stops, or by staying a night at a Nongriat homestay.
 
 ## Access & walk

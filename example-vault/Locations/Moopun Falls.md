@@ -21,8 +21,8 @@ best_months:
   - Jan
   - Feb
   - Mar
-december_verdict: good
-december_note: The district promotes it as a winter spot. The flow is lower than after the monsoon, but that exposes the sandy "beach" at the base and leaves the pool below the stone bridge calm and clear. The water is cold for a swim
+season_verdict: good
+season_note: The district promotes it as a winter spot. The flow is lower than after the monsoon, but that exposes the sandy "beach" at the base and leaves the pool below the stone bridge calm and clear. The water is cold for a swim
 walk_involved: true
 walk_distance_km:
 walk_duration_min: 15
@@ -35,7 +35,7 @@ opening_hours: Open access (no gate reported); go in daylight
 closed_days:
 last_mile: From NH-6 (old NH-44) at Kongong junction, about 10 km on a paved rural road via Pynthorsale and Mukhaialong to Mutong village, then 300 m to the top of the falls. Tempo traveller should manage (confirm with driver). Signboards from the highway are poor, so ask locals
 permits: None
-entry_fee_inr: 0
+entry_fee: 0
 other_fees: Sources disagree; one says ₹50 per person, most recent reviews say free. Small parking area above the falls
 toilets: Not reported; assume none
 food_nearby: None at the falls; eat in Jowai
@@ -59,7 +59,7 @@ state: Assam | Meghalaya
 nearest_base: Guwahati | Shillong | Sohra | Dawki | Mawlynnong | Kaziranga | Majuli | …
 category: waterfall | viewpoint | cave | village | root-bridge | lake-river | wildlife | temple | museum | market | tea-estate | activity
 location: [lat, lng]  e.g. [25.1884, 92.0206]  (decimal degrees, used by the map)
-december_verdict: great | good | ok | skip
+season_verdict: great | good | ok | skip
 walk_distance_km / walk_duration_min: ROUND TRIP
 difficulty: easy | moderate | strenuous
 group_fit: good | ok | poor   (for the group described in 00 Home → Trip facts)
@@ -84,7 +84,7 @@ Known locally as the "waterfall with a beach". It is on the Umjhai River at Muto
 - **Teens:** the sand, the stone bridge, and paddling or a quick swim in the pool.
 - **Adults:** one of the easiest falls to reach in Meghalaya (5 min walk), with few tourists.
 
-## December reality
+## Season reality
 The East Jaintia Hills district names winter as the best time to visit. Flow is lower than in Oct–Nov, but reviews say the sandy bank is exposed after the rains, so December is when the beach shows best. The pool is clear and calm, but the water is cold, so swims will be short. It is well off the main tourist circuit, so expect few people even in Christmas week. Flow drops further by March. The valley loses sun early; leave by about 3:30 pm.
 
 ## Access & walk

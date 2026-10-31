@@ -25,8 +25,8 @@ best_months:
   - Oct
   - Nov
   - Dec
-december_verdict: great
-december_note: "Indoors, so good in any weather. BUT closed Sundays and 22–26 Dec; winter hours 09:30–16:30"
+season_verdict: great
+season_note: "Indoors, so good in any weather. BUT closed Sundays and 22–26 Dec; winter hours 09:30–16:30"
 walk_involved: false
 walk_distance_km:
 walk_duration_min:
@@ -39,7 +39,7 @@ opening_hours: Mon–Sat 09:30–16:30 (Dec–Jan)
 closed_days: Sundays; 22–26 Dec; 31 Dec; 1, 26 and 31 Jan
 last_mile: In town; any vehicle
 permits: None
-entry_fee_inr: 50
+entry_fee: 50
 other_fees: Camera ₹100
 toilets: Yes
 food_nearby: Cafés in Mawlai / Laitumkhrah
@@ -63,7 +63,7 @@ state: Assam | Meghalaya
 nearest_base: Guwahati | Shillong | Sohra | Dawki | Mawlynnong | Kaziranga | Majuli | …
 category: waterfall | viewpoint | cave | village | root-bridge | lake-river | wildlife | temple | museum | market | tea-estate | activity
 location: [lat, lng]  e.g. [25.1884, 92.0206]  (decimal degrees, used by the map)
-december_verdict: great | good | ok | skip
+season_verdict: great | good | ok | skip
 walk_distance_km / walk_duration_min: ROUND TRIP
 difficulty: easy | moderate | strenuous
 group_fit: good | ok | poor   (for the group described in 00 Home → Trip facts)
@@ -84,7 +84,7 @@ The Don Bosco Museum of Indigenous Cultures, in Mawlai, Shillong. It's a seven-s
 ## Why go
 - **Teens:** the skywalk and the costume and weapons galleries. **Adults:** the depth of the collections.
 
-## December reality
+## Season reality
 > [!warning] Closed dates
 > **Closed every Sunday and on 22–26 Dec** (and 31 Dec). Winter hours (1 Dec – 31 Jan) are 09:30–16:30.
 

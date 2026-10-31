@@ -19,8 +19,8 @@ best_months:
   - Jan
   - Feb
   - Mar
-december_verdict: ok
-december_note: "Go at opening time with VIP passes, or settle for a courtyard visit without the inner-sanctum darshan."
+season_verdict: ok
+season_note: "Go at opening time with VIP passes, or settle for a courtyard visit without the inner-sanctum darshan."
 walk_involved: true
 walk_distance_km: 0.6
 walk_duration_min: 20
@@ -33,7 +33,7 @@ opening_hours: 5:30 AM – 1:00 PM and 2:30 PM – 5:30 PM (closed for noon bhog
 closed_days: Open daily. Closed for a few days during Ambubachi Mela (June) and on some special ritual days
 last_mile: Up Nilachal Hill from Maligaon or Kamakhya Gate. Cars and small vehicles usually reach the hilltop parking. Large vehicles may be stopped at the foothill parking, with shared autos or shuttles going up. Whether a tempo traveller can go up on 25 Dec is unconfirmed
 permits: None
-entry_fee_inr: 0
+entry_fee: 0
 other_fees: VIP (special) darshan pass ₹501 per person (children under 10 free with a pass holder), booked online only since 15 Jun 2026 (mkdonline.co.in; counter sales ended, per Curly Tales; slot times unverified). Shoe and phone deposit about ₹10. Parking extra
 toilets: Yes, in the temple complex (basic)
 food_nearby: Stalls and small eateries along the temple lane. The temple bhog (prasad) is served midday
@@ -57,7 +57,7 @@ state: Assam | Meghalaya
 nearest_base: Guwahati | Shillong | Sohra | Dawki | Mawlynnong | Kaziranga | Majuli | …
 category: waterfall | viewpoint | cave | village | root-bridge | lake-river | wildlife | temple | museum | market | tea-estate | activity
 location: [lat, lng]  e.g. [25.1884, 92.0206]  (decimal degrees, used by the map)
-december_verdict: great | good | ok | skip
+season_verdict: great | good | ok | skip
 walk_distance_km / walk_duration_min: ROUND TRIP
 difficulty: easy | moderate | strenuous
 group_fit: good | ok | poor   (for the group described in 00 Home → Trip facts)
@@ -80,7 +80,7 @@ Kamakhya is one of the most important Shakti Peethas in India. It sits on Nilach
 - For everyone, the hilltop gives views over Guwahati and the Brahmaputra, and the temple architecture, sculpted panels and subsidiary shrines are interesting.
 - For teens, it is less engaging. The long queue is the main downside. The courtyard, the architecture and the views are the interesting parts.
 
-## December reality
+## Season reality
 - The weather is ideal: cool and dry, 12–24 °C.
 - Crowds are the problem.
   - The general queue commonly runs 3–5 hrs (longer on weekends and holidays).

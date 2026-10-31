@@ -21,8 +21,8 @@ best_months:
   - Jan
   - Feb
   - Mar
-december_verdict: good
-december_note: Dry season. The steps and roots are much less slippery than in the monsoon, but the stream below is low, so the "gushing water" look is gone. Busy between about 11 AM and 3 PM because every Mawlynnong day tour stops here, with queues for photos on the bridge
+season_verdict: good
+season_note: Dry season. The steps and roots are much less slippery than in the monsoon, but the stream below is low, so the "gushing water" look is gone. Busy between about 11 AM and 3 PM because every Mawlynnong day tour stops here, with queues for photos on the bridge
 walk_involved: true
 walk_distance_km: 0.6
 walk_duration_min: 30
@@ -35,7 +35,7 @@ opening_hours: About 8 AM – 5 PM (some listings say until 6–7 PM)
 closed_days:
 last_mile: Paved village road from the Mawlynnong approach to a small car park at Riwai. Tempo traveller OK. The parking area is tight at peak hours
 permits: None
-entry_fee_inr: 50
+entry_fee: 50
 other_fees: Reported ₹30–50 entry per person (₹40 in Oct 2024), camera about ₹20, parking about ₹50 per vehicle
 toilets: Basic, near the car park
 food_nearby: Tea and snack stalls and small shops at the car park. Proper meals at Mawlynnong
@@ -59,7 +59,7 @@ state: Assam | Meghalaya
 nearest_base: Guwahati | Shillong | Sohra | Dawki | Mawlynnong | Kaziranga | Majuli | …
 category: waterfall | viewpoint | cave | village | root-bridge | lake-river | wildlife | temple | museum | market | tea-estate | activity
 location: [lat, lng]  e.g. [25.1884, 92.0206]  (decimal degrees, used by the map)
-december_verdict: great | good | ok | skip
+season_verdict: great | good | ok | skip
 walk_distance_km / walk_duration_min: ROUND TRIP
 difficulty: easy | moderate | strenuous
 group_fit: good | ok | poor   (for the group described in 00 Home → Trip facts)
@@ -83,7 +83,7 @@ This is a single-decker living root bridge over a small forest stream at Riwai, 
 - Teens: walking on a bridge that is a living tree, and photos from the stream bed below.
 - **Contrast:** the famous **Nongriat double-decker** ([[Double Decker Living Root Bridge]]) near Sohra needs roughly 3,000–3,500 steps down from Tyrna and back up again. That is about 4–6 hrs round trip on steep steps. It is in neither itinerary and is not suitable for this group. Riwai gives most of the experience for about 5% of the effort.
 
-## December reality
+## Season reality
 - Dry and firm underfoot, which is the safest time of year for the steps. The stream is low and clear.
 - Peak season crowds: the bridge is short (about 20–25 m, single file), so at midday you may wait for a photo gap.
 - Verdict: good. It is easy and worthwhile, especially early in the morning. Don't expect the monsoon drama of photos taken in August.

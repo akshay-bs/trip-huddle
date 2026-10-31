@@ -19,8 +19,8 @@ best_months:
   - Jan
   - Feb
   - Mar
-december_verdict: good
-december_note: Dry, sunny and pleasant for walking (about 8–18 °C). The gardens are less lush than after the monsoon. Day-trippers from Shillong and Dawki crowd it between about 11 AM and 3 PM. Around Christmas, this Christian Khasi village is busy with church and family events, so some stalls or homestay services may be limited on 24–25 Dec
+season_verdict: good
+season_note: Dry, sunny and pleasant for walking (about 8–18 °C). The gardens are less lush than after the monsoon. Day-trippers from Shillong and Dawki crowd it between about 11 AM and 3 PM. Around Christmas, this Christian Khasi village is busy with church and family events, so some stalls or homestay services may be limited on 24–25 Dec
 walk_involved: true
 walk_distance_km: 1.5
 walk_duration_min: 60
@@ -33,7 +33,7 @@ opening_hours: Village open in daylight. Sky View about 8 AM – 5 PM
 closed_days:
 last_mile: Paved road from the Shillong–Dawki road via Pynursla, then the Mawlynnong turn-off. Tempo traveller reaches the village car park at the entrance
 permits: None
-entry_fee_inr: 50
+entry_fee: 50
 other_fees: Reported entry is ₹50–100 per person, and one 2025 review quotes ₹200 (possibly per vehicle), so treat it as unconfirmed. Vehicle parking is extra (small fee). Sky View platform about ₹10–30 per person. Paid toilets about ₹10
 toilets: Yes, paid public toilets near the parking and at homestays
 food_nearby: Homestay kitchens and small eateries serve simple Khasi and Indian meals (rice, dal, pork or chicken, tea)
@@ -57,7 +57,7 @@ state: Assam | Meghalaya
 nearest_base: Guwahati | Shillong | Sohra | Dawki | Mawlynnong | Kaziranga | Majuli | …
 category: waterfall | viewpoint | cave | village | root-bridge | lake-river | wildlife | temple | museum | market | tea-estate | activity
 location: [lat, lng]  e.g. [25.1884, 92.0206]  (decimal degrees, used by the map)
-december_verdict: great | good | ok | skip
+season_verdict: great | good | ok | skip
 walk_distance_km / walk_duration_min: ROUND TRIP
 difficulty: easy | moderate | strenuous
 group_fit: good | ok | poor   (for the group described in 00 Home → Trip facts)
@@ -80,7 +80,7 @@ Mawlynnong is a small Khasi village of a few hundred people in the Pynursla bloc
 - **Teens:** the Sky View bamboo platform (a climb above the treetops with a view towards the Bangladesh plains) and photos. There isn't much else to "do" here, so keep expectations modest.
 - Some recent reviews call it overrated or commercialised when it is packed at midday. It is best early in the morning or on an overnight stay.
 
-## December reality
+## Season reality
 - Dry, clear weather that is good for walking. Days are mild and nights are cold (8–18 °C). The hedges and flowers are less lush than just after the monsoon.
 - It is the peak visiting season. Tour vehicles arrive around 11 AM – 3 PM, so the lanes and car park get busy and the Sky View has a queue.
 - Christmas: Mawlynnong is a church-going Christian village. On Sundays and around 24–25 Dec, expect services, closed stalls and limited homestay kitchens.

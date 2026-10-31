@@ -20,8 +20,8 @@ best_months:
   - Feb
   - Mar
   - Apr
-december_verdict: great
-december_note: Peak season. The park is open (Nov–Apr), the grass has been burnt back or is short so rhinos are easy to see, and it's dry. Early mornings are foggy and cold (about 8–10 °C) in an open jeep, so wear layers, a cap and gloves. Christmas-week safari slots sell out, so book early.
+season_verdict: great
+season_note: Peak season. The park is open (Nov–Apr), the grass has been burnt back or is short so rhinos are easy to see, and it's dry. Early mornings are foggy and cold (about 8–10 °C) in an open jeep, so wear layers, a cap and gloves. Christmas-week safari slots sell out, so book early.
 walk_involved: false
 walk_distance_km:
 walk_duration_min:
@@ -34,7 +34,7 @@ opening_hours: Jeep safari slots about 7:30–9:30 AM, 9:30–11:30 AM, 1:30–3
 closed_days: Park closed to tourists roughly May–October (monsoon)
 last_mile: Central (Kohora) Range gate is about 2 km from Kohora on NH-715. Safari jeeps are hired at the gate or through the hotel; a tempo traveller cannot enter the park
 permits: "Safari permits are issued by the Forest Department per slot."
-entry_fee_inr:
+entry_fee:
 other_fees: "Park entry and camera fees may be charged separately; confirm what the ₹4,500 covers"
 toilets: Basic toilets at the range gate / watchtower points
 food_nearby: None inside the park; eat at the hotel or at Kohora
@@ -58,7 +58,7 @@ state: Assam | Meghalaya
 nearest_base: Guwahati | Shillong | Sohra | Dawki | Mawlynnong | Kaziranga | Majuli | …
 category: waterfall | viewpoint | cave | village | root-bridge | lake-river | wildlife | temple | museum | market | tea-estate | activity
 location: [lat, lng]  e.g. [25.1884, 92.0206]  (decimal degrees, used by the map)
-december_verdict: great | good | ok | skip
+season_verdict: great | good | ok | skip
 walk_distance_km / walk_duration_min: ROUND TRIP
 difficulty: easy | moderate | strenuous
 group_fit: good | ok | poor   (for the group described in 00 Home → Trip facts)
@@ -82,7 +82,7 @@ A UNESCO World Heritage Site and tiger reserve on the south bank of the Brahmapu
 - **Adults:** no walking at all. Easy, seated sightseeing.
 - A much bigger, better-known park than [[Pobitora Wildlife Sanctuary]], but it costs two extra travel days.
 
-## December reality
+## Season reality
 December is one of the best months. The park is open, grass is shorter after burning, and animals gather near water. Mornings are **misty and cold**, especially on the dawn elephant safari. Fog can hide animals until about 8–9 am.
 
 ## Access & walk

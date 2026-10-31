@@ -18,8 +18,8 @@ best_months:
   - Jan
   - Feb
   - Mar
-december_verdict: good
-december_note: "Indoor, so weather doesn't matter. Closed Mondays and on the 2nd and 4th Saturdays."
+season_verdict: good
+season_note: "Indoor, so weather doesn't matter. Closed Mondays and on the 2nd and 4th Saturdays."
 walk_involved: true
 walk_distance_km: 0.5
 walk_duration_min: 60
@@ -32,7 +32,7 @@ opening_hours: 10:00 AM – 5:00 PM (last ticket 4:00 PM)
 closed_days: Monday, 2nd and 4th Saturday, government holidays
 last_mile: At the south end of Dighalipukhuri tank, GNB Road, central Guwahati (near Pan Bazar); drop-off at the gate. Tempo traveller OK for drop and pick-up
 permits: None
-entry_fee_inr: 5
+entry_fee: 5
 other_fees: Camera fee extra. The ₹5 fee comes from the museum's older listing; recent blogs quote ₹10–20
 toilets: Yes
 food_nearby: Plenty of restaurants around Pan Bazar and Dighalipukhuri
@@ -56,7 +56,7 @@ state: Assam | Meghalaya
 nearest_base: Guwahati | Shillong | Sohra | Dawki | Mawlynnong | Kaziranga | Majuli | …
 category: waterfall | viewpoint | cave | village | root-bridge | lake-river | wildlife | temple | museum | market | tea-estate | activity
 location: [lat, lng]  e.g. [25.1884, 92.0206]  (decimal degrees, used by the map)
-december_verdict: great | good | ok | skip
+season_verdict: great | good | ok | skip
 walk_distance_km / walk_duration_min: ROUND TRIP
 difficulty: easy | moderate | strenuous
 group_fit: good | ok | poor   (for the group described in 00 Home → Trip facts)
@@ -80,7 +80,7 @@ Assam's main state museum, founded in 1940 by the Kamarupa Anusandhan Samiti and
 - **Adults:** sculptures, manuscripts and Ahom-era artefacts.
 - About 1 km from Umananda Ghat, so it fits easily into the city-tour morning.
 
-## December reality
+## Season reality
 No seasonal issues. Just check the closure days: Mondays, 2nd and 4th Saturdays and government holidays.
 
 ## Access & walk

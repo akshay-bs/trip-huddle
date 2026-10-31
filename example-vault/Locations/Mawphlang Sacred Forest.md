@@ -21,8 +21,8 @@ best_months:
   - Feb
   - Mar
   - Apr
-december_verdict: good
-december_note: Dry, clear and cool. The forest floor is less muddy than in the monsoon, but it's colder here (about 1,800 m) than in Shillong, so wear a jacket. Afternoon light fades by 4 pm and the forest closes about 4:30 pm.
+season_verdict: good
+season_note: Dry, clear and cool. The forest floor is less muddy than in the monsoon, but it's colder here (about 1,800 m) than in Shillong, so wear a jacket. Afternoon light fades by 4 pm and the forest closes about 4:30 pm.
 walk_involved: true
 walk_distance_km: 1.5
 walk_duration_min: 45
@@ -35,7 +35,7 @@ opening_hours: Sacred Forest about 9:00 AM – 4:30 PM; Khasi Heritage Village a
 closed_days:
 last_mile: About 25 km (about 1 hr) from Shillong via the Mawphlang road; parking at the entrance. Tempo traveller OK
 permits: A local guide is compulsory for the forest
-entry_fee_inr: 20
+entry_fee: 20
 other_fees: "Guide about ₹300 per group; camera ₹20; Khasi Heritage Village ₹10 per person. Amounts from 2024–25 blogs, may have gone up"
 toilets: Basic toilets near the entrance
 food_nearby: Small tea/snack stalls near the entrance; a few eateries in Mawphlang village
@@ -59,7 +59,7 @@ state: Assam | Meghalaya
 nearest_base: Guwahati | Shillong | Sohra | Dawki | Mawlynnong | Kaziranga | Majuli | …
 category: waterfall | viewpoint | cave | village | root-bridge | lake-river | wildlife | temple | museum | market | tea-estate | activity
 location: [lat, lng]  e.g. [25.1884, 92.0206]  (decimal degrees, used by the map)
-december_verdict: great | good | ok | skip
+season_verdict: great | good | ok | skip
 walk_distance_km / walk_duration_min: ROUND TRIP
 difficulty: easy | moderate | strenuous
 group_fit: good | ok | poor   (for the group described in 00 Home → Trip facts)
@@ -83,7 +83,7 @@ An ancient sacred grove of about 78 hectares at Mawphlang village, about 25 km s
 - **Adults:** an easy, flat-ish walk with real cultural depth; the heritage village adds architecture and lifestyle context.
 - It's also the starting point of the [[David Scott Trail]].
 
-## December reality
+## Season reality
 A good time to visit: dry paths, clear skies, crisp air. Mawphlang is higher and colder than Shillong, and mornings can be misty. Closes about 4:30 pm, so don't leave it until after [[Laitlum Canyons]] late in the day. Laitlum is on the other side of Shillong, so doing both is a long day.
 
 ## Access & walk

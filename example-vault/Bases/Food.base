@@ -1,0 +1,141 @@
+filters:
+  and:
+    - type == "food"
+    - '!file.inFolder("Templates")'
+formulas:
+  sources: if(recommended_by, recommended_by.length, 0)
+  priority_rank: if(priority == "must", 1, if(priority == "should", 2, if(priority == "maybe", 3, 4)))
+properties:
+  formula.sources:
+    displayName: "# Sources"
+  veg_options:
+    displayName: Veg options
+  price_band:
+    displayName: Price
+  google_rating:
+    displayName: Rating
+views:
+  - type: table
+    name: All
+    order:
+      - file.name
+      - nearest_base
+      - kind
+      - meal
+      - cuisine
+      - veg_options
+      - price_band
+      - decision
+      - formula.sources
+      - decision_reason
+    sort:
+      - property: decision
+        direction: DESC
+      - property: nearest_base
+        direction: DESC
+      - property: formula.sources
+        direction: DESC
+  - type: table
+    name: To decide
+    filters:
+      and:
+        - decision == "considering"
+    order:
+      - file.name
+      - nearest_base
+      - kind
+      - meal
+      - cuisine
+      - veg_options
+      - price_band
+      - priority
+      - formula.sources
+    sort:
+      - property: formula.priority_rank
+        direction: ASC
+      - property: formula.sources
+        direction: DESC
+  - type: table
+    name: Selected
+    filters:
+      and:
+        - decision == "selected"
+    order:
+      - file.name
+      - nearest_base
+      - kind
+      - meal
+      - scheduled_day
+      - opening_hours
+      - price_band
+  - type: table
+    name: Selected but unscheduled
+    filters:
+      and:
+        - decision == "selected"
+        - scheduled_day.isEmpty()
+    order:
+      - file.name
+      - nearest_base
+      - kind
+      - meal
+      - priority
+  - type: table
+    name: By base town
+    filters:
+      and:
+        - decision != "dropped"
+    groupBy:
+      property: nearest_base
+      direction: ASC
+    order:
+      - file.name
+      - kind
+      - meal
+      - cuisine
+      - veg_options
+      - price_band
+      - decision
+  - type: table
+    name: Dropped
+    filters:
+      and:
+        - decision == "dropped"
+    order:
+      - file.name
+      - nearest_base
+      - decision_reason
+      - decided_on
+  - type: cards
+    name: Cards
+    order:
+      - file.name
+      - nearest_base
+      - kind
+      - cuisine
+      - price_band
+      - decision
+    image: note.cover
+  - type: map
+    name: Map
+    filters:
+      and:
+        - decision != "dropped"
+    coordinates: note.location
+  - type: table
+    name: In this itinerary
+    filters:
+      and:
+        - file.hasLink(this.file)
+    order:
+      - file.name
+      - nearest_base
+      - kind
+      - meal
+      - cuisine
+      - veg_options
+      - price_band
+      - decision
+    sort:
+      - property: nearest_base
+        direction: ASC

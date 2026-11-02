@@ -1,11 +1,11 @@
 ---
 name: add-source
-description: Take in a new source for a trip-huddle Obsidian trip vault, then hand its places and stays to add-place. Use whenever the user pastes, forwards or shares an itinerary, agency quote, hotel list, link, screenshot text or a friend's suggestions, or says "here's what X sent", "X suggested these", "we got a quote", "look at this itinerary". It records the source once, lists what is new and what is already in the vault, and tracks it until every item has a note.
+description: Take in a new source for a trip-huddle Obsidian trip vault, then hand its places, stays and restaurants or cafes to add-place. Use whenever the user pastes, forwards or shares an itinerary, agency quote, hotel list, link, screenshot text or a friend's suggestions, or says "here's what X sent", "X suggested these", "we got a quote", "look at this itinerary". It records the source once, lists what is new and what is already in the vault, and tracks it until every item has a note.
 ---
 
 # Add a source to the trip vault
 
-A source is anything that suggests places or stays: an itinerary, a quote, a hotel list, a link, or a friend's message. Every place and stay in the vault traces back to a Source note. This skill makes that note, finds out what is new, and passes the new items to `add-place`.
+A source is anything that suggests places, stays, restaurants or cafes: an itinerary, a quote, a hotel list, a link, or a friend's message. Every place and stay in the vault traces back to a Source note. This skill makes that note, finds out what is new, and passes the new items to `add-place`.
 
 The vault root is the current working directory.
 **Pipeline:** read the trip → find an existing Source note → write the Source note → list new and existing items → hand over to `add-place` → tick and close → update Home → validate → report.
@@ -29,7 +29,7 @@ File: `Sources/<Who> - <Label>.md`, for example `Alex - Additions 2Oct` or `Agen
   - `processed: false`.
   - `tags`: keep `source`, and add a short CamelCase tag with no spaces, such as `Alex2Oct` or `AgencyQuote`. `add-place` copies it onto each place.
 - **Original text / attachment:** paste the user's text **word for word**. Don't fix spelling or shorten it. It is their vault. For a link, paste the link and a short note of what you could read from it. For a screenshot, paste the text you read from it and say so.
-- **Checklists:** one line per place under "Places mentioned" and one per stay under "Stays mentioned", written `- [ ] [[Name]]`. Use the name as the source gives it for now; step 5 settles the final names. Remove the empty `- [ ] [[ ]]` placeholder lines.
+- **Checklists:** one line per place under "Places mentioned", one per stay under "Stays mentioned" and one per restaurant, cafe, street-food spot or bakery under "Restaurants and cafes mentioned" (add that heading if the note comes from an older template), written `- [ ] [[Name]]`. Use the name as the source gives it for now; step 5 settles the final names. Remove the empty `- [ ] [[ ]]` placeholder lines.
 - **If it's an itinerary or quote**, record what it says, for the later comparison of options. Use the template's own places for it, and don't invent new properties:
   - **Route summary:** towns in order with nights, for example `Town A (2N) → Town B (3N)`.
   - **Day by day (as given):** one bullet per day, in the source's words, with the stay and the places that day.
@@ -38,19 +38,19 @@ File: `Sources/<Who> - <Label>.md`, for example `Alex - Additions 2Oct` or `Agen
 - Not an itinerary (a friend's list of ideas)? Leave the route and day sections blank, and put what the friend said about each place in "Notes / opinions from the source".
 
 ## 4. List what's new and what already exists
-For every place and stay in the source, search the vault the way `add-place` does:
-- note names in `Locations/` and `Stays/`,
+For every place, stay and food spot in the source, search the vault the way `add-place` does:
+- note names in `Locations/`, `Stays/` and `Food/`,
 - `aliases:` in frontmatter, case-insensitive, on the key word alone (for example "Labon", "Nongriat"),
 - nearby spellings ("laboon" is Labon).
 
-Make a short table: item | place or stay | new, or existing with its note name. If a name could be two places, pick the most likely one and say so. Ask only if the candidates would lead to very different trips. Fix the checklist names in the Source note to the names the notes use (or will use).
+Make a short table: item | place, stay or food spot | new, or existing with its note name. If a name could be two places, pick the most likely one and say so. Ask only if the candidates would lead to very different trips. Fix the checklist names in the Source note to the names the notes use (or will use).
 
 Add everything the source mentions, even if it's off-route. The group decides later.
 
 ## 5. Hand over to `add-place`
 Invoke the `add-place` skill for **all** the items, new and existing. Tell it:
 - the source is `[[<the Source note name>]]` with the tag `<SourceTag>`, so it skips its own source step (step 1) and uses this note;
-- the list: for each item, whether it is a place or a stay, the name, whether it is new or already exists (with the existing note), and what the source said about it (day, nights, price notes for stays).
+- the list: for each item, whether it is a place, a stay or a food spot (restaurant, cafe, street food, bakery, bar), the name, whether it is new or already exists (with the existing note), and what the source said about it (day, nights, price notes for stays).
 
 `add-place` does the dedupe, research, notes, link back and its own validation. For an existing note it adds this source to `recommended_by` and the tag. Wait for it to finish.
 
@@ -77,7 +77,7 @@ Fix every error in the notes you created or edited. A warning that the source is
 ## 9. Report to the user
 Keep it short:
 - What came in: who from, what kind, and the date.
-- How many places and stays: new, and already in the vault.
+- How many places, stays and food spots: new, and already in the vault.
 - What the source says about route, days, nights and price, in one line, if it's an itinerary or quote.
 - What's still open: items not yet noted, questions for the group, and whether the source is in the Home inbox or closed.
 - If the vault now holds two or more itineraries or quotes (this source and another, or a Route note drafted by the group), offer once, in one line, to compare them with the `compare-itineraries` skill.

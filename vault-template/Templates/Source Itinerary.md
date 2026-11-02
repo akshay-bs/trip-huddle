@@ -31,6 +31,9 @@ processed: tick once every place below has a Location note with this source in i
 ## Stays mentioned
 - [ ] [[ ]]
 
+## Restaurants and cafes mentioned
+- [ ] [[ ]]
+
 ## Notes / opinions from the source
 - 
 

@@ -1,11 +1,14 @@
 #!/usr/bin/env node
 // trip-init: set up a trip-huddle vault from an answers file, or update an existing vault's settings.
 //
-//   node init.mjs --answers <file.json> [--vault <folder>] [--reconfigure]
+//   node init.mjs --answers <file.json> [--vault <folder>] [--reconfigure [--add-food]]
 //
 // New vault (default): copies vault-template into the folder (empty or missing), then fills it in.
 // --reconfigure: the folder already has trip.md. Rewrites trip.md, the per-trip values in Templates
 // and Bases, the field packs and the Trip facts in 00 Home.md. Notes are never touched.
+// --add-food (with --reconfigure, for a vault made before 0.9.0): adds the restaurants and cafes category: the Food/ folder,
+// Bases/Food.base, the new Food Spot template, the Source template's food checklist, the types, and a "Food to decide"
+// section on 00 Home.md. It only adds; notes are never touched. The skill asks the user before using it.
 // The per-trip values ("slots") are listed in ../slots.md.
 
 import fs from 'node:fs';
@@ -23,10 +26,12 @@ const TEMPLATE_VAULT = path.join(PLUGIN, 'vault-template');
 const args = process.argv.slice(2);
 const opt = n => { const i = args.indexOf(n); return i >= 0 ? args[i + 1] : undefined; };
 const RECONF = args.includes('--reconfigure');
+const ADD_FOOD = args.includes('--add-food');
 const VAULT = path.resolve(opt('--vault') || process.cwd());
 const ANSWERS = opt('--answers');
 const die = m => { console.error(`trip-init: ${m}`); process.exit(1); };
 if (!ANSWERS) die('missing --answers <file.json>');
+if (ADD_FOOD && !RECONF) die('--add-food only works with --reconfigure (a new vault already has the Food category)');
 
 // ---------- the answers ----------
 // Property order and defaults, the same as vault-template/trip.md.
@@ -124,6 +129,28 @@ for (const k of ['decision_values', 'folders', 'road_speeds', 'stop_buffer']) {
 const oldTrip = fs.existsSync(tripMd) ? fs.readFileSync(tripMd, 'utf8') : read('trip.md');
 const body = oldTrip.replace(/^---\n[\s\S]*?\n---\n?/, '');
 write('trip.md', `---\n${front}\n---\n${body}`);
+
+// ---------- --add-food: bring a vault made before 0.9.0 up to the Food category ----------
+if (ADD_FOOD) {
+  const fromStarter = rel => fs.readFileSync(path.join(TEMPLATE_VAULT, rel), 'utf8');
+  fs.mkdirSync(path.join(VAULT, 'Food'), { recursive: true });
+  if (!fs.existsSync(path.join(VAULT, 'Bases/Food.base'))) write('Bases/Food.base', fromStarter('Bases/Food.base'));
+  // The old Food Spot template had no kind, meal or scheduled_day. Replace it only when it is that old one; the price band
+  // line is filled again below.
+  if (!/^kind:/m.test(read('Templates/Food Spot.md'))) write('Templates/Food Spot.md', fromStarter('Templates/Food Spot.md'));
+  edit('Templates/Source Itinerary.md', t => /## Restaurants and cafes mentioned/.test(t) ? t
+    : sub(t, /(## Stays mentioned\n- \[ \] \[\[ \]\]\n)/, '$1\n## Restaurants and cafes mentioned\n- [ ] [[ ]]\n', 'the Stays mentioned list in the Source template'));
+  edit('.obsidian/types.json', t => {   // kind and meal go just before cuisine, as in the starter vault
+    const j = JSON.parse(t), types = {};
+    for (const [k, v] of Object.entries(j.types)) {
+      if (k === 'cuisine') for (const [a, b] of [['kind', 'text'], ['meal', 'multitext']]) if (!(a in j.types)) types[a] = b;
+      types[k] = v;
+    }
+    return JSON.stringify({ ...j, types }, null, 2) + '\n';
+  });
+  edit('00 Home.md', t => /Food\.base#To decide/.test(t) || !/^## Stays to book$/m.test(t) ? t
+    : t.replace(/^## Stays to book$/m, '## Food to decide\n![[Food.base#To decide]]\n\n## Stays to book'));
+}
 
 // ---------- slots (see ../slots.md) ----------
 function edit(rel, fn) { const p = path.join(VAULT, rel); if (!fs.existsSync(p)) die(`missing ${rel}`); write(rel, fn(read(rel))); }

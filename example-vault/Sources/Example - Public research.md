@@ -94,6 +94,11 @@ Not a real itinerary. This note stands in for the friends' messages, agency quot
 - [x] [[Ri Kynjai Serenity by the Lake]]
 - [x] [[Sohra Plaza]]
 
+## Restaurants and cafes mentioned
+- [x] [[Cafe Shillong]]
+- [x] [[Khorika]]
+- [x] [[Orange Roots]]
+
 ## Notes / opinions from the source
 - The notes were researched for a group trip in mid-December. That's why the `season_*` fields and the "Season reality" sections exist.
 - Trip dates, group details, names and private sources were removed. `decision` is reset to `considering` everywhere.

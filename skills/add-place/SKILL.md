@@ -1,11 +1,11 @@
 ---
 name: add-place
-description: Add new locations (places to visit) or stays (hotels, homestays, Airbnbs, resorts) to a trip-huddle Obsidian trip vault, consistently. Use whenever the user asks to add, include or put a named place, waterfall, viewpoint, activity, hotel or stay "to the list". Also use when the user mentions a place that might already exist (it adds the new source to the existing note instead of duplicating it). A pasted itinerary, quote, hotel list, link or friend's suggestions goes to the add-source skill first, which then hands the items to this one.
+description: Add new locations (places to visit), stays (hotels, homestays, Airbnbs, resorts) or food spots (restaurants, cafes, street food, bakeries) to a trip-huddle Obsidian trip vault, consistently. Use whenever the user asks to add, include or put a named place, waterfall, viewpoint, activity, hotel, stay, restaurant or cafe "to the list". Also use when the user mentions a place that might already exist (it adds the new source to the existing note instead of duplicating it). A pasted itinerary, quote, hotel list, link or friend's suggestions goes to the add-source skill first, which then hands the items to this one.
 ---
 
-# Add a location or stay to the trip vault
+# Add a location, stay or food spot to the trip vault
 
-The vault root is the current working directory (the Obsidian vault). Every new place or stay follows the same pipeline:
+The vault root is the current working directory (the Obsidian vault). Every new place, stay or food spot (a restaurant, cafe, street-food stall, bakery or bar) follows the same pipeline:
 **source → dedupe → research → write the note → link back → validate → report**.
 Never skip the dedupe or validate steps.
 
@@ -15,7 +15,7 @@ Never skip the dedupe or validate steps.
   - **Fixed dates are fixed.** If Trip facts say the travel dates are booked, judge timing against them and never propose moving them.
   - **Additions stay open for the group.** Add everything the user mentions, even if it's off-route, and leave it `considering`.
 - Every file you create stays inside the vault. Scratch files go in `.claude/scratch/` and get deleted at the end.
-- Read the current templates: `Templates/Location.md` and `Templates/Stay.md`. **The template is the schema:** use its property list, property order and FIELD GUIDE values. If the template has changed, follow the template, not this skill.
+- Read the current templates: `Templates/Location.md`, `Templates/Stay.md` and `Templates/Food Spot.md`. **The template is the schema:** use its property list, property order and FIELD GUIDE values. If the template has changed, follow the template, not this skill.
 - If the vault's `Templates/Location.md` has no `after_dark` field (the vault is older than 0.6.0), run `node "${CLAUDE_PLUGIN_ROOT}/skills/add-place/scripts/migrate-after-dark.mjs"` from the vault root first. It adds the new fields empty and turns `best_time_of_day` into a list; run it with `--dry-run` to see what it would do.
 
 ## 1. Identify the source
@@ -26,8 +26,8 @@ Every addition must be traceable to a note in `Sources/`.
 
 ## 2. Dedupe (always)
 Before creating anything, search for the place or stay. The user's spelling is often off: "laboon" means Labon, "double root bridge" means Double Decker Living Root Bridge.
-- Search note names in `Locations/` and `Stays/` (Glob).
-- Search the `aliases:` in frontmatter: `Grep pattern "<word>" path Locations` (or `Stays`), case-insensitive. Try the key word on its own, e.g. "Labon", "Nongriat", "Sapphire".
+- Search note names in `Locations/`, `Stays/` and `Food/` (Glob). A restaurant can be inside a hotel or at a sight: a stay's restaurant belongs in the Stay note, and a food spot only gets its own note when the group might choose it on its own.
+- Search the `aliases:` in frontmatter: `Grep pattern "<word>" path Locations` (or `Stays`, `Food`), case-insensitive. Try the key word on its own, e.g. "Labon", "Nongriat", "Sapphire".
 - If it's ambiguous ("Blue Lagoon" could mean several places), pick the most likely one and say so in the note and the report. Ask only if the candidates lead to very different trips.
 
 **If it already exists, don't create a new note.** Instead:
@@ -39,7 +39,7 @@ Before creating anything, search for the place or stay. The user's spelling is o
 - File name = the H1 heading = the canonical English name in Title Case, e.g. `Krang Suri Falls.md`, `Hotel Sapphire Shillong.md`.
 - Add a parenthetical when the bare name is ambiguous or generic: `Balancing Rock (Mawlynnong)`, `Blue Lagoon (Nongriat)`, `River Dolphin Point (Mayong)`.
 - No `[ ] # ^ | : / \ ?` characters in names. Spellings the user used, and local names, go in `aliases`.
-- Locations go in `Locations/` and stays go in `Stays/`. **Nothing goes in the vault root.** Only `00 Home.md` and `trip.md` live there.
+- Locations go in `Locations/`, stays in `Stays/` and food spots in `Food/` (the folders are set by `folders` in `trip.md`; create `Food/` if it is not there). **Nothing goes in the vault root.** Only `00 Home.md` and `trip.md` live there.
 
 ## 4. Research and write the note
 - **Several items:** with 3 or more new items, fan out to `general-purpose` subagents, 3–5 items per agent, grouped by area. Run them in the background, in parallel. Use the prompt in `${CLAUDE_PLUGIN_ROOT}/skills/add-place/references/agent-prompt.md`, filled in.
@@ -57,7 +57,7 @@ Before creating anything, search for the place or stay. The user's spelling is o
 - **Planning fields:**
   - `decision: considering`. Leave `priority`, `decision_reason`, `decided_on` and `scheduled_day` blank. Stays also get `booking_status: not-contacted`. **Never set selected or dropped.** That's the group's call.
   - `recommended_by` is a list of quoted wikilinks to source notes: `- "[[Alex - Additions 2Oct]]"`.
-  - `tags` keeps `location` or `stay`, plus the source tag.
+  - `tags` keeps `location`, `stay` or `food`, plus the source tag.
 - **Judging fit:**
   - `season_verdict`, `difficulty` and `group_fit` are honest judgements for the group in Trip facts (ages, fitness, how much walking and how many steps they accept, vehicle size). `season_verdict` is about the travel season in Trip facts: weather, water levels, daylight, closures and crowds on those dates.
   - Walk distance and duration are **round trip**.
@@ -71,6 +71,12 @@ Before creating anything, search for the place or stay. The user's spelling is o
   - Size `room_config` and `rooms_needed` for the group in Trip facts.
   - Seasonal essentials (`heating`, `hot_water`, `power_backup` for a cold-season trip) come from reviews, or are `unknown`.
   - Note red flags honestly: capacity, location vs. the claimed town, scam listings, cleanliness.
+- **Food spots** (restaurants, cafes, street food, bakeries, bars): use `Templates/Food Spot.md`.
+  - Set `kind` (`restaurant | cafe | street food | bakery | bar`) and `meal` (a list from `breakfast | lunch | dinner | snack`: what the group would eat there), `cuisine`, `veg_options` and `price_band` (from the FIELD GUIDE) against the dietary needs in Trip facts, and `opening_hours` (meal times, closed days). `nearest_base` is the base town from `trip.md`.
+  - Research the real spot: the name as shown on the map or its own page, the area it is in, whether it takes a whole group, and what reviewers say. Coordinates and `maps_link` as for places, using the entrance. If you cannot pin it down (several outlets, conflicting addresses), leave `location` empty, say so in a `> [!warning]` callout, and never guess.
+  - `decision: considering`. Leave `priority`, `decision_reason`, `decided_on` and `scheduled_day` blank. `recommended_by` is set the same way as for places.
+  - Fill `Why`, `Must-try dishes` and `Practical` from sources. Where a group fit is unknown (seating, reservations, payment), write "Not known" rather than guessing.
+  - A food spot that is part of a stay (the hotel restaurant) goes in the Stay note (`restaurant_onsite`, `veg_food`), not here, unless the user asks for it as a separate option.
 - **Body:** fill every template section concisely.
   - Directly under the H1, add the group-decision callout:
     ```
@@ -79,7 +85,7 @@ Before creating anything, search for the place or stay. The user's spelling is o
     ```
   - Add a `> [!warning]` callout for anything that changes the decision: dry in season, closed on the trip dates, strenuous, needs a 4x4, the hotel is too small.
   - Cross-link related Location and Stay notes with `[[wikilinks]]`. Only link to notes that exist (or that you're creating in this same run).
-  - **Places:** end with "Sources & links": the source wikilinks (with the day, if given) plus 2–4 web references.
+  - **Places and food spots:** end with "Sources & links": the source wikilinks (with the day, if given) plus 2–4 web references.
   - **Stays:** end with "Links": "Proposed in [[Source]] (Day X, N nights)", related locations, and web references.
   - Never put hotel-to-place distances in a location note. Distances belong in Day Plans.
 - **Photos:** 2–3 real images.
@@ -91,7 +97,7 @@ Before creating anything, search for the place or stay. The user's spelling is o
 ## 5. Link back
 After the notes are written:
 1. **Source note:**
-   - Tick each item in "Places mentioned" or "Stays mentioned" as `- [x] [[Name]]` (with "(new)" or "(already on the list from …)").
+   - Tick each item in "Places mentioned", "Stays mentioned" or "Restaurants and cafes mentioned" (add that heading from `Templates/Source Itinerary.md` if the note lacks it) as `- [x] [[Name]]` (with "(new)" or "(already on the list from …)").
    - Add "Our observations" bullets for the important findings (strenuous, dry, off-route, capacity).
    - Set `processed: true` once every item is linked.
 2. **`00 Home.md`, under "Open questions for the group":** add one `- [ ] Group decision on …` line. Use one line per item for one or two items, or one grouped line per source for more (follow the existing lines there). List anything the group needs to answer.
@@ -108,7 +114,7 @@ node "${CLAUDE_PLUGIN_ROOT}/scripts/validate.mjs"
 
 ## 7. Report to the user
 Keep it short:
-- A table: note | new or existing | Season verdict | difficulty | group_fit | photos.
+- A table: note | new or existing | Season verdict | difficulty | group_fit | photos. For food spots use kind | cuisine | veg options | price band instead.
 - Then the flags that matter for the group's decision.
 - Then the doubts: assumed identities, unverified coordinates or fees.
 - Mention anything you added to the home page's open questions.

@@ -125,3 +125,9 @@ export function strictPlanningLimits(vault) {
   if (r.problems.length) throw new Error('trip.md has a problem:\n  - ' + r.problems.join('\n  - '));
   return r;
 }
+
+// ---- the stage of the trip (`stage` in trip.md). It tells the skills what the group is doing now.
+export const STAGES = ['planning', 'booking', 'travelling', 'after'];
+export const DEFAULT_STAGE = 'planning';
+export const stageProblems = v => (v === undefined || v === null || v === '' || STAGES.includes(String(v))) ? []
+  : [`stage "${v}" is not one of: ${STAGES.join(' | ')}`];

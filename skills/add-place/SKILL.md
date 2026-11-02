@@ -15,6 +15,7 @@ Never skip the dedupe or validate steps.
   - **Fixed dates are fixed.** If Trip facts say the travel dates are booked, judge timing against them and never propose moving them.
   - **Additions stay open for the group.** Add everything the user mentions, even if it's off-route, and leave it `considering`.
 - Every file you create stays inside the vault. Scratch files go in `.claude/scratch/` and get deleted at the end.
+- Read the locked decisions in `Decisions/` (the folder may not exist in an older vault). A decision with `status: locked` is a hard rule. Adding is still fine, and the item still goes in as `considering`, but flag it in the report and ask when it conflicts with a lock: a stay in a base whose stay is locked, a place that is far from or off the locked route, a place that needs a day the locked dates do not have, an activity at a time that clashes with a locked one. Do not change a locked decision or a note it points to.
 - Read the current templates: `Templates/Location.md`, `Templates/Stay.md` and `Templates/Food Spot.md`. **The template is the schema:** use its property list, property order and FIELD GUIDE values. If the template has changed, follow the template, not this skill.
 - If the vault's `Templates/Location.md` has no `after_dark` field (the vault is older than 0.6.0), run `node "${CLAUDE_PLUGIN_ROOT}/skills/add-place/scripts/migrate-after-dark.mjs"` from the vault root first. It adds the new fields empty and turns `best_time_of_day` into a list; run it with `--dry-run` to see what it would do.
 
@@ -113,6 +114,8 @@ node "${CLAUDE_PLUGIN_ROOT}/scripts/validate.mjs"
 - **Stray files:** if the validator reports empty stray `.md` files in the vault root, they were created by clicking a link before its note existed. Delete them once you've confirmed they're empty.
 
 ## 7. Report to the user
+If the new item conflicts with a locked decision (section 0), say which one in the first lines, plainly, and ask whether the group wants to unlock it or keep the item as a backup. Do not unlock anything yourself.
+
 Keep it short:
 - A table: note | new or existing | Season verdict | difficulty | group_fit | photos. For food spots use kind | cuisine | veg options | price band instead.
 - Then the flags that matter for the group's decision.

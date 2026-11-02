@@ -112,6 +112,11 @@
     "options": "multitext",
     "compared_on": "date",
     "recommended": "text",
-    "decided_option": "text"
+    "decided_option": "text",
+    "question": "text",
+    "locks": "multitext",
+    "locked_by": "text",
+    "affects": "multitext",
+    "deadline": "date"
   }
 }

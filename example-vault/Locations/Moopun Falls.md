@@ -37,6 +37,7 @@ opening_hours: Open access (no gate reported); go in daylight
 closed_days:
 last_mile: From NH-6 (old NH-44) at Kongong junction, about 10 km on a paved rural road via Pynthorsale and Mukhaialong to Mutong village, then 300 m to the top of the falls. Tempo traveller should manage (confirm with driver). Signboards from the highway are poor, so ask locals
 permits: None
+needs_booking: false
 entry_fee: 0
 other_fees: Sources disagree; one says ₹50 per person, most recent reviews say free. Small parking area above the falls
 toilets: Not reported; assume none

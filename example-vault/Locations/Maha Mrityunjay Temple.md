@@ -36,6 +36,7 @@ opening_hours:
 closed_days:
 last_mile: Just off the Guwahati–Kaziranga highway; any vehicle OK
 permits: None
+needs_booking: false
 entry_fee: 0
 other_fees:
 toilets:

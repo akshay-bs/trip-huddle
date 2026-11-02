@@ -22,3 +22,7 @@
 - Before planning, comparing or adding anything, read `Decisions/`. A decision with `status: locked` is fixed (booked, paid or agreed to be final). Never plan against it, and say so when an option or a change would break it. Ask the group before anything is unlocked, and write the reason in the note's History.
 - A `decided` decision is the group's current choice: respect it, and ask before going against it.
 - Never decide for the group, and never copy booking references or flight details into a Decision note.
+
+## Bookings live on the item's own note
+- The booking list is made from what the group selected (stays, the vehicle, places with `needs_booking: true`) plus the small notes in `Bookings/`. Never make a Bookings note for something that has a Stay, Transport or Location note.
+- Status, amounts, `booking_ref` and `confirmation` go on that note. Vouchers, tickets and pasted emails go in `Confirmations/`. Never copy them into a Decision note, and never write an amount or a reference the user did not give.

@@ -37,6 +37,7 @@ opening_hours: The viewpoint is roadside and open anytime. Water sports run abou
 closed_days:
 last_mile: Directly on NH-6 (Guwahati–Shillong highway) at Barapani, about 15–17 km north of Shillong. Tempo traveller OK, with roadside and complex parking
 permits: None
+needs_booking: false
 entry_fee: 50
 other_fees: Water sports complex entry about ₹50 per head plus about ₹50 car parking (2024 report). Rides are extra, and reported prices vary widely (pedal boat or kayak about ₹20–100, motorboat about ₹200 per head, water scooter about ₹400, full 10-seat speed boat about ₹1,200–1,500). The roadside viewpoint is free
 toilets: At the water sports complex and Orchid Lake Resort. Basic at roadside stops

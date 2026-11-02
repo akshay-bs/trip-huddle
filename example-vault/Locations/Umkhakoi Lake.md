@@ -36,6 +36,7 @@ opening_hours: About 9:00 am – 5:00 pm
 closed_days:
 last_mile: Via Mawsynram road to Mawlyngbna; the final stretch is narrow but motorable. Tempo traveller should be OK (confirm)
 permits: None
+needs_booking: false
 entry_fee: 10
 other_fees: Kayak / row-boat hire and guide charged separately (rates not published; ask at Mawlyngbna Traveller's Nest)
 toilets: Basic (unverified)

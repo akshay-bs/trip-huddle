@@ -36,6 +36,7 @@ opening_hours: About 9:00 am – 5:00 pm (verify locally)
 closed_days:
 last_mile: Paved road from Sohra town (about 3.5 km) to parking at Lumshynna; tempo traveller OK
 permits: None
+needs_booking: false
 entry_fee: 50
 other_fees: Children under 12 about ₹10; parking and camera charges may apply; optional local guide ₹100–200
 toilets: Basic toilets near parking (unverified)

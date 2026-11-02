@@ -37,6 +37,7 @@ opening_hours: No fixed hours; go with a guide in daylight
 closed_days: Closed in the monsoon (about Jun–Sep) because of flash floods
 last_mile: NH-6 to Lumshnong, then about 7 km on a rough dirt road to Brichyrnot (Brishyrnot) village. A tempo traveller is unlikely to manage this; use local 4x4s or pickups (about ₹1,500–5,000 round trip). Not on Google Maps; a guide is needed
 permits: Registration at a checkpoint on the trail (no Inner Line Permit needed for Indian citizens)
+needs_booking: false
 entry_fee: 50
 other_fees: Local guide mandatory, about ₹2,000 per group (includes the bamboo raft and safety gear; some say ₹1,000 per person). 4x4 pickup about ₹1,500–5,000 round trip. UPI accepted at the registration point
 toilets: None reported

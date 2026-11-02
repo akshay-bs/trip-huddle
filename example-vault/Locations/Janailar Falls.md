@@ -35,6 +35,7 @@ opening_hours:
 closed_days:
 last_mile: Local road near Mawkma; confirm with the driver
 permits: None
+needs_booking: false
 entry_fee:
 other_fees:
 toilets: Unknown

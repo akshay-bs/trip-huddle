@@ -42,6 +42,7 @@ opening_hours: Mon–Sat 09:30–16:30 (Dec–Jan)
 closed_days: Sundays; 22–26 Dec; 31 Dec; 1, 26 and 31 Jan
 last_mile: In town; any vehicle
 permits: None
+needs_booking: false
 entry_fee: 50
 other_fees: Camera ₹100
 toilets: Yes

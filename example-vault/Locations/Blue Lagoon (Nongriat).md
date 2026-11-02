@@ -35,6 +35,7 @@ opening_hours: Daylight only
 closed_days:
 last_mile: Same as the [[Double Decker Living Root Bridge]]: Sohra → Tyrna by road (about 12 km), then on foot via Nongriat
 permits: None
+needs_booking: false
 entry_fee: 0
 other_fees: No separate fee reported beyond the Nongriat village fee (₹20–50). Guide optional
 toilets: None; basic in Nongriat

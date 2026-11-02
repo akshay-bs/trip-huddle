@@ -37,6 +37,7 @@ opening_hours: About 06:00–18:00
 closed_days:
 last_mile: Dawki–Tamabil road past the bridge; truck queues, tight parking
 permits: Carry photo ID; follow BSF rules
+needs_booking: false
 entry_fee: 0
 other_fees:
 toilets:

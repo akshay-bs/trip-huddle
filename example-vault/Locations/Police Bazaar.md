@@ -36,6 +36,7 @@ opening_hours: Shops about 10:00–20:00; street food stalls mostly in the eveni
 closed_days: Sunday (many shops and eateries shut or keep short hours; varies by shop)
 last_mile: City centre; one-way streets and heavy traffic. Drop off at Police Point and walk; parking is very limited for a tempo traveller.
 permits: None
+needs_booking: false
 entry_fee:
 other_fees:
 toilets: Public and restaurant toilets only

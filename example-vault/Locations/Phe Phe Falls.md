@@ -35,6 +35,7 @@ opening_hours: About 8:00 am – 5:00 pm (verify locally)
 closed_days:
 last_mile: Jowai–Amlarem/Dawki side road to the Paradise Adventure Camp area near Shkentalang village; paved (tempo traveller OK, confirm the final stretch)
 permits: None
+needs_booking: false
 entry_fee: 50
 other_fees: River crossing by shared boat about ₹50–100 per person; life jacket about ₹100; parking may be charged
 toilets: Basic at the campsite; bamboo changing rooms near the pool

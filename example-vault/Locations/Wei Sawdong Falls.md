@@ -34,6 +34,7 @@ opening_hours: About 8:00 am – 5:00 pm (verify locally)
 closed_days:
 last_mile: Paved road from Sohra toward Dainthlen, then a short side road to the trailhead parking; tempo traveller OK (verify the final stretch)
 permits: None
+needs_booking: false
 entry_fee: 50
 other_fees: Parking may be charged
 toilets: None at the falls; basic at best near parking (unverified)

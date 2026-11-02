@@ -37,6 +37,7 @@ opening_hours: About 8 AM – 5 PM (some listings say until 6–7 PM)
 closed_days:
 last_mile: Paved village road from the Mawlynnong approach to a small car park at Riwai. Tempo traveller OK. The parking area is tight at peak hours
 permits: None
+needs_booking: false
 entry_fee: 50
 other_fees: Reported ₹30–50 entry per person (₹40 in Oct 2024), camera about ₹20, parking about ₹50 per vehicle
 toilets: Basic, near the car park

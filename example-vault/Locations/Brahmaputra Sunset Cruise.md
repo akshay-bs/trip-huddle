@@ -35,6 +35,7 @@ opening_hours: Daily sailings. The Alfresco Grand sunset cruise leaves around 4:
 closed_days: May be cancelled in bad weather or high water (mainly in the monsoon)
 last_mile: City road to the riverfront on MG Road (Panbazar/Fancy Bazar). City traffic is heavy in the evening, so allow 45–60 min. The tempo traveller drops at the terminal or ghat
 permits: None
+needs_booking: false
 entry_fee: 700
 other_fees: Alfresco Grand adults ₹700 (middle deck) or ₹850 (upper deck), children ₹600 or ₹700. Food and drinks are à la carte on board. Other operators charge about ₹700–750
 toilets: Yes, on board and at the terminal

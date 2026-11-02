@@ -37,6 +37,7 @@ opening_hours: 06:00–18:00
 closed_days:
 last_mile: Village road near Jowai; any vehicle
 permits: None
+needs_booking: false
 entry_fee: 20
 other_fees:
 toilets: Basic

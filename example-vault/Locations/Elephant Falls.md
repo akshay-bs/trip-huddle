@@ -34,6 +34,7 @@ opening_hours: About 9:00/10:00–17:00 (varies by source)
 closed_days:
 last_mile: Paved road via Upper Shillong (Shillong–Sohra road side); parking at the gate; tempo traveller OK
 permits: None
+needs_booking: false
 entry_fee: 100
 other_fees: Parking; camera fee sometimes charged; Khasi costume photo about ₹50–100 (optional)
 toilets: Yes, basic at the entrance

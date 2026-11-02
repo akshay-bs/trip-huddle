@@ -107,6 +107,20 @@ How to use this file:
 - Meaning: the slack, in hours, that a day needs to be "ok". A Base formula cannot read `trip.md`, so this is the one place where a `planning_limits` value is written into a file instead of being read. Everything else (`sun.mjs slack`, `travel.mjs`, the checker) reads `trip.md` itself.
 - From: `planning_limits.slack_ok_hrs` (default 1.5). Replace only the number after `formula.slack_hrs < ` in the second comparison. The `< 0` never changes.
 
+### S14. Bookings base: cost split count
+- File: `Bases/Bookings.base`
+- Template text: `  cost_per_split: if(cost_agreed, cost_agreed / 1, "")`
+- Example text: `  cost_per_split: if(cost_agreed, cost_agreed / 4, "")`
+- Meaning: the number of equal shares each agreed booking cost is split into, as in S9.
+- From: `cost_split_units`. Replace only the number after `cost_agreed / `. A vault made before 0.11.0 has no Bookings base until `--add-bookings` adds it; until then the slot is skipped.
+
+### S15. Bookings base: split column label
+- File: `Bases/Bookings.base`
+- Template text: `    displayName: Per person` (the line under `formula.cost_per_split:`)
+- Example text: `    displayName: Per family ₹`
+- Meaning: heading of the per-share cost column, as in S10.
+- From: `cost_split_label` and `currency_symbol`, written the same way as S10.
+
 ## Not text slots (the code reads `trip.md` itself)
 
 - Map box: `scripts/validate.mjs` reads `map_box` (`{lat_min, lat_max, lng_min, lng_max}`) from `trip.md` at the vault root. When `trip.md` or `map_box` is missing or empty, the coordinate box check is skipped. Nothing to replace.
@@ -116,6 +130,7 @@ How to use this file:
 - Planning limits: `planning_limits` (`slack_ok_hrs` 1.5, `dark_drive_tight_min` 30, `late_finish_min` 60, `max_drive_hrs_day` 6) is in the starter `trip.md`. `scripts/trip-settings.mjs` reads it for `scripts/validate.mjs`, `skills/plan-day/scripts/sun.mjs` (`slack`), `skills/review-travel-times/scripts/travel.mjs` and `init.mjs`. Only `slack_ok_hrs` also has a text slot (S13, the Itinerary base). `init.mjs` merges the answers over the vault's current values (on `--reconfigure`) over the defaults, so giving one limit never resets the others, and it rejects values that are not numbers.
 - Stage: `stage` (`planning`, `booking`, `travelling`, `after`) is in the starter `trip.md`. `scripts/validate.mjs` warns about any other word; `init.mjs` keeps the vault's current stage on `--reconfigure` when the answers leave it out, and refuses a bad one. Nothing to replace in the templates.
 - Decision template: `Templates/Decision.md` and `Bases/Decisions.base` have no slot. They are copied with the rest of `vault-template` into a new vault, are the same in `example-vault`, and `--reconfigure` does not add them (or the `Decisions/` folder) to an older vault; the `group-decisions` skill asks before adding them.
+- Booking list: `Templates/Booking.md` has no slot, and the booking fields in the Stay, Transport and Location templates are the same in both vaults. A new vault gets them, the `Bookings/` and `Confirmations/` folders and the *Bookings* section of `00 Home.md` with the rest of `vault-template`. `--reconfigure --add-bookings` adds them to a vault made before 0.11.0 (only adding, and only what is missing); existing notes get their new fields from `skills/group-decisions/scripts/migrate-bookings.mjs`.
 - Comparison template: `Templates/Comparison.md` has no slot. It is copied with the rest of `vault-template` into a new vault, is the same in `example-vault`, and `--reconfigure` does not add it to an older vault (the `compare-itineraries` skill asks before adding it).
 - Field packs (`field-packs/*.json`): extra properties added before `recommended_by:` and extra FIELD GUIDE lines, plus their types in `.obsidian/types.json`. Packs not chosen are taken out again; their types stay (harmless).
 
@@ -123,5 +138,5 @@ How to use this file:
 
 After filling the slots, these must still hold:
 - `diff -r vault-template/Templates example-vault/Templates` shows only lines from S1 to S8.
-- `diff -r vault-template/Bases example-vault/Bases` shows only lines from S9 to S13 (S13 matches while `slack_ok_hrs` is the default 1.5).
+- `diff -r vault-template/Bases example-vault/Bases` shows only lines from S9 to S15 (S13 matches while `slack_ok_hrs` is the default 1.5).
 - `diff -r vault-template/.obsidian example-vault/.obsidian` shows nothing.

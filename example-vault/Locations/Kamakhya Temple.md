@@ -35,6 +35,7 @@ opening_hours: 5:30 AM – 1:00 PM and 2:30 PM – 5:30 PM (closed for noon bhog
 closed_days: Open daily. Closed for a few days during Ambubachi Mela (June) and on some special ritual days
 last_mile: Up Nilachal Hill from Maligaon or Kamakhya Gate. Cars and small vehicles usually reach the hilltop parking. Large vehicles may be stopped at the foothill parking, with shared autos or shuttles going up. Whether a tempo traveller can go up on 25 Dec is unconfirmed
 permits: None
+needs_booking: false
 entry_fee: 0
 other_fees: VIP (special) darshan pass ₹501 per person (children under 10 free with a pass holder), booked online only since 15 Jun 2026 (mkdonline.co.in; counter sales ended, per Curly Tales; slot times unverified). Shoe and phone deposit about ₹10. Parking extra
 toilets: Yes, in the temple complex (basic)

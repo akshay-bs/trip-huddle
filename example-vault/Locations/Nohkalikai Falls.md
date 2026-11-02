@@ -35,6 +35,7 @@ opening_hours: About 9:00 am – 5:00 pm
 closed_days:
 last_mile: Paved road from Sohra town (about 5 km) to the viewpoint parking; tempo traveller OK
 permits: None
+needs_booking: false
 entry_fee: 20
 other_fees: Camera about ₹20; parking charged. Fees vary between sources (₹10–50), so carry cash
 toilets: Yes, at the viewpoint complex (paid)

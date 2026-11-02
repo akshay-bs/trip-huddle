@@ -36,6 +36,7 @@ opening_hours: About 7:00 am – 6:00 pm (one source) or 9:00 am – 5:00 pm (Mu
 closed_days:
 last_mile: Jowai → Amlarem road, then a short road to the parking area; paved. Tempo traveller OK (confirm)
 permits: None
+needs_booking: false
 entry_fee: 40
 other_fees: Life jacket about ₹100 (compulsory for swimming and boating); boat ride about ₹100 per person; parking may be charged
 toilets: Yes, basic, plus separate changing rooms

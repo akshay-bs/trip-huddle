@@ -102,6 +102,21 @@ For each day:
 
 No reasons, no budget, no food choices, no booking references. The same brief goes to every operator, so the quotes can be compared.
 
+## The distance file
+One saved file of road facts between places, `Logistics/legs.json`, shared by this skill, `plan-day`, `review-travel-times` and `compare-itineraries`. Each link: from, to, km, drive time range, road type, after dark (ok or avoid), the road cutoff area if any, where the figure came from, and the date it was checked. A script (`skills/build-itinerary/scripts/route.mjs`) reads it to try route orders and check each day the same way every time.
+
+**It holds facts about roads, never decisions.** Which stay, place or food spot is selected stays in the notes. When a hotel falls through, the road between two towns has not changed, so the file stays right; the skills read the current choices from the notes each time. There is no "update the file" step to forget. A new place only adds links.
+
+**Which links, so a day between two bases works.** Not every pair (60 places would be thousands of links), and not only each place to its own base, which breaks a day like *Jowai → Krang Suri → Dawki*: Krang Suri sits between the two bases, and a day that checks out of one and checks in at the other needs both sides. So:
+- every base town to every other base town;
+- every place to **every base within `link_reach_hrs`** (2 hrs by default), not just its nearest one. Krang Suri then links to both Jowai and Dawki;
+- places to each other within `link_reach_hrs` of each other;
+- **filled in when needed:** when a route option has a day from base A to base B, the script lists the places that could sit on that day and adds any missing A → place → B links before checking it.
+
+**On the way or a detour.** For a day from A to B, a place P costs `A→P + P→B − A→B` extra. Under about 20 minutes it is "on the way" (the same rule `plan-day` uses); more is a detour and a stop of its own. This is how the script builds the stops of a moving day, and how it shows what the group passes without stopping.
+
+**The figures are still estimates.** The file makes every skill use the same estimate, with its source and date. It does not make them true; `review-travel-times` still checks them.
+
 ## New fields
 - **`trip.md` → `road_cutoffs`:** a list of `{area, no_drive_after: "HH:MM", reason}`. Example: `{area: Jowai, no_drive_after: "16:00", reason: single-track border roads}`. Read by this skill, `plan-day` and `review-travel-times`; a leg in that area after the time counts as a rule bend.
 - **Route template:** a **Day by day** section (day, start, main stops, end, night), and a **What it makes possible / Red flags / What it costs** section.
@@ -123,7 +138,8 @@ No reasons, no budget, no food choices, no booking references. The same brief go
 - No live booking or price lookups. The operator brief asks for quotes; it does not get them.
 - No printing or PDF. That is the `driver-brief` item on the roadmap, which can grow out of the Operator brief.
 
-## Open questions
-1. **Road cutoffs on the area, or on each place?** Recommended: on the area in `trip.md`, because the rule is about the roads, not one waterfall.
-2. **Should the skill also suggest base towns** the group has not listed (it would have found "stay in Jowai")? Recommended: yes, but as a suggestion only, marked "not in your list yet".
-3. **Operator brief:** one per trip, or one per route option, to get quotes before deciding? Recommended: one per option on request, because quotes often decide the route.
+## Decided
+1. Road cutoffs are kept per area in `trip.md`.
+2. The skill may suggest base towns not in the list, marked "not in your list yet".
+3. One operator brief per route option, on request.
+4. Road facts go in a shared distance file; decisions stay in the notes.

@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 350" role="img" aria-labelledby="t d">
+  <title id="t">The trip-huddle journey</title>
+  <desc id="d">A road through five stages: Choose, Agree the route, Book, Travel, Come home. Above each stop is the group chat's worst message at that stage. Under each stop are the questions trip-huddle helps the group answer there. The road is solid through the stages trip-huddle covers today and dotted through the stages coming next.</desc>
+  <style>
+    svg{--ink:#18231f;--muted:#5b6b65;--line:#d8e1dd;--bubble:#ffffff;--road:#2e3a36;--accent:#1f6f5c;--soon:#a3650f;--ring:#ffffff}
+    @media (prefers-color-scheme: dark){svg{--ink:#e4ece9;--muted:#9db0a9;--line:#3a4a44;--bubble:#22302b;--road:#8fa39c;--accent:#6fc8ae;--soon:#e3b065;--ring:#0d1117}}
+    text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif}
+    .rd{fill:none;stroke:var(--road);stroke-width:6;stroke-linecap:round}
+    .rd-soon{fill:none;stroke:var(--road);stroke-width:6;stroke-linecap:round;stroke-dasharray:4 14;opacity:.55}
+    .bub{fill:var(--bubble);stroke:var(--line);stroke-width:1.5}
+    .btx{fill:var(--ink);font-size:15px;font-style:italic}
+    .who{fill:var(--muted);font-size:11px;font-weight:700;letter-spacing:.06em}
+    .stop{fill:var(--accent);stroke:var(--ring);stroke-width:4}
+    .stop-soon{fill:var(--ring);stroke:var(--soon);stroke-width:4}
+    .q{fill:var(--muted);font-size:13.5px;text-anchor:middle}
+    .lbl{fill:var(--ink);font-size:17px;font-weight:700}
+  </style>
+  <path class="rd" d="M20 200 C 60 170, 70 170, 100 190 S 220 225, 300 195 S 430 160, 500 190 S 560 215, 600 205"/>
+  <path class="rd-soon" d="M600 205 C 640 195, 650 180, 700 190 S 820 220, 900 192 S 960 175, 985 180"/>
+  <g><rect class="bub" x="20" y="28" width="160" height="78" rx="14"/><path class="bub" d="M90 105 l10 16 l8 -16z"/>
+    <text class="who" x="36" y="50">ANITA · 11:42 PM</text>
+    <text class="btx" x="36" y="72">is it Laboon</text><text class="btx" x="36" y="92">or Labon??</text></g>
+  <g><rect class="bub" x="220" y="28" width="160" height="78" rx="14"/><path class="bub" d="M290 105 l10 16 l8 -16z"/>
+    <text class="who" x="236" y="50">ROHAN · 9:03 PM</text>
+    <text class="btx" x="236" y="72">it's only 2 hours</text><text class="btx" x="236" y="92">on the map na</text></g>
+  <g><rect class="bub" x="420" y="28" width="160" height="78" rx="14"/><path class="bub" d="M490 105 l10 16 l8 -16z"/>
+    <text class="who" x="436" y="50">PRIYA · 7:15 AM</text>
+    <text class="btx" x="436" y="72">wait did anyone</text><text class="btx" x="436" y="92">pay the hotel?</text></g>
+  <g><rect class="bub" x="620" y="28" width="160" height="78" rx="14"/><path class="bub" d="M690 105 l10 16 l8 -16z"/>
+    <text class="who" x="636" y="50">DRIVER · 6:40 AM</text>
+    <text class="btx" x="636" y="72">road closed sir.</text><text class="btx" x="636" y="92">landslide.</text></g>
+  <g><rect class="bub" x="820" y="28" width="160" height="78" rx="14"/><path class="bub" d="M890 105 l10 16 l8 -16z"/>
+    <text class="who" x="836" y="50">3 MONTHS LATER</text>
+    <text class="btx" x="836" y="72">gentle reminder</text><text class="btx" x="836" y="92">re: van money 🙏</text></g>
+  <circle class="stop" cx="100" cy="190" r="13"/>
+  <circle class="stop" cx="300" cy="195" r="13"/>
+  <circle class="stop" cx="500" cy="190" r="13"/>
+  <circle class="stop-soon" cx="700" cy="190" r="13"/>
+  <circle class="stop-soon" cx="900" cy="192" r="13"/>
+  <text class="lbl" x="100" y="242" text-anchor="middle">Choose</text>
+  <text class="lbl" x="300" y="242" text-anchor="middle">Agree the route</text>
+  <text class="lbl" x="500" y="242" text-anchor="middle">Book</text>
+  <text class="lbl" x="700" y="242" text-anchor="middle">Travel</text>
+  <text class="lbl" x="900" y="242" text-anchor="middle">Come home</text>
+  <text class="q" x="100" y="268">The waterfall we voted for</text>
+  <text class="q" x="100" y="286">is a trickle in December.</text>
+  <text class="q" x="100" y="316">Which hotels are we</text>
+  <text class="q" x="100" y="334">considering in Shillong?</text>
+  <text class="q" x="300" y="268">Eleven days of must-sees,</text>
+  <text class="q" x="300" y="286">seven days of leave.</text>
+  <text class="q" x="500" y="268">Did we book the</text>
+  <text class="q" x="500" y="286">safari permits?</text>
+  <text class="q" x="700" y="268">Two hours late. Which</text>
+  <text class="q" x="700" y="286">stop do we drop?</text>
+  <text class="q" x="900" y="268">Who owes whom,</text>
+  <text class="q" x="900" y="286">per family?</text>
+</svg>

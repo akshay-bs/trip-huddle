@@ -3,7 +3,8 @@
 // trip-init making a new vault the checker accepts, the plan-day sun script and example, the after-dark checks
 // and migration, the review-travel-times script (road-type time, stops buffer, trip.md settings, verdicts), its
 // made-up checked example, the travel_verdict warning, the planning_limits in trip.md (they change the verdicts, reach the
-// Itinerary base through trip-init, and are checked), Comparison notes and the made-up comparison, Food notes (the template, the Base, the folder, the example notes and the upgrade of an older vault), and a deliberately
+// Itinerary base through trip-init, and are checked), Comparison notes and the made-up comparison, Food notes (the template, the Base, the folder, the example notes and the upgrade of an older vault),
+// the booking list (templates, the Bookings base, the example, the checker's booking warnings, trip-init --add-bookings and migrate-bookings), and a deliberately
 // broken vault where every problem must be reported. Works on temporary copies, so the repo is never modified. Exits 1 if anything fails.
 import fs from 'node:fs';
 import os from 'node:os';
@@ -968,10 +969,10 @@ const warnLine = (out, file, text) => out.split('\n').some(l => l.includes(file)
   });
 }
 
-test('plugin: both manifests have the same version, and it is 0.10.0', () => {
+test('plugin: both manifests have the same version, and it is 0.11.0', () => {
   const a = JSON.parse(fs.readFileSync(path.join(ROOT, '.claude-plugin/plugin.json'), 'utf8')).version;
   const b = JSON.parse(fs.readFileSync(path.join(ROOT, '.claude-plugin/marketplace.json'), 'utf8')).plugins[0].version;
-  return a === b && a === '0.10.0' ? '' : `plugin.json ${a}, marketplace.json ${b}`;
+  return a === b && a === '0.11.0' ? '' : `plugin.json ${a}, marketplace.json ${b}`;
 });
 // ---- Food spots (restaurants and cafes): the template, the Base, the folder, the example notes and the old-vault upgrade
 {
@@ -1091,6 +1092,240 @@ test('plugin: both manifests have the same version, and it is 0.10.0', () => {
     return r.code === 1 && /--add-food only works with --reconfigure/.test(r.out) ? '' : r.out;
   });
 }
+// ---- the booking list (v0.11.0): templates, the base, the example, the checker, trip-init --add-bookings and the migration
+{
+  const rd = (v, f) => fs.readFileSync(path.join(ROOT, v, f), 'utf8');
+  const BF = ['booking_status', 'cost_agreed', 'advance_paid', 'balance_pending', 'confirmation'];
+  const split = t => t.replace(/cost_agreed \/ [\d.]+/, 'cost_agreed / N').replace(/(formula\.cost_per_split:\n\s*displayName: ).*/, '$1X');
+  test('bookings: the Booking and Transport templates, the Bookings base (but its split), the types and the folders agree between the vaults', () => {
+    const bad = [];
+    for (const f of ['Templates/Booking.md', 'Templates/Transport.md', '.obsidian/types.json']) if (rd('vault-template', f) !== rd('example-vault', f)) bad.push(`${f} differs`);
+    if (split(rd('vault-template', 'Bases/Bookings.base')) !== split(rd('example-vault', 'Bases/Bookings.base'))) bad.push('Bases/Bookings.base differs by more than the split (S14, S15)');
+    if (!/cost_agreed \/ 4,/.test(rd('example-vault', 'Bases/Bookings.base')) || !/displayName: Per family ₹/.test(rd('example-vault', 'Bases/Bookings.base'))) bad.push('the example base does not split per family');
+    for (const d of ['Bookings', 'Confirmations']) if (!fs.existsSync(path.join(ROOT, 'vault-template', d, '.gitkeep')) || !fs.existsSync(path.join(ROOT, 'example-vault', d))) bad.push(`no ${d}/ folder`);
+    return bad.join('\n');
+  });
+  test('bookings: the templates carry the booking fields, Transport has decision, Location has needs_booking, with the right types', () => {
+    const fm = t => t.match(/^---\n([\s\S]*?)\n---/)[1];
+    const bad = [], types = JSON.parse(rd('vault-template', '.obsidian/types.json')).types;
+    const booking = rd('vault-template', 'Templates/Booking.md');
+    if (fm(booking) !== 'type: booking\n' + 'booking_status: not-contacted\ncost_agreed:\nadvance_paid:\nbalance_pending:\nconfirmation:\ntags:\n  - booking') bad.push('Booking template frontmatter');
+    for (const t of ['Stay', 'Transport']) for (const k of BF) if (!new RegExp(`^${k}:`, 'm').test(fm(rd('vault-template', `Templates/${t}.md`)))) bad.push(`${t} has no ${k}`);
+    if (!/^booking_ref:$/m.test(fm(rd('vault-template', 'Templates/Stay.md')))) bad.push('Stay lost booking_ref');
+    if (!/^decision: considering\ndecision_reason:$/m.test(fm(rd('vault-template', 'Templates/Transport.md')))) bad.push('Transport has no decision');
+    const loc = rd('vault-template', 'Templates/Location.md');
+    if (!/^permits:\nneeds_booking: false\n/m.test(fm(loc) + '\n') || BF.some(k => new RegExp(`^${k}:`, 'm').test(fm(loc)))) bad.push('Location: needs_booking after permits, and no booking fields in the frontmatter');
+    if (!loc.includes('booking_status: not-contacted | enquired | quoted | booked | paid | cancelled')) bad.push('Location FIELD GUIDE has no booking_status list');
+    for (const [k, ty] of [['needs_booking', 'checkbox'], ['cost_agreed', 'number'], ['balance_pending', 'number'], ['advance_paid', 'number'], ['confirmation', 'text']]) if (types[k] !== ty) bad.push(`types.json: ${k} should be ${ty}`);
+    if (/not-needed/.test(booking)) bad.push('a new booking value');
+    return bad.join('\n');
+  });
+  test('bookings: the base lists the selected stays, vehicle and places that need booking plus Bookings notes, and its views and columns exist', () => {
+    const base = rd('vault-template', 'Bases/Bookings.base'), bad = [];
+    for (const f of ['type == "booking"', 'type == "stay"', 'type == "transport"', 'type == "location"', 'needs_booking == true']) if (!base.includes(f)) bad.push(`no filter ${f}`);
+    if ((base.match(/decision == "selected"/g) || []).length !== 3) bad.push('stay, transport and location must each need decision == "selected"');
+    const views = [...base.matchAll(/^ {2}- type: table\n {4}name: (.+)$/gm)].map(m => m[1]);
+    for (const v of ['To book', 'No confirmation yet', 'Balance pending', 'All bookings']) if (!views.includes(v)) bad.push(`no view ${v}`);
+    const cols = [...base.matchAll(/^ {6}- ([\w.]+)$/gm)].map(m => m[1]).filter(c => !c.startsWith('file.'));
+    for (const c of new Set(cols)) if (![...BF, 'type', 'formula.cost_per_split'].includes(c)) bad.push(`column ${c}`);
+    for (const v of ['vault-template', 'example-vault']) {
+      const home = rd(v, '00 Home.md');
+      for (const e of [...home.matchAll(/!\[\[Bookings\.base#([^\]]+)\]\]/g)].map(m => m[1])) if (!views.includes(e)) bad.push(`${v}: Home embeds a missing view ${e}`);
+      for (const w of ['## Bookings', '![[Bookings.base#To book]]', '![[Bookings.base#No confirmation yet]]', '![[Stays.base#Booking tracker]]', '- **Paid so far / still owed:**', '`Confirmations/`']) if (!home.includes(w)) bad.push(`${v}: Home lacks ${w}`);
+      if (!/booking: Bookings\}/.test(rd(v, 'trip.md'))) bad.push(`${v}: trip.md folders line`);
+    }
+    if (!/## Bookings live on the item's own note/.test(rd('vault-template', '.claude/CLAUDE.md'))) bad.push('vault CLAUDE.md rule');
+    return bad.join('\n');
+  });
+  test('bookings: the example has a Bookings note and a place that needs booking, and no confirmations, references, amounts or dates', () => {
+    const bad = [], dirs = ['Stays', 'Locations', 'Bookings'];
+    const notes = dirs.flatMap(d => fs.readdirSync(path.join(ROOT, 'example-vault', d)).filter(f => f.endsWith('.md')).map(f => `${d}/${f}`));
+    for (const n of notes) {
+      const front = rd('example-vault', n).match(/^---\n([\s\S]*?)\n---/)[1];
+      for (const k of ['booking_ref', 'cost_agreed', 'advance_paid', 'balance_pending', 'confirmation', 'nights_booked']) if (new RegExp(`^${k}: *\\S`, 'm').test(front)) bad.push(`${n}: ${k} is filled`);
+      if (/^booking_status: (?!not-contacted\s*$)/m.test(front)) bad.push(`${n}: booking_status is not not-contacted`);
+    }
+    const tasks = fs.readdirSync(path.join(ROOT, 'example-vault/Bookings')).filter(f => f.endsWith('.md'));
+    if (!tasks.length) bad.push('no Bookings note');
+    if (tasks.some(f => /\b\d{4}-\d{2}-\d{2}\b/.test(rd('example-vault', `Bookings/${f}`)))) bad.push('a date in a Bookings note');
+    if (fs.readdirSync(path.join(ROOT, 'example-vault/Confirmations')).some(f => f !== '.gitkeep')) bad.push('files in Confirmations/');
+    if (!/^needs_booking: true\nbooking_status: not-contacted\ncost_agreed:\nadvance_paid:\nbalance_pending:\nconfirmation:\n/m.test(rd('example-vault', 'Locations/Kaziranga National Park.md'))) bad.push('Kaziranga has no booking block');
+    const r = check(path.join(ROOT, 'example-vault'));
+    if (r.out.split('\n').some(l => /Bookings\/|Kaziranga|Stays\//.test(l))) bad.push(r.out);
+    return bad.join('\n');
+  });
+
+  // The checker on bookings: changed copies of the example
+  const SOHRA = 'Stays/Sohra Plaza.md', SDEC = 'Decisions/Decision - Stay in Sohra.md', TASK = 'Bookings/Book - Travel to and from the trip.md';
+  const KAZ = 'Locations/Kaziranga National Park.md', ARWAH = 'Locations/Arwah Cave.md';
+  const bvariant = (tag, edits) => {
+    const v = path.join(TMP, 'book-' + tag);
+    fs.cpSync(path.join(ROOT, 'example-vault'), v, { recursive: true });
+    for (const [file, from, to] of edits) {
+      const p = path.join(v, file);
+      if (from === null) { fs.mkdirSync(path.dirname(p), { recursive: true }); fs.writeFileSync(p, to); continue; }
+      const t = fs.readFileSync(p, 'utf8');
+      if (!t.includes(from)) throw new Error(`test setup: "${from}" not in ${file}`);
+      fs.writeFileSync(p, t.replace(from, to));
+    }
+    return check(v);
+  };
+  const selectSohra = [SOHRA, 'decision: considering', 'decision: selected'];
+  const bookSohra = [SOHRA, 'booking_status: not-contacted', 'booking_status: booked'];
+  const lockSohra = [[SDEC, 'status: open', 'status: locked'], [SDEC, 'decided_option:', 'decided_option: "[[Sohra Plaza]]"'],
+    [SDEC, 'decision_reason:', 'decision_reason: the group chose it'], [SDEC, 'locked_by:', 'locked_by: "[[Sohra Plaza]]"']];
+  const voucher = [[SOHRA, 'confirmation:', 'confirmation: "[[Confirmations/sohra-voucher.pdf]]"'], ['Confirmations/sohra-voucher.pdf', null, 'made up']];
+  const mineB = (out, file) => out.split('\n').filter(l => l.includes(file));
+  test('bookings: a booked stay with no confirmation warns "booked, no confirmation yet", and its open decision "not locked"', () => {
+    const r = bvariant('noconf', [selectSohra, bookSohra]);
+    return r.code === 0 && warnLine(r.out, SOHRA, 'booked, no confirmation yet') && warnLine(r.out, SOHRA, 'is not locked') ? '' : r.out;
+  });
+  test('bookings: booked, confirmed and locked by a link to the stay is clean', () => {
+    const r = bvariant('clean', [selectSohra, bookSohra, ...voucher, ...lockSohra,
+      [SOHRA, 'cost_agreed:', 'cost_agreed: 100'], [SOHRA, 'advance_paid:', 'advance_paid: 40'], [SOHRA, 'balance_pending:', 'balance_pending: 60']]);
+    return r.code === 0 && !mineB(r.out, 'Sohra').length ? '' : r.out;
+  });
+  test('bookings: paid with a balance still pending, and amounts that do not add up, are warned about', () => {
+    const r = bvariant('amounts', [selectSohra, [SOHRA, 'booking_status: not-contacted', 'booking_status: paid'], ...voucher, ...lockSohra,
+      [SOHRA, 'cost_agreed:', 'cost_agreed: 100'], [SOHRA, 'advance_paid:', 'advance_paid: 40'], [SOHRA, 'balance_pending:', 'balance_pending: 50']]);
+    return warnLine(r.out, SOHRA, 'paid, but balance_pending is 50') && warnLine(r.out, SOHRA, 'is not cost_agreed (100)') ? '' : r.out;
+  });
+  test('bookings: a booking on a stay the group no longer has selected is flagged', () => {
+    const r = bvariant('notsel', [bookSohra, ...voucher]);
+    return warnLine(r.out, SOHRA, 'booked, but the group has it as "considering", not selected') ? '' : r.out;
+  });
+  test('bookings: locked_by linking a note that is not booked is flagged, and a text locked_by still passes', () => {
+    const r = bvariant('lockedby', [selectSohra, ...lockSohra]);
+    return warnLine(r.out, SDEC, 'locked_by links to [[Sohra Plaza]], but that is not booked or paid')
+      && !mineB(r.out, 'Decision - How we get around').length ? '' : r.out;
+  });
+  test('bookings: a confirmation outside Confirmations/ is flagged', () => {
+    const r = bvariant('confdir', [selectSohra, bookSohra, ...lockSohra, [SOHRA, 'confirmation:', 'confirmation: "[[Example - Public research]]"']]);
+    return warnLine(r.out, SOHRA, 'is not in Confirmations/') && !warnLine(r.out, SOHRA, 'no confirmation yet') ? '' : r.out;
+  });
+  test('bookings: a booked Bookings note in a decision\'s affects locks that decision; until then it is flagged', () => {
+    const DAWKI = 'Decisions/Decision - Dawki boat ride.md';
+    const edits = [[TASK, 'booking_status: not-contacted', 'booking_status: booked'], [TASK, 'confirmation:', 'confirmation: "[[Confirmations/tickets.pdf]]"'],
+      ['Confirmations/tickets.pdf', null, 'made up'], [DAWKI, 'affects:\n', 'affects:\n  - "[[Book - Travel to and from the trip]]"\n']];
+    const r = bvariant('task', edits);
+    return warnLine(r.out, TASK, 'booked, but its decision [[Decision - Dawki boat ride]] is not locked') && !warnLine(r.out, TASK, 'not selected') ? '' : r.out;
+  });
+  test('bookings: a place\'s booking fields must match needs_booking, and a bad booking_status is a warning', () => {
+    const r = bvariant('place', [[KAZ, 'needs_booking: true', 'needs_booking: false'], [ARWAH, 'needs_booking: false', 'needs_booking: true'],
+      [TASK, 'booking_status: not-contacted', 'booking_status: not-needed']]);
+    return warnLine(r.out, KAZ, 'has booking fields (booking_status, cost_agreed, advance_paid, balance_pending, confirmation) but needs_booking is not true')
+      && warnLine(r.out, ARWAH, 'needs_booking is true but the booking fields are missing') && warnLine(r.out, TASK, 'booking_status "not-needed" is not one of')
+      && !warnLine(r.out, KAZ, 'properties that are not in') ? '' : r.out;
+  });
+  test('bookings: a Bookings note outside Bookings/ is an error, and folders: {booking: Logistics} in trip.md moves it', () => {
+    const v = path.join(TMP, 'book-folder');
+    fs.cpSync(path.join(ROOT, 'example-vault'), v, { recursive: true });
+    fs.mkdirSync(path.join(v, 'Logistics'));
+    fs.renameSync(path.join(v, TASK), path.join(v, 'Logistics', path.basename(TASK)));
+    const a = check(v);
+    fs.writeFileSync(path.join(v, 'trip.md'), fs.readFileSync(path.join(v, 'trip.md'), 'utf8').replace('field_packs: []', 'field_packs: []\nfolders: {booking: Logistics}'));
+    const b = check(v);
+    return a.code === 1 && warnLine(a.out, 'Logistics/Book - Travel', 'must live in Bookings/') && b.code === 0 ? '' : a.out + b.out;
+  });
+  test('bookings: the daily drive limit comes from the selected Transport note', () => {
+    const tpl = rd('example-vault', 'Templates/Transport.md'), day = rd('example-vault', 'Templates/Day Plan.md');
+    const r = bvariant('transport', [
+      ['Logistics/Transport - Van.md', null, tpl.replace('{{title}}', 'Transport - Van').replace('decision: considering', 'decision: selected').replace('max_hrs_per_day:', 'max_hrs_per_day: 4')],
+      ['Logistics/Transport - Bus.md', null, tpl.replace('{{title}}', 'Transport - Bus').replace('max_hrs_per_day:', 'max_hrs_per_day: 10')],
+      ['Itinerary/Day 01.md', null, day.replace('{{title}}', 'Day 01').replace('drive_hrs:', 'drive_hrs: 6')]]);
+    return warnLine(r.out, 'Itinerary/Day 01.md', 'over the daily limit of 4 hours') ? '' : r.out;
+  });
+
+  // trip-init: a new vault, and an older vault brought up to date
+  test('bookings: a new vault from trip-init has the folders, the base (split per its answers), the templates, and passes', () => {
+    const missing = ['Bookings', 'Confirmations', 'Bases/Bookings.base', 'Templates/Booking.md'].filter(f => !fs.existsSync(path.join(portugal, f)));
+    const units = JSON.parse(fs.readFileSync(path.join(ANSWERS, 'portugal-answers.json'), 'utf8')).cost_split_units;
+    const base = fs.readFileSync(path.join(portugal, 'Bases/Bookings.base'), 'utf8');
+    const t = fs.readFileSync(path.join(portugal, 'Logistics/Transport.md'), 'utf8');
+    return !missing.length && base.includes(`cost_agreed / ${units},`) && /^decision: considering$/m.test(t) ? '' : `missing: ${missing.join(', ')}\n${base}`;
+  });
+  const old = path.join(TMP, 'pre-0.11');
+  fs.cpSync(path.join(ROOT, 'example-vault'), old, { recursive: true });
+  const ow = (rel, fn) => { const p = path.join(old, rel); fs.writeFileSync(p, fn(fs.readFileSync(p, 'utf8'))); };
+  const front = fn => s => { const m = s.match(/^---\n[\s\S]*?\n---/)[0]; return fn(m) + s.slice(m.length); };
+  const drop = (...ks) => front(m => ks.reduce((t, k) => t.replace(new RegExp(`^${k}:.*\\n`, 'm'), ''), m));
+  for (const f of ['Bases/Bookings.base', 'Templates/Booking.md']) fs.rmSync(path.join(old, f));
+  for (const d of ['Bookings', 'Confirmations']) fs.rmSync(path.join(old, d), { recursive: true });
+  ow('Templates/Stay.md', s => drop('confirmation', 'cost_agreed', 'balance_pending')(s)
+    .replace('price_per_night / extra_bed / cost_agreed / advance_paid / balance_pending:', 'price_per_night / extra_bed / advance_paid:').replace(/^(cost_agreed: the total|confirmation: a link).*\n/gm, ''));
+  ow('Templates/Location.md', s => drop('needs_booking')(s).replace(/^(needs_booking|booking_status): .*\n/gm, ''));
+  ow('Templates/Transport.md', s => drop('decision', 'decision_reason', 'cost_agreed', 'advance_paid', 'balance_pending', 'confirmation')(s).replace(/^(decision|cost_agreed \/|confirmation): .*\n/gm, ''));
+  ow('.obsidian/types.json', s => s.replace(/,\n\s*"needs_booking"[\s\S]*?"confirmation": "text"/, ''));
+  ow('00 Home.md', s => s.replace(/^## Bookings\n[\s\S]*?(?=\n## )/m, '## Stays to book\n![[Stays.base#Booking tracker]]\n')
+    .replace(/^8\. \*\*Book\.\*\*.*$/m, "8. **Book.** Move each selected stay's `booking_status` from enquired → quoted → booked → paid.").replace('- **Paid so far / still owed:** \n', ''));
+  fs.mkdirSync(path.join(old, '.claude'));
+  fs.writeFileSync(path.join(old, '.claude/CLAUDE.md'), rd('vault-template', '.claude/CLAUDE.md').replace(/\n## Bookings live on[\s\S]*$/, ''));
+  ow(KAZ, s => s.replace('needs_booking: true\nbooking_status: not-contacted\ncost_agreed:\nadvance_paid:\nbalance_pending:\nconfirmation:\n', ''));
+  for (const d of ['Stays', 'Locations']) for (const f of fs.readdirSync(path.join(old, d))) ow(`${d}/${f}`, drop('needs_booking', 'confirmation', 'cost_agreed', 'balance_pending'));
+  fs.mkdirSync(path.join(old, 'Logistics'));
+  fs.writeFileSync(path.join(old, 'Logistics/Transport.md'), '---\ntype: transport\nvehicle: hired van\ndriver:\ncontact_phone:\nquote:\nbooking_status: booked\nmax_km_per_day:\nmax_hrs_per_day:\ntags:\n  - transport\n---\n<!--\nFIELD GUIDE\n-->\n\n# Transport\n');
+  const exAnswers = path.join(ANSWERS, 'example-vault-answers.json');
+  const TOOL = ['Bases/Bookings.base', 'Templates/Booking.md', 'Templates/Stay.md', 'Templates/Location.md', 'Templates/Transport.md', '.obsidian/types.json', '00 Home.md'];
+  test('bookings: the made-up older vault really is old (setup check), and --reconfigure alone adds nothing', () => {
+    const notOld = ['Templates/Stay.md', 'Templates/Location.md', 'Templates/Transport.md', '.obsidian/types.json', '00 Home.md'].filter(f => fs.readFileSync(path.join(old, f), 'utf8') === rd('example-vault', f));
+    const r = run(INIT, ['--answers', exAnswers, '--vault', old, '--reconfigure']);
+    return !notOld.length && r.code === 0 && r.out.includes('Nothing changed') && !fs.existsSync(path.join(old, 'Bases/Bookings.base')) ? '' : `not changed by setup: ${notOld.join(', ')}\n${r.out}`;
+  });
+  const up = run(INIT, ['--answers', exAnswers, '--vault', old, '--reconfigure', '--add-bookings']);
+  test('trip-init --reconfigure --add-bookings brings an older vault to what the example has (folders, base, templates, types, Home, vault rules)', () => {
+    const diff = TOOL.filter(f => fs.readFileSync(path.join(old, f), 'utf8') !== rd('example-vault', f));
+    if (fs.readFileSync(path.join(old, '.claude/CLAUDE.md'), 'utf8') !== rd('vault-template', '.claude/CLAUDE.md')) diff.push('.claude/CLAUDE.md');
+    const dirs = ['Bookings', 'Confirmations'].filter(d => !fs.existsSync(path.join(old, d)));
+    return up.code === 0 && !diff.length && !dirs.length ? '' : `${up.out}\ndiffers: ${diff.join(', ')} missing: ${dirs.join(', ')}`;
+  });
+  test('trip-init --add-bookings: a second run changes nothing, and without --reconfigure it is refused', () => {
+    const again = run(INIT, ['--answers', exAnswers, '--vault', old, '--reconfigure', '--add-bookings']);
+    const no = run(INIT, ['--answers', exAnswers, '--vault', path.join(TMP, 'never-b'), '--add-bookings']);
+    return again.code === 0 && again.out.includes('Nothing changed') && no.code === 1 && /--add-bookings only works with --reconfigure/.test(no.out) ? '' : again.out + no.out;
+  });
+  const MIG = path.join(ROOT, 'skills/group-decisions/scripts/migrate-bookings.mjs');
+  const snap = () => { const o = {}; for (const d of ['Stays', 'Locations', 'Logistics']) for (const f of fs.readdirSync(path.join(old, d))) o[`${d}/${f}`] = fs.readFileSync(path.join(old, d, f), 'utf8'); return o; };
+  const before = JSON.stringify(snap());
+  const dry = run(MIG, ['--dry-run'], old);
+  test('migrate-bookings: --dry-run changes nothing', () => dry.code === 0 && /would change/.test(dry.out) && JSON.stringify(snap()) === before ? '' : dry.out);
+  const mig = run(MIG, [], old);
+  test('migrate-bookings: notes get the new fields in template order (the example\'s notes, an older booked Transport note selected)', () => {
+    const now = snap(), bad = [];
+    for (const [f, t] of Object.entries(now)) {
+      if (f.startsWith('Logistics/')) continue;
+      const want = f === KAZ ? rd('example-vault', f).replace(/needs_booking: true\nbooking_status: not-contacted\ncost_agreed:\nadvance_paid:\nbalance_pending:\nconfirmation:\n/, 'needs_booking: false\n') : rd('example-vault', f);
+      if (t !== want) bad.push(f);
+    }
+    const tr = now['Logistics/Transport.md'];
+    if (!/contact_phone:\ndecision: selected\ndecision_reason:\nquote:\nbooking_status: booked\ncost_agreed:\nadvance_paid:\nbalance_pending:\nconfirmation:\nmax_km_per_day:/.test(tr)) bad.push('Transport: ' + tr);
+    return mig.code === 0 && !bad.length ? '' : mig.out + '\n' + bad.slice(0, 5).join('\n');
+  });
+  test('migrate-bookings: a second run changes nothing, and the result passes the checker', () => {
+    const again = run(MIG, [], old), r = check(old);
+    const extra = r.out.split('\n').filter(l => /missing properties|not in the same order|not in Templates/.test(l));
+    return again.code === 0 && /Nothing to do/.test(again.out) && r.code === 0 && !extra.length && warnLine(r.out, 'Logistics/Transport.md', 'booked, no confirmation yet') ? '' : again.out + r.out;
+  });
+
+  // the skills, the roadmap and the plan
+  test('bookings: group-decisions has the booking procedure, and the other skills read the new fields', () => {
+    const sk = n => fs.readFileSync(path.join(ROOT, 'skills', n, 'SKILL.md'), 'utf8'), bad = [];
+    const g = sk('group-decisions'), ref = fs.readFileSync(path.join(ROOT, 'skills/group-decisions/references/booking.md'), 'utf8');
+    for (const w of ['references/booking.md', 'migrate-bookings.mjs', '--add-bookings', "what's left to book", 'Paid so far / still owed', 'booked, no confirmation yet', 'cost_agreed']) if (!g.includes(w)) bad.push(`group-decisions: ${w}`);
+    for (const w of ['not-contacted', 'enquired', 'quoted', 'booked', 'paid', 'cancelled', 'Confirmations/', 'needs_booking', 'Lock it right away', 'dropped', 'affects', 'delete']) if (!ref.includes(w)) bad.push(`references/booking.md: ${w}`);
+    if (/not-needed|confirmed`/.test(ref)) bad.push('references/booking.md uses a value that is not in the lists');
+    if (!/needs_booking/.test(sk('add-place')) || !/needs_booking/.test(fs.readFileSync(path.join(ROOT, 'skills/add-place/references/agent-prompt.md'), 'utf8'))) bad.push('add-place: needs_booking');
+    if (!/needs_booking/.test(sk('plan-day')) || !/decision: selected/.test(sk('plan-day')) || !/decision: selected/.test(sk('review-travel-times'))) bad.push('plan-day / review-travel-times: the selected Transport note and needs_booking');
+    if (!/cost_agreed/.test(sk('compare-itineraries'))) bad.push('compare-itineraries: cost_agreed');
+    if (!/--add-bookings/.test(sk('trip-init'))) bad.push('trip-init: --add-bookings');
+    return bad.join('; ');
+  });
+  test('bookings: the roadmap marks the booking task list done; the plan says built', () => {
+    const bad = [];
+    if (!/\[x\] \(v0\.11\.0\) \*\*Booking task list\*\*/.test(rd('.', 'docs/ROADMAP.md'))) bad.push('roadmap not marked done');
+    if (!/^Status: built \(v0\.11\.0\)/m.test(rd('.', 'docs/PLAN-booking-tasks.md'))) bad.push('plan status line');
+    return bad.join('; ');
+  });
+}
 test('vaults: the Day Plan template, trip.md notes and Home pointer agree between vault-template and example-vault', () => {
   const rd = (v, f) => fs.readFileSync(path.join(ROOT, v, f), 'utf8');
   // the three per-trip lines (slots S1 to S3) may differ; everything else in the template must be identical
@@ -1194,6 +1429,10 @@ fs.writeFileSync(path.join(broken, 'Itinerary/Route.md'), fs.readFileSync(path.j
 fs.mkdirSync(path.join(broken, 'Decisions'), { recursive: true });
 fs.writeFileSync(path.join(broken, 'Decisions/Decision - Van.md'), fs.readFileSync(path.join(broken, 'Templates/Decision.md'), 'utf8')
   .replace('{{title}}', 'Decision - Van').replace('options: []', 'options:\n  - Van').replace('status: open', 'status: locked').replace('decided_option:', 'decided_option: Van'));
+// A selected stay that is booked with no confirmation, and a Bookings note with a booking_status that is not in the list.
+edit('Stays/Sohra Plaza.md', 'decision: considering', 'decision: selected');
+edit('Stays/Sohra Plaza.md', 'booking_status: not-contacted', 'booking_status: booked');
+edit('Bookings/Book - Travel to and from the trip.md', 'booking_status: not-contacted', 'booking_status: done');
 
 const brokenRun = check(broken);
 const expectIn = (name, file, text, level) => test(`checker finds: ${name}`, () => {
@@ -1214,6 +1453,9 @@ expectIn('bad decision value in a Food note', 'Food/Cafe.md', 'decision "maybe" 
 expectIn('kind outside the list in a Food note', 'Food/Cafe.md', 'kind "diner" is not one of', 'warning');
 expectIn('locked Decision note with no locked_by', 'Decisions/Decision - Van.md', 'locked_by is empty', 'error');
 expectIn('Route nights that do not match the bases', 'Itinerary/Route.md', 'nights_per_base', 'warning');
+expectIn('a booked stay with no confirmation', 'Stays/Sohra Plaza.md', 'booked, no confirmation yet', 'warning');
+expectIn('a booked stay whose decision is not locked', 'Stays/Sohra Plaza.md', 'is not locked', 'warning');
+expectIn('a booking_status outside the list', 'Bookings/Book - Travel to and from the trip.md', 'booking_status "done" is not one of', 'warning');
 
 fs.rmSync(TMP, { recursive: true, force: true });
 console.log(failed ? `\n${failed} test(s) FAILED` : '\nAll tests passed');

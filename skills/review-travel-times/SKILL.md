@@ -19,7 +19,7 @@ The vault root is the current working directory.
 **Pipeline:** read the trip → pick what to check → three estimates per leg → sun times and bends → run the script → verdict → fixes and one question → write → validate → report.
 
 ## 1. Read the trip
-- Read `trip.md`: `group_vehicle`, `bases`, `evening_bases`, `day_start`, the fallback `daylight_hrs` and `sunset`, and the optional `road_speeds` and `stop_buffer`. Also read `planning_limits`: `slack_ok_hrs`, `dark_drive_tight_min` and `late_finish_min` set the verdict in section 6, and `max_drive_hrs_day` is used by `compare-itineraries`. The group changes them in `trip.md` as it plans, and the script reads them itself. Read **Trip facts** in `00 Home.md` and `Memories/MEMORY.md`. Read `Logistics/Transport.md` if it exists (the vehicle, and the daily limits).
+- Read `trip.md`: `group_vehicle`, `bases`, `evening_bases`, `day_start`, the fallback `daylight_hrs` and `sunset`, and the optional `road_speeds` and `stop_buffer`. Also read `planning_limits`: `slack_ok_hrs`, `dark_drive_tight_min` and `late_finish_min` set the verdict in section 6, and `max_drive_hrs_day` is used by `compare-itineraries`. The group changes them in `trip.md` as it plans, and the script reads them itself. Read **Trip facts** in `00 Home.md` and `Memories/MEMORY.md`. Read the vehicle's Transport note in `Logistics/` if there is one: the one with `decision: selected`, or `Logistics/Transport.md` in an older vault (the vehicle, and the daily limits).
 - Print the settings in force:
   ```bash
   node "${CLAUDE_PLUGIN_ROOT}/skills/review-travel-times/scripts/travel.mjs" config

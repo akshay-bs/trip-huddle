@@ -57,6 +57,8 @@ Before creating anything, search for the place or stay. The user's spelling is o
   - `maps_link` is `https://www.google.com/maps/search/?api=1&query=<lat>,<lng>`, or a name query for stays.
 - **Planning fields:**
   - `decision: considering`. Leave `priority`, `decision_reason`, `decided_on` and `scheduled_day` blank. Stays also get `booking_status: not-contacted`. **Never set selected or dropped.** That's the group's call.
+  - **Booking fields** (`booking_status`, `cost_agreed`, `advance_paid`, `balance_pending`, `confirmation`, and `booking_ref` on a stay) are for the group's own bookings: leave the amounts, the reference and the confirmation blank. A price you found in research goes in `price_per_night`, `est_total` or `entry_fee`, never in `cost_agreed`.
+  - **A place that must be booked ahead** (tickets that sell out, a safari or boat slot, a permit; say why in `permits`): set `needs_booking: true` and add the five booking fields right after it, with `booking_status: not-contacted` and the rest blank. Otherwise `needs_booking: false` and no booking fields. Once the group selects the place, it shows on the home page's booking list.
   - `recommended_by` is a list of quoted wikilinks to source notes: `- "[[Alex - Additions 2Oct]]"`.
   - `tags` keeps `location`, `stay` or `food`, plus the source tag.
 - **Judging fit:**

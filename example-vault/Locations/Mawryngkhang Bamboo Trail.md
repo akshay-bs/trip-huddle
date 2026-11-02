@@ -30,7 +30,7 @@ steps_or_climb: Up and down a gorge, with bamboo walkways tied to the cliff face
 difficulty: strenuous
 group_fit: poor
 time_needed_hrs: 4.5
-best_time_of_day: []
+best_time_of_day: [morning]
 after_dark:
 after_dark_note:
 opening_hours:

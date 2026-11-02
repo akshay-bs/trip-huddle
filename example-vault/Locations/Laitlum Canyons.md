@@ -29,7 +29,7 @@ steps_or_climb: Rim walk is near-level grassy ridge (a few minutes from parking)
 difficulty: easy
 group_fit: good
 time_needed_hrs: 1.5
-best_time_of_day: []
+best_time_of_day: [afternoon]
 after_dark:
 after_dark_note:
 opening_hours: About 6 AM – 5 PM

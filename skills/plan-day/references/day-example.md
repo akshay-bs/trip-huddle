@@ -45,6 +45,13 @@ A loop from Lagos with the one early start of the trip, for sunrise at the cliff
 
 **Daylight and slack:** sunrise 06:14, sunset 20:54, so 14.7 hrs of daylight (computed for Lagos, time zone Europe/Lisbon). Drive 2.3 + activity 10 − 1.3 hrs before sunrise = 11 hrs in daylight. Slack 3.7 hrs: **ok**, with 1 rule bend (see below).
 
+## Why this plan
+- **Sunrise first.** The cliff is the one place worth getting up in the dark for: the light on the rock lasts barely half an hour, and by 08:00 the haze has taken it. So this is the only early start of the trip, and tomorrow is a slow morning.
+- **Boats in the morning.** The sea is calmest before midday, and in June the small boats fill up by lunchtime. That is why the harbour comes straight after breakfast.
+- **Quiet afternoon, then the old town.** After a 05:00 start the group will want a rest. The old town is flat and best in the evening light, so we walk it at 17:00 and are back well before sunset.
+- **Mountain Fort left off.** It is 90 minutes inland, the opposite way from the harbour, and would have pushed this day past the daylight. It fits better on the day we leave for the next base.
+- **The one rule bend.** The first drive, before sunrise, is on an unlit coast road with a gravel track at the end. We accept it for the sunrise (see "Choices that bend the rules"). Every other road is driven in daylight.
+
 ## Legs
 | From | To | km | Drive time (estimate) | After dark | Road notes |
 | ---- | -- | -- | --------------------- | ---------- | ---------- |

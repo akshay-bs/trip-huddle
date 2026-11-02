@@ -29,7 +29,7 @@ steps_or_climb: Short walk from the riverside car park to the boat ghat, over un
 difficulty: easy
 group_fit: good
 time_needed_hrs: 2
-best_time_of_day: []
+best_time_of_day: [morning, midday]
 after_dark:
 after_dark_note:
 opening_hours: Boats run about 7–8 AM to 4–5 PM (daylight, weather permitting)

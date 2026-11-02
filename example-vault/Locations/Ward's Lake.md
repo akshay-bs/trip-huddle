@@ -28,7 +28,7 @@ steps_or_climb: Flat cobbled path around the lake, with a gentle slope at the en
 difficulty: easy
 group_fit: good
 time_needed_hrs: 1
-best_time_of_day: []
+best_time_of_day: [afternoon]
 after_dark:
 after_dark_note:
 opening_hours: About 8:30–17:30 in winter (Nov–Feb); about 8:30–19:00 in summer

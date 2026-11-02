@@ -29,7 +29,7 @@ steps_or_climb: Flat to gently sloping paved paths and small bridges across stre
 difficulty: easy
 group_fit: good
 time_needed_hrs: 1
-best_time_of_day: []
+best_time_of_day: [morning, midday, afternoon]
 after_dark:
 after_dark_note:
 opening_hours: About 8:00 AM – 5:00 PM

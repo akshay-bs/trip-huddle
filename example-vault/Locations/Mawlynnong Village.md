@@ -28,7 +28,7 @@ steps_or_climb: The village lanes are flat, paved and gentle. The optional Sky V
 difficulty: easy
 group_fit: good
 time_needed_hrs: 1.5
-best_time_of_day: []
+best_time_of_day: [morning, afternoon]
 after_dark:
 after_dark_note:
 opening_hours: Village open in daylight. Sky View about 8 AM – 5 PM

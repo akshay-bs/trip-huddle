@@ -29,7 +29,7 @@ steps_or_climb: "Point-to-point, not a loop. Mawphlang → Lad Mawphlang: about 
 difficulty: moderate
 group_fit: poor
 time_needed_hrs: 6
-best_time_of_day: []
+best_time_of_day: [morning]
 after_dark:
 after_dark_note:
 opening_hours: Daylight only

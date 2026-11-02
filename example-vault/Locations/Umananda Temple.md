@@ -29,7 +29,7 @@ steps_or_climb: A steep flight of stone steps up from the island landing to the 
 difficulty: moderate
 group_fit: ok
 time_needed_hrs: 2
-best_time_of_day: []
+best_time_of_day: [morning]
 after_dark:
 after_dark_note:
 opening_hours: Temple about 5:30 AM – 6:00 PM. Government ferries from Umananda/Kachari Ghat about 9:00 AM – 2:00 PM (returns until about 2:40 PM), roughly every 1 hr 15 min; private boats about 8:30 AM – 5:00 PM

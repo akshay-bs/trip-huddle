@@ -28,7 +28,7 @@ steps_or_climb: Paved footpath (15–30 min each way), downhill steps in the las
 difficulty: easy
 group_fit: good
 time_needed_hrs: 1.5
-best_time_of_day: []
+best_time_of_day: [morning, midday]
 after_dark:
 after_dark_note:
 opening_hours: 07:00–18:00

@@ -30,7 +30,7 @@ steps_or_climb: Short flight of Forest Department steps down from the road to th
 difficulty: easy
 group_fit: good
 time_needed_hrs: 0.75
-best_time_of_day: []
+best_time_of_day: [morning]
 after_dark:
 after_dark_note:
 opening_hours: About 6 AM – 6 PM

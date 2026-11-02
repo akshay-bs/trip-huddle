@@ -29,7 +29,7 @@ steps_or_climb: Guided walk on estate paths over gentle tea-garden slopes; a sho
 difficulty: easy
 group_fit: good
 time_needed_hrs: 2.5
-best_time_of_day: []
+best_time_of_day: [afternoon]
 after_dark:
 after_dark_note:
 opening_hours: Amchong Leaf about 9 AM – 6 PM (the website also says 10 AM – 7 PM for the shop); Steep House restaurant from 10 AM

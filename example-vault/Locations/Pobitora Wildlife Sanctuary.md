@@ -27,7 +27,7 @@ steps_or_climb: Flat. Only a short walk from parking to the jeep or elephant boa
 difficulty: easy
 group_fit: good
 time_needed_hrs: 2
-best_time_of_day: []
+best_time_of_day: [morning, afternoon]
 after_dark:
 after_dark_note:
 opening_hours: About 7:00 AM – 4:00 PM. Jeep slots run about 7:00 AM – 3:00 PM and elephant rides about 6:00–8:00 AM (sources differ, so confirm when booking)

@@ -27,7 +27,7 @@ steps_or_climb: A short but fairly steep path or steps from the road and parking
 difficulty: easy
 group_fit: good
 time_needed_hrs: 3.5
-best_time_of_day: []
+best_time_of_day: [morning, midday]
 after_dark:
 after_dark_note:
 opening_hours: Activities about 8–10 AM to 4–6 PM, depending on operator and light

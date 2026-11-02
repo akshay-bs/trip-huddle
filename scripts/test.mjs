@@ -233,7 +233,7 @@ const warnLine = (out, file, text) => out.split('\n').some(l => l.includes(file)
   const v = path.join(TMP, 'after-dark-values');
   fs.cpSync(path.join(ROOT, 'example-vault'), v, { recursive: true });
   const f = path.join(v, exLoc), orig = fs.readFileSync(f, 'utf8');
-  const withValues = (bt, ad) => fs.writeFileSync(f, orig.replace('best_time_of_day: []', bt).replace('after_dark:\n', ad));
+  const withValues = (bt, ad) => fs.writeFileSync(f, orig.replace(/^best_time_of_day: \[.*\]$/m, bt).replace('after_dark:\n', ad));
   withValues('best_time_of_day: [sunrise, evening, night, any]', 'after_dark: good\n');
   let r = check(v);
   test('after dark: valid best_time_of_day list and after_dark value pass', () => r.code === 0 && !warnLine(r.out, 'Arwah Cave', 'not one of') ? '' : r.out);
@@ -313,7 +313,7 @@ const warnLine = (out, file, text) => out.split('\n').some(l => l.includes(file)
   rw('.obsidian/types.json', s => s.replace('"best_time_of_day": "multitext"', '"best_time_of_day": "text"').replace(/\s*"after_dark(_note)?": "text",/g, '').replace(/\s*"rule_bends": "number",/, ''));
   rw('trip.md', s => s.replace('evening_bases: []\n', ''));
   for (const f of fs.readdirSync(path.join(old, 'Locations'))) {
-    rw(`Locations/${f}`, s => s.replace('best_time_of_day: []\nafter_dark:\nafter_dark_note:\n', 'best_time_of_day: Late morning to early afternoon\n'));
+    rw(`Locations/${f}`, s => s.replace(/best_time_of_day: \[.*\]\nafter_dark:\nafter_dark_note:\n/, 'best_time_of_day: Late morning to early afternoon\n'));
   }
   rw(exLoc, s => s.replace('best_time_of_day: Late morning to early afternoon', 'best_time_of_day: Morning, evening'));
   rw('Locations/Kynrem Falls.md', s => s.replace('best_time_of_day: Late morning to early afternoon', 'best_time_of_day:\n  - sunrise'));

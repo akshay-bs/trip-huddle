@@ -29,7 +29,7 @@ steps_or_climb: Paved forest walkway with some steps and a cliff-side bridge fro
 difficulty: easy
 group_fit: good
 time_needed_hrs: 1.5
-best_time_of_day: []
+best_time_of_day: [morning]
 after_dark:
 after_dark_note:
 opening_hours: About 9:00 am – 5:00 pm (verify locally)

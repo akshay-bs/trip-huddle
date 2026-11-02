@@ -28,7 +28,7 @@ steps_or_climb: Short uphill walk/steps from the parking to the temple on top of
 difficulty: easy
 group_fit: good
 time_needed_hrs: 0.75
-best_time_of_day: []
+best_time_of_day: [morning]
 after_dark:
 after_dark_note:
 opening_hours: Early morning to evening (reported as about 4–5 AM to 8–9 PM)

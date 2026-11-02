@@ -28,7 +28,7 @@ steps_or_climb: Uneven natural trail from the road; details unknown
 difficulty: moderate
 group_fit: ok
 time_needed_hrs: 1
-best_time_of_day: []
+best_time_of_day: [morning]
 after_dark:
 after_dark_note:
 opening_hours:

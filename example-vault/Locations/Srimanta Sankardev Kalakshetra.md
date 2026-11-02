@@ -28,7 +28,7 @@ steps_or_climb: Flat, paved campus with a few steps into galleries
 difficulty: easy
 group_fit: good
 time_needed_hrs: 1.5
-best_time_of_day: []
+best_time_of_day: [morning, afternoon]
 after_dark:
 after_dark_note:
 opening_hours: About 10:00 AM – 7:00 PM (galleries may close earlier, around 4:30–5 PM)

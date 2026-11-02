@@ -28,7 +28,7 @@ steps_or_climb: Short walk from the terminal or ghat along a floating jetty and 
 difficulty: easy
 group_fit: good
 time_needed_hrs: 1.5
-best_time_of_day: []
+best_time_of_day: [sunset]
 after_dark:
 after_dark_note:
 opening_hours: Daily sailings. The Alfresco Grand sunset cruise leaves around 4:00 PM in winter (60 min). Evening and dinner cruises run later

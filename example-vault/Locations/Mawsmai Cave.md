@@ -27,7 +27,7 @@ steps_or_climb: Short walk past stalls from parking; about 150 m lit one-way rou
 difficulty: easy
 group_fit: ok
 time_needed_hrs: 1
-best_time_of_day: []
+best_time_of_day: [morning]
 after_dark:
 after_dark_note:
 opening_hours: About 9:00 am – 5:00 pm (some sources say 9:30 am – 5:30 pm)

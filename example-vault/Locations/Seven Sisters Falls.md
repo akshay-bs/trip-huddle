@@ -29,7 +29,7 @@ steps_or_climb: Level roadside viewpoint a few steps from parking
 difficulty: easy
 group_fit: good
 time_needed_hrs: 0.5
-best_time_of_day: []
+best_time_of_day: [morning]
 after_dark:
 after_dark_note:
 opening_hours: Daylight hours (roadside); eco-park gate roughly 8 am – 5 pm

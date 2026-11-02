@@ -7,6 +7,8 @@ description: Plan the days of a trip in a trip-huddle Obsidian vault. Builds Day
 
 A Day note answers one question: can this group do this day, in the daylight it has? This skill builds the note for one day, or for a run of days, from places and stays that already have notes.
 
+**The place fields are for you; the reasons are for the group.** Read the research fields (`best_time_of_day`, `after_dark`, `season_verdict`, `opening_hours` and the rest) and use them to build the route, but never dump them into the Day note or the chat. Turn them into reasons a person can read and argue with: "the cliff is at sunrise because the haze takes the light by 8", not `best_time_of_day: [sunrise]`. The human mainly reads the plan and the *why* behind it.
+
 The vault root is the current working directory.
 **Pipeline:** read the trip → pick the days and their places → sun times → legs → schedule → slack and verdict → write the Day note → set `scheduled_day` → validate → report.
 
@@ -94,6 +96,7 @@ File: `Itinerary/Day 03.md` (the folder is `folders.day` in `trip.md`, default `
 - **Heading:** `# Day 03 · Thu 17 Jun · <the day in a few words>` (the weekday comes from the script).
 - Under it, one line on the shape of the day and a link to the Route (or itinerary) note it belongs to.
 - **Daylight and slack:** `sunrise …, sunset …, … hrs of daylight (computed for <base>, <time zone>). Drive … + activity … − … hrs before sunrise = … hrs. Slack … hrs: **ok**.` For the fallback case say `(trip.md defaults, not worked out for this date)`.
+- **Why this plan** (right after Daylight and slack): 3 to 6 short bullets in plain language, written for the group. Say why the day is in this order, why it starts when it does, why a place is in the morning or the evening, what was left out and why, which roads are done before dark, and any rule bend (point to *Choices that bend the rules*). No field names, no codes, no raw values: say "the haze takes the view by 8", not `best_time_of_day: [sunrise]`. Every bullet is a reason, not a fact about the place. Rewrite it whenever the plan changes, so it never describes an older version of the day.
 - **Legs, Schedule, Meals** (where each meal happens; note where there are few options after dark), **Backup plan** (a weather, closure or delay case, each with a concrete swap), **Choices that bend the rules** (write `- None.` when there are none), **Notes** (the stay or candidates, **Book ahead**, places that don't fit and why).
 - A complete made-up note is in `${CLAUDE_PLUGIN_ROOT}/skills/plan-day/references/day-example.md`. Match its shape.
 
@@ -108,9 +111,11 @@ node "${CLAUDE_PLUGIN_ROOT}/scripts/validate.mjs"
 It checks the Day note against the template (properties, order, number types) and warns when `sunrise`, `sunset` and `daylight_hrs` disagree, when the Schedule puts an `after_dark: avoid` place (or a drive on an `avoid` leg) after sunset while `rule_bends` is 0, when `rule_bends` does not match the lines under *Choices that bend the rules*, when `early_start` is not before sunrise, when `drive_hrs` is over the Transport limit, and when the day has no slack. Fix every error in the notes you wrote. Report problems in older notes; don't silently rewrite them.
 
 ## 10. Report to the user
-Keep it short:
-- A table: day | date | route | sunrise–sunset | drive | activity | slack | verdict.
+Lead with the plan and why it looks that way, not with data. Keep it short:
+- First, two to four lines: the shape of each day and the main reasons for it (the same plain-language reasons as *Why this plan*). Never paste field values, lists of properties or raw checker output.
+- Then a table: day | date | route | sunrise–sunset | drive | activity | slack | verdict.
 - For each tight or too-much day: what you cut or moved, or what you suggest.
 - What the times are based on: computed sun times or the `trip.md` defaults, and which drive times are guesses.
+- The numbers (sun times, drive, slack) belong in the table and are not repeated in prose.
 - Book-ahead items, places left off and why, and the stay still to choose.
 - Anything you changed in Home's open questions.

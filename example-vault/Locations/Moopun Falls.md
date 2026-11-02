@@ -30,7 +30,7 @@ steps_or_climb: A short, slightly steep, well-kept path. About 5 min from the pa
 difficulty: easy
 group_fit: good
 time_needed_hrs: 1.5
-best_time_of_day: []
+best_time_of_day: [morning, midday, afternoon]
 after_dark:
 after_dark_note:
 opening_hours: Open access (no gate reported); go in daylight

@@ -29,7 +29,7 @@ steps_or_climb: None. You stay in the jeep or on the elephant. Mounting the elep
 difficulty: easy
 group_fit: good
 time_needed_hrs: 2
-best_time_of_day: []
+best_time_of_day: [morning, afternoon]
 after_dark:
 after_dark_note:
 opening_hours: Jeep safari slots about 7:30–9:30 AM, 9:30–11:30 AM, 1:30–3:30 PM, 2:30–4:30 PM (varies by range). Elephant safari about 5:00/5:30–7:30 AM, plus an afternoon slot when allotted

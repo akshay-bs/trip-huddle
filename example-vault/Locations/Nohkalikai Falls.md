@@ -28,7 +28,7 @@ steps_or_climb: Short paved path with some steps from parking to the viewing pla
 difficulty: easy
 group_fit: good
 time_needed_hrs: 1
-best_time_of_day: []
+best_time_of_day: [morning, midday, afternoon]
 after_dark:
 after_dark_note:
 opening_hours: About 9:00 am – 5:00 pm

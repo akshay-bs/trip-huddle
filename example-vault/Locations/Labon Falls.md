@@ -31,7 +31,7 @@ steps_or_climb: About 45–60 min each way through forest on rocky, narrow paths
 difficulty: strenuous
 group_fit: poor
 time_needed_hrs: 3
-best_time_of_day: []
+best_time_of_day: [midday]
 after_dark:
 after_dark_note:
 opening_hours: Google lists 8 am opening (no gate reported)

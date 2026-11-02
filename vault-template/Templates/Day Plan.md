@@ -39,6 +39,10 @@ Slack = daylight_hrs − (drive_hrs + activity_hrs − predawn_hrs), computed in
 
 **Daylight and slack:** 
 
+## Why this plan
+<!-- 3 to 6 short bullets, in plain words, for the group. Why this order, why this start time, why a place is in the morning or the evening, what was left out and why, which roads are done before dark, and any rule bend (see "Choices that bend the rules"). No field names or codes. -->
+- 
+
 ## Legs
 | From | To | km | Drive time (estimate) | After dark | Road notes |
 | ---- | -- | -- | --------------------- | ---------- | ---------- |

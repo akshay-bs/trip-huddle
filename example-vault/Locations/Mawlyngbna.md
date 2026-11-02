@@ -30,7 +30,7 @@ steps_or_climb: Split Rock / crevice walk is about 40–60 min with ladders insi
 difficulty: moderate
 group_fit: ok
 time_needed_hrs: 4
-best_time_of_day: []
+best_time_of_day: [morning, midday, afternoon]
 after_dark:
 after_dark_note:
 opening_hours: Activities by prior booking, daylight only

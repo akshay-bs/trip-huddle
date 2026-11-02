@@ -28,7 +28,7 @@ steps_or_climb: A few steps up to the viewing deck and telescope tower; otherwis
 difficulty: easy
 group_fit: good
 time_needed_hrs: 1
-best_time_of_day: []
+best_time_of_day: [morning]
 after_dark:
 after_dark_note:
 opening_hours: About 9:00–15:30 (last entry; timings set by the Air Force)

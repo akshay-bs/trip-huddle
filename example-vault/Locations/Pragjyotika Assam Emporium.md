@@ -23,7 +23,7 @@ steps_or_climb:
 difficulty: easy
 group_fit: good
 time_needed_hrs: 1
-best_time_of_day: []
+best_time_of_day: [morning]
 after_dark:
 after_dark_note:
 opening_hours: Not verified (government showroom; usually about 10 AM – 7 PM). Confirm before the day

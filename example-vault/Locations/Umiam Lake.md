@@ -30,7 +30,7 @@ steps_or_climb: The roadside viewpoint needs almost no walking. The water sports
 difficulty: easy
 group_fit: good
 time_needed_hrs: 1
-best_time_of_day: []
+best_time_of_day: [morning, midday, afternoon, sunset]
 after_dark:
 after_dark_note:
 opening_hours: The viewpoint is roadside and open anytime. Water sports run about 9:00 AM – 5:00 PM

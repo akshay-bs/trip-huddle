@@ -29,7 +29,7 @@ steps_or_climb: Flat to gently sloping streets; no steps
 difficulty: easy
 group_fit: good
 time_needed_hrs: 2
-best_time_of_day: []
+best_time_of_day: [evening]
 after_dark:
 after_dark_note:
 opening_hours: Shops about 10:00–20:00; street food stalls mostly in the evening

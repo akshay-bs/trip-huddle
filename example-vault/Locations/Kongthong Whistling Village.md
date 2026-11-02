@@ -29,7 +29,7 @@ steps_or_climb: Village lanes on a hillside slope with some steps down from the 
 difficulty: easy
 group_fit: ok
 time_needed_hrs: 4
-best_time_of_day: []
+best_time_of_day: [morning, afternoon, evening]
 after_dark:
 after_dark_note:
 opening_hours: Village; no fixed hours (daylight for day visitors)

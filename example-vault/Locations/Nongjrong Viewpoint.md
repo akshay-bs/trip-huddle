@@ -26,7 +26,7 @@ steps_or_climb: Short uphill walk (about 10–15 min each way) from the village/
 difficulty: easy
 group_fit: good
 time_needed_hrs: 2.5
-best_time_of_day: []
+best_time_of_day: [sunrise, morning]
 after_dark:
 after_dark_note:
 opening_hours: Open access; visited pre-dawn

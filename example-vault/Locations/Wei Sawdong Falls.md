@@ -27,7 +27,7 @@ steps_or_climb: Steep descent on uneven stone/concrete steps, mud slopes and one
 difficulty: moderate
 group_fit: poor
 time_needed_hrs: 2
-best_time_of_day: []
+best_time_of_day: [morning, midday]
 after_dark:
 after_dark_note:
 opening_hours: About 8:00 am – 5:00 pm (verify locally)

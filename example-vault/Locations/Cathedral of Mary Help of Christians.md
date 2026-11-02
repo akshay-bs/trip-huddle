@@ -29,7 +29,7 @@ steps_or_climb: A broad flight of steps up from the road to the cathedral door
 difficulty: easy
 group_fit: good
 time_needed_hrs: 0.5
-best_time_of_day: []
+best_time_of_day: [afternoon, evening]
 after_dark:
 after_dark_note:
 opening_hours: About 7:00 AM – 5:00 PM daily

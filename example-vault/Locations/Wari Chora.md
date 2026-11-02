@@ -28,7 +28,7 @@ steps_or_climb: About 1.5 km each way through forest. Mostly flat, then a near-v
 difficulty: moderate
 group_fit: poor
 time_needed_hrs: 5
-best_time_of_day: []
+best_time_of_day: [morning]
 after_dark:
 after_dark_note:
 opening_hours: 8 am – 2 pm (boating)

@@ -29,7 +29,7 @@ steps_or_climb:
 difficulty: easy
 group_fit: good
 time_needed_hrs: 0.75
-best_time_of_day: []
+best_time_of_day: [afternoon]
 after_dark:
 after_dark_note:
 opening_hours:

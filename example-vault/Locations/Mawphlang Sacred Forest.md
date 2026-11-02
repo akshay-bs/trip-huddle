@@ -30,7 +30,7 @@ steps_or_climb: Short guided loop about 30–40 min (long loop about 90 min, 3�
 difficulty: easy
 group_fit: good
 time_needed_hrs: 2
-best_time_of_day: []
+best_time_of_day: [morning, midday, afternoon]
 after_dark:
 after_dark_note:
 opening_hours: Sacred Forest about 9:00 AM – 4:30 PM; Khasi Heritage Village about 8:00 AM – 6:00 PM

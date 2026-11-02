@@ -27,7 +27,7 @@ steps_or_climb: About 100–150 concrete steps down to the lowest (third) fall, 
 difficulty: moderate
 group_fit: ok
 time_needed_hrs: 1
-best_time_of_day: []
+best_time_of_day: [morning, midday, afternoon]
 after_dark:
 after_dark_note:
 opening_hours: About 9:00/10:00–17:00 (varies by source)

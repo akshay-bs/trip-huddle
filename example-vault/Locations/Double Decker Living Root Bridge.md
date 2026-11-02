@@ -30,7 +30,7 @@ steps_or_climb: About 3,000–3,500 concrete steps down from Tyrna into the vall
 difficulty: strenuous
 group_fit: poor
 time_needed_hrs: 6
-best_time_of_day: []
+best_time_of_day: [morning, midday]
 after_dark:
 after_dark_note:
 opening_hours: Daylight hours; start early

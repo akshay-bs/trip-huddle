@@ -29,7 +29,7 @@ steps_or_climb: About 200–250 stone steps down a paved path (10–15 min down,
 difficulty: moderate
 group_fit: good
 time_needed_hrs: 2
-best_time_of_day: []
+best_time_of_day: [morning, midday, afternoon]
 after_dark:
 after_dark_note:
 opening_hours: About 7:00 am – 6:00 pm (one source) or 9:00 am – 5:00 pm (Muddie Trails); verify locally and don't plan to arrive before 9:00

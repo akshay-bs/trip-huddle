@@ -30,7 +30,7 @@ steps_or_climb: Stone steps down a wooded slope to the stream and back up. Count
 difficulty: easy
 group_fit: good
 time_needed_hrs: 1
-best_time_of_day: []
+best_time_of_day: [morning]
 after_dark:
 after_dark_note:
 opening_hours: About 8 AM – 5 PM (some listings say until 6–7 PM)

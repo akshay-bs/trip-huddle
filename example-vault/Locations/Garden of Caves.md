@@ -29,7 +29,7 @@ steps_or_climb: Stone steps and bamboo bridges on an up-and-down loop
 difficulty: easy
 group_fit: good
 time_needed_hrs: 1.5
-best_time_of_day: []
+best_time_of_day: [morning]
 after_dark:
 after_dark_note:
 opening_hours: 08:30–17:30 (confirm)

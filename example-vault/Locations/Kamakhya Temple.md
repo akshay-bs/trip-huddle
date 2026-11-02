@@ -28,7 +28,7 @@ steps_or_climb: Gentle uphill lane from the parking or drop point (a few hundred
 difficulty: moderate
 group_fit: ok
 time_needed_hrs: 3
-best_time_of_day: []
+best_time_of_day: [sunrise, morning]
 after_dark:
 after_dark_note:
 opening_hours: 5:30 AM – 1:00 PM and 2:30 PM – 5:30 PM (closed for noon bhog). VIP passes are sold in slots, about 8 AM – 4:30 PM

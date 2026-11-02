@@ -30,7 +30,7 @@ steps_or_climb: Flat paved paths
 difficulty: easy
 group_fit: good
 time_needed_hrs: 1.5
-best_time_of_day: []
+best_time_of_day: [afternoon, evening]
 after_dark:
 after_dark_note:
 opening_hours: Until about 5 pm (confirm the show time)

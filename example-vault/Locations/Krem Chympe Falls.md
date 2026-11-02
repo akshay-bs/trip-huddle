@@ -30,7 +30,7 @@ steps_or_climb: Forest trail with a suspension bridge, boulder crossings and som
 difficulty: strenuous
 group_fit: poor
 time_needed_hrs: 5
-best_time_of_day: []
+best_time_of_day: [morning, midday]
 after_dark:
 after_dark_note:
 opening_hours: No fixed hours; go with a guide in daylight

@@ -28,7 +28,7 @@ steps_or_climb: Boat or kayak crossing of the river, 7–10 min across meadows, 
 difficulty: moderate
 group_fit: ok
 time_needed_hrs: 2
-best_time_of_day: []
+best_time_of_day: [morning, midday, afternoon]
 after_dark:
 after_dark_note:
 opening_hours: About 8:00 am – 5:00 pm (verify locally)

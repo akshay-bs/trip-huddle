@@ -30,7 +30,7 @@ steps_or_climb: Short walk from parking to the viewpoint; optional scrambles up 
 difficulty: easy
 group_fit: ok
 time_needed_hrs: 1.5
-best_time_of_day: []
+best_time_of_day: [sunrise, morning, midday, afternoon]
 after_dark:
 after_dark_note:
 opening_hours: Daylight hours

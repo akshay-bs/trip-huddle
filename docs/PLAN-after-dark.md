@@ -9,6 +9,8 @@ plan-day uses one rule: leave outdoor places before sunset, and keep the last dr
 - Evenings belong in cities and large towns, where walking around after dark is easy.
 - People bend their own rules for things they love. The plan should say so, not hide it.
 
+**Principle:** the place fields below are for the agent, which collects them and builds the route. The group mainly reads the plan and the reasons behind it, so plan-day turns the fields into a plain-language "Why this plan" section and never shows the raw values.
+
 ## Approach
 Ask two questions, about the **place** and about the **road**:
 1. Is this place good, fine, or best avoided after dark? Is there a best time to be there?

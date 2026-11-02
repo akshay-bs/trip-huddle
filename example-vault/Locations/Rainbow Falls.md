@@ -28,7 +28,7 @@ steps_or_climb: The full Tyrna → Nongriat descent (about 3,000–3,500 steps) 
 difficulty: strenuous
 group_fit: poor
 time_needed_hrs: 9
-best_time_of_day: []
+best_time_of_day: [morning, midday]
 after_dark:
 after_dark_note:
 opening_hours: About 6:00 am – 5:00 pm (one source); in practice, daylight only

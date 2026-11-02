@@ -29,7 +29,7 @@ steps_or_climb: About 50 steps or a short path from the ticket point to the rock
 difficulty: easy
 group_fit: good
 time_needed_hrs: 0.25
-best_time_of_day: []
+best_time_of_day: [any]
 after_dark:
 after_dark_note:
 opening_hours: About 6 AM – 5 PM

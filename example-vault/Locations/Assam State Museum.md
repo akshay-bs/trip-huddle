@@ -27,7 +27,7 @@ steps_or_climb: Galleries over two floors; stairs between floors (no lift confir
 difficulty: easy
 group_fit: good
 time_needed_hrs: 1.5
-best_time_of_day: []
+best_time_of_day: [morning]
 after_dark:
 after_dark_note:
 opening_hours: 10:00 AM – 5:00 PM (last ticket 4:00 PM)

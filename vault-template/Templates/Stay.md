@@ -45,6 +45,7 @@ tags:
 ---
 <!--
 FIELD GUIDE
+checker: folder=Stays
 stay_type: hotel | resort | homestay | airbnb | guesthouse
 base_town: base town the stay is in  (set your list at trip setup)
 location: [lat, lng]

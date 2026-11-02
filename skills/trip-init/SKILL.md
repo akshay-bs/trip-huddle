@@ -54,7 +54,7 @@ If it stops with an error, show the user the error in plain words and fix the an
 ## 5. Check
 Run the checker from the vault folder:
 ```bash
-node "${CLAUDE_PLUGIN_ROOT}/skills/add-place/scripts/validate.mjs"
+node "${CLAUDE_PLUGIN_ROOT}/scripts/validate.mjs"
 ```
 It must report 0 errors. Delete `.claude/scratch/` afterwards.
 

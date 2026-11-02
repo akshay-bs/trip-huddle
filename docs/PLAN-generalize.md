@@ -67,7 +67,9 @@ map_box: {lat_min: 36.9, lat_max: 39.0, lng_min: -9.6, lng_max: -7.4}
 - Add `scripts/migrate-0.2.mjs`. It renames properties in an existing vault, so the example vault and the real trip vault both move over safely.
 - Rewrite the template comments in neutral wording. Example: "Is it good in your travel season?" instead of "dry in December?".
 
-## Phase 3: A shared validator driven by the templates (1–2 days)
+## Phase 3: A shared validator driven by the templates (1–2 days) — done
+
+Done: `scripts/validate.mjs`, with tests in `scripts/tests/`. Each template carries a `checker:` line in its first comment (`folder=…; required=…`). Route and Transport are checked as soon as templates for them exist.
 
 - Move `validate.mjs` to a shared `scripts/` folder that every skill calls.
 - Take the note types from the vault's `Templates/` folder instead of a fixed list. Then fields added at init are checked automatically.

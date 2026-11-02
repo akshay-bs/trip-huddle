@@ -14,6 +14,7 @@ tags:
   - day
 ---
 <!--
+checker: folder=Itinerary; required=day
 Name the note "Day 01", "Day 02", …
 stay: "[[Stay note]]" for tonight
 locations: list of "[[Location note]]" visited today (also set scheduled_day on each Location)

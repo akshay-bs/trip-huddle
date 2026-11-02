@@ -8,7 +8,7 @@ Trip-Huddle is a Claude plugin (for Cowork and Claude Code) plus an Obsidian vau
 
 1. **Every suggestion has a source.** A friend's message, an agency quote or a hotel list becomes a note in `Sources/`. Every place and stay links back to the sources that recommended it (`recommended_by`).
 2. **No duplicates.** Before adding anything, Claude searches names and aliases, so "laboon falls" finds the existing *Labon Falls* note and just adds the new source to it.
-3. **The template is the schema.** `Templates/Location.md` and `Templates/Stay.md` define every property, its order and its allowed values (the FIELD GUIDE comment). A validator checks every note against them.
+3. **The template is the schema.** `Templates/Location.md` and `Templates/Stay.md` define every property, its order and its allowed values (the FIELD GUIDE comment). The shared checker reads the `Templates/` folder and checks every note against it (Location, Stay, Day, Food, Source).
 4. **Honest research.** Coordinates are checked against OpenStreetMap or Wikipedia, and each note gets a seasonal verdict, walk difficulty, group fit and openly licensed photos.
 5. **The group decides.** New items go in as `considering` and are listed under "Open questions" on the home page. Obsidian Bases views show what's pending, the booking tracker with cost per family, and a map.
 
@@ -16,7 +16,8 @@ Trip-Huddle is a Claude plugin (for Cowork and Claude Code) plus an Obsidian vau
 | Path | What it is |
 |---|---|
 | `.claude-plugin/` | Plugin manifest, plus a marketplace file so this repo can be added as a marketplace |
-| `skills/add-place/` | The skill that adds places and stays: the pipeline, a subagent prompt for researching many items in parallel, and `validate.mjs` (Node, no dependencies) |
+| `skills/add-place/` | The skill that adds places and stays: the pipeline and a subagent prompt for researching many items in parallel |
+| `scripts/validate.mjs` | The shared checker every skill calls (Node, no dependencies). It is driven by the vault's `Templates/` and `trip.md`. Tests: `scripts/tests/` |
 | `skills/trip-init/` | The skill that sets up a vault for your trip: a short interview, then `init.mjs` (Node, no dependencies) writes `trip.md` and fills the templates and Bases. Optional field sets live in `field-packs/` |
 | `vault-template/` | An empty starter vault: templates, Bases views, Obsidian property types, a home page with a **Trip facts** section, and vault rules for Claude |
 | `example-vault/` | A filled example: 60 places and 6 stays in Assam and Meghalaya, researched for a December trip |
@@ -35,8 +36,9 @@ Trip-Huddle is a Claude plugin (for Cowork and Claude Code) plus an Obsidian vau
 
 To try it without your own data, open `example-vault/` in Obsidian, and check it with:
 ```bash
-cd example-vault && node ../skills/add-place/scripts/validate.mjs
+cd example-vault && node ../scripts/validate.mjs
 ```
+From another folder, use `node scripts/validate.mjs --vault <path>`.
 
 ## Optional Obsidian plugins
 - **Maps** (official, for Bases) or **Map View** (community) to see places and stays on a map. Both read the `location: [lat, lng]` property.

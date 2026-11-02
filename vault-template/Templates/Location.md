@@ -41,6 +41,7 @@ tags:
 ---
 <!--
 FIELD GUIDE (delete nothing — this comment is invisible in Reading view)
+checker: folder=Locations
 state: region, state or province the place is in  (set your list at trip setup)
 nearest_base: base town you would stay in to visit this place  (set your list at trip setup)
 category: viewpoint | nature | old-town | museum | market | food | activity | beach | hike | …

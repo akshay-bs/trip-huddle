@@ -45,6 +45,7 @@ tags:
 ---
 <!--
 FIELD GUIDE
+checker: folder=Stays
 stay_type: hotel | resort | homestay | airbnb | guesthouse
 base_town: Guwahati | Shillong | Sohra | Dawki | Mawlynnong | Kaziranga | Majuli | …
 location: [lat, lng]

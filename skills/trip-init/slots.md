@@ -102,8 +102,9 @@ How to use this file:
 
 ## Not text slots (the code reads `trip.md` itself)
 
-- Map box: `skills/add-place/scripts/validate.mjs` reads `map_box` (`{lat_min, lat_max, lng_min, lng_max}`) from `trip.md` at the vault root. When `trip.md` or `map_box` is missing or empty, the coordinate box check is skipped. Nothing to replace.
-- Regions: the validator reads `regions` (a list) from `trip.md` and warns when a Location's `state` is not in it. When absent, it falls back to the FIELD GUIDE list (S4). When `regions` is set, the S4 list is not checked.
+- Map box: the shared checker (`scripts/validate.mjs`) reads `map_box` (`{lat_min, lat_max, lng_min, lng_max}`) from `trip.md` at the vault root. When `trip.md` or `map_box` is missing or empty, the coordinate box check is skipped. Nothing to replace.
+- Value lists: the checker reads `regions`, `bases` and `categories` from `trip.md`. A Location's `state` must be in `regions` (the S4 list is then not checked). `bases` (S5, S7) and `categories` (S6) are only enforced when the template's list is closed; the lists `init.mjs` writes end in `…`, so they are open. Without `trip.md` lists it uses the FIELD GUIDE list. Optional extra `trip.md` properties, not written by `init.mjs`: `decision_values` (default: the template's `decision` list) and `folders` (e.g. `{location: Places}`, to override a template's folder).
+- Checker hint: each template's first comment has a line `checker: folder=<Folder>; required=<field>, <field>`. `folder` is where notes of that type live; `required` lists fields that may not be empty (`recommended_by` is always required when the template has it). Keep this line when editing a template. `init.mjs` and the field packs leave it alone. Field pack properties are checked automatically: they are template properties, and their FIELD GUIDE lines give the allowed values.
 - Trip facts in `00 Home.md`: `init.mjs` fills a line only while it still holds the starter text (`<...>` or empty). Hand-written lines are kept.
 - Field packs (`field-packs/*.json`): extra properties added before `recommended_by:` and extra FIELD GUIDE lines, plus their types in `.obsidian/types.json`. Packs not chosen are taken out again; their types stay (harmless).
 
@@ -113,3 +114,4 @@ After filling the slots, these must still hold:
 - `diff -r vault-template/Templates example-vault/Templates` shows only lines from S1 to S8.
 - `diff -r vault-template/Bases example-vault/Bases` shows only lines from S9 to S12.
 - `diff -r vault-template/.obsidian example-vault/.obsidian` shows nothing.
+- `cd example-vault && node ../scripts/validate.mjs` reports 0 errors.

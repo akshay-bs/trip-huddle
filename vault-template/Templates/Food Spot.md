@@ -17,6 +17,7 @@ tags:
   - food
 ---
 <!--
+checker: folder=Food
 veg_options: good | limited | none
 price_band: low | mid | high
 decision: considering | selected | backup | dropped

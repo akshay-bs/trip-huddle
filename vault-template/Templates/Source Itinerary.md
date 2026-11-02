@@ -10,6 +10,7 @@ tags:
   - source
 ---
 <!--
+checker: folder=Sources; required=source_from, source_kind
 source_from: person / website / agency name
 source_kind: friend | blog | agency | video | other
 processed: tick once every place below has a Location note with this source in its recommended_by

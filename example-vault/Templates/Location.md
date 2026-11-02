@@ -41,6 +41,7 @@ tags:
 ---
 <!--
 FIELD GUIDE (delete nothing — this comment is invisible in Reading view)
+checker: folder=Locations
 state: Assam | Meghalaya
 nearest_base: Guwahati | Shillong | Sohra | Dawki | Mawlynnong | Kaziranga | Majuli | …
 category: waterfall | viewpoint | cave | village | root-bridge | lake-river | wildlife | temple | museum | market | tea-estate | activity | …

@@ -109,6 +109,12 @@ Payment due dates and cancellation cut-offs become two date fields beside `balan
 ## Not in this version
 No due dates, cut-offs or reminders (next item). No comparing quotes from several rental companies. No who-paid-what or settle-up (*After travel*). No reading amounts out of a confirmation file.
 
-## Open questions
-1. Transport gains `decision` so a rental can fall through and be replaced. Is that right, or should the vehicle stay a single note that is always on the list once a vehicle is named?
-2. Stays keep `booking_ref` next to `confirmation`. Keep both, or fold the reference into the confirmation?
+## Decided
+1. Transport gains `decision` (`considering | selected | backup | dropped`), so a rental can fall through and be replaced by another selected Transport note.
+2. Stays keep `booking_ref` as a separate field next to `confirmation`.
+
+## Choices made while building
+- *Stays to book* on the home page became **Bookings**, which embeds `#To book`, `#No confirmation yet` and the Stays *Booking tracker* (as "Stays: dates and rooms"), so the budget line that points to the tracker still holds. The budget gets a **Paid so far / still owed** line.
+- Booking task notes have the five booking fields only: no `booking_ref` (the reference is on the confirmation). A task is linked to a Decision through that Decision's `affects`.
+- `Confirmations/` is a fixed folder name, not part of `folders` in `trip.md`, because the checker treats every `folders` entry as a folder of trip notes, and a pasted email there has no type.
+- The checker also warns when a `confirmation` link points outside `Confirmations/`, and when a `locked_by` link points to a note that does not exist.

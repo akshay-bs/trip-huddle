@@ -14,64 +14,12 @@ You scroll up. You find three versions of the plan, two agency PDFs, a voice not
 
 **trip-huddle** turns Claude into your group's trip assistant. You paste in the chaos. Claude keeps one tidy notebook (an [Obsidian](https://obsidian.md) vault) that the whole group can open, and it carries the trip from the first idea to the last payment.
 
-![The trip in five stages: Choose, Agree the route, Book, Travel, Come home. The road is solid through the stages trip-huddle covers today and dotted through the ones coming next.](docs/trip-journey.svg)
+![The trip in five stages: Choose, Agree the route, Book, Travel, Come home, with the question each stage raises. The road is solid through the stages trip-huddle covers today and dotted through the ones coming next.](docs/trip-journey.svg)
 
 > **Status:** early, and growing. It was built on one real group trip to Assam and Meghalaya, with the private details removed. The solid road works today; the dotted road is on the [roadmap](docs/ROADMAP.md).
 
-## Where group trips go wrong
+## What trip-huddle does today
 
-Each box holds the questions that sink a trip at that stage. Solid boxes: trip-huddle answers them today. Dotted boxes: coming next.
-
-```text
-1. CHOOSE                        2. AGREE THE ROUTE                3. BOOK
-
-┌──────────────────────────┐
-│ PLACES                   │──┐
-│ · Laboon or Labon Falls? │  │
-│   Same place?            │  │
-│ · Elephant Falls is a    │  │
-│   must-see. Why is it    │  │
-│   not on our list?       │  │
-│ · Seven Sisters Falls in │  │
-│   December? A trickle.   │  │
-│ · "Easy walk." 3,000     │  │
-│   steps down. And back   │  │
-│   up.                    │  │  ┌────────────────────────────┐    ┌────────────────────────────┐
-└──────────────────────────┘  │  │ · "It's just two hours."   │    │ · Did we decide this, or   │
-                              │  │   Hairpins, fog and photo  │    │   did someone just book    │
-┌──────────────────────────┐  │  │   stops: closer to four.   │    │   it?                      │
-│ STAYS                    │──┤  │ · Sunset is 4:38 pm. Are   │    │ · Who paid the advance?    │
-│ · Three hotel lists.     │  │  │   we still driving at 7?   │    │   What is still owed?      │
-│   Which one did we like? │  │  │ · Which day is the         │    │ · Where is the             │
-│ · On tomorrow's route,   │  ├─▶│   heaviest?                │───▶│   confirmation number?     │
-│   or an hour the wrong   │  │  │ · Eleven days of must-     │    │ · Boat ride at Dawki, jeep │
-│   way?                   │  │  │   sees. Seven days of      │    │   safari at Kaziranga:     │
-│ · Who suggested it, and  │  │  │   leave.                   │    │   booked ahead, or sold    │
-│   why?                   │  │  │ · Agency A, agency B, or   │    │   out at the gate?         │
-└──────────────────────────┘  │  │   our own plan?            │    │ · Hotel booked. Is the     │
-                              │  └────────────────────────────┘    │   plan still built around  │
-┌──────────────────────────┐  │                                    │   it?                      │
-│ FOOD                     │──┤                                    └────────────────────────────┘
-│ · That café from Priya's │  │                                                   │
-│   link. What was it      │  │                 ┌─────────────────────────────────┘
-│   called?                │  │                 ▼
-│ · On the way, or a       │  │  4. TRAVEL                         5. COME HOME
-│   detour at lunch?       │  │  ┌┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┐    ┌┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┐
-│ · Open in December?      │  │  ┆ · "What time do we leave?" ┆    ┆ · Who owes whom, per       ┆
-└──────────────────────────┘  │  ┆ · Two hours late. Which    ┆┄┄┄▶┆   family?                  ┆
-                              │  ┆   stop do we drop?         ┆    ┆ · "Gentle reminder re: van ┆
-┌──────────────────────────┐  │  ┆ · Who paid for fuel on day ┆    ┆   money."                  ┆
-│ CAR OR VAN               │──┘  ┆   four?                    ┆    └┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┘
-│ · One big van or two     │     └┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┘
-│   cars?                  │
-│ · Will it make the hill  │
-│   roads?                 │
-│ · How many hours a day   │
-│   can the driver drive?  │
-└──────────────────────────┘
-```
-
-**How it answers them**
 - **Choose.** Paste any message, quote or link. Every place, stay, café and vehicle gets one note, with who suggested it. "Laboon" finds the existing *Labon Falls*. Each place is checked for your season, how hard the walk is, and whether it suits your group.
 - **Agree the route.** Every drive is checked three ways (a map, the kind of road, recent local reports) against that date's real sunset. Each day comes back ok, tight or too much. Agency quotes and your own plan are compared side by side, with no scores.
 - **Book.** One booking list, made from what the group chose: what's booked, what's paid, what's owed, and where the voucher is. Places that need tickets land on it by themselves. Once something is booked it's locked, and nothing gets planned against it.

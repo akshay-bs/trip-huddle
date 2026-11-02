@@ -753,10 +753,225 @@ const warnLine = (out, file, text) => out.split('\n').some(l => l.includes(file)
     return dirs.includes('compare-itineraries') && !bad.length ? '' : `wrong or missing name in: ${bad.join(', ')}`;
   });
 }
-test('plugin: both manifests have the same version, and it is 0.9.0', () => {
+// ---- group-decisions: Decision notes, locks, the stage in trip.md
+{
+  const rd = (v, f) => fs.readFileSync(path.join(ROOT, v, f), 'utf8');
+  const DEC = ['Decision - Stay in Sohra', 'Decision - Dawki boat ride', 'Decision - How we get around'];
+  const mineD = out => out.split('\n').filter(l => /Decisions\//.test(l));
+  const errorsOf = out => out.split('ERRORS')[1].split('WARNINGS')[0];
+  // A copy of the example in which one Decision note (and, through `more`, anything else) can be changed.
+  const dvariant = (tag, name, edit, more = () => {}) => {
+    const v = path.join(TMP, 'dec-' + tag);
+    fs.cpSync(path.join(ROOT, 'example-vault'), v, { recursive: true });
+    const f = path.join(v, 'Decisions', name + '.md');
+    fs.writeFileSync(f, edit(fs.readFileSync(f, 'utf8')));
+    more(v);
+    return check(v);
+  };
+  const setIn = (v, rel, from, to) => {
+    const f = path.join(v, rel), t = fs.readFileSync(f, 'utf8');
+    if (!t.includes(from)) throw new Error(`test setup: "${from}" not in ${rel}`);
+    fs.writeFileSync(f, t.replace(from, to));
+  };
+  const LOCKED = 'Decision - How we get around';
+  const SOHRA = 'Decision - Stay in Sohra';
+  const lockSohra = t => t.replace('status: open', 'status: locked').replace('decided_option:', 'decided_option: "[[Sohra Plaza]]"')
+    .replace('decision_reason:', 'decision_reason: the group chose it').replace('locked_by:', 'locked_by: stay booked');
+  const select = (file, from = 'decision: considering', to = 'decision: selected') => v => setIn(v, file, from, to);
+
+  test('decisions: the example\'s Decision notes pass the checker with no errors or warnings about them', () => {
+    const r = check(path.join(ROOT, 'example-vault'));
+    const missing = DEC.filter(n => !fs.existsSync(path.join(ROOT, 'example-vault/Decisions', n + '.md')));
+    return r.code === 0 && !mineD(r.out).length && !missing.length ? '' : missing.join() + r.out;
+  });
+  test('decisions: the example has an open, a decided and a locked decision, and no dates', () => {
+    const texts = DEC.map(n => rd('example-vault', `Decisions/${n}.md`));
+    const st = texts.map(t => t.match(/^status: (\w+)/m)[1]).sort().join();
+    const emptyDates = texts.every(t => /^decided_on:\s*$/m.test(t) && /^deadline:\s*$/m.test(t));
+    const dateLike = /\b\d{4}-\d{2}-\d{2}\b/.test(texts.join('\n').replace(/YYYY-MM-DD/g, ''));
+    return st === 'decided,locked,open' && emptyDates && !dateLike ? '' : `${st} emptyDates=${emptyDates} dateLike=${dateLike}`;
+  });
+  test('decisions: the template, the Base, the types and the home page sections are in both vaults', () => {
+    const bad = [];
+    for (const f of ['Templates/Decision.md', 'Bases/Decisions.base', '.obsidian/types.json']) if (rd('vault-template', f) !== rd('example-vault', f)) bad.push(f);
+    for (const v of ['vault-template', 'example-vault']) {
+      const home = rd(v, '00 Home.md');
+      if (!home.includes('![[Decisions.base#Open]]') || !home.includes('![[Decisions.base#Locked]]')) bad.push(`${v} Home embeds`);
+      const base = rd(v, 'Bases/Decisions.base');
+      for (const view of ['Open', 'Decided', 'Locked']) if (!new RegExp(`name: ${view}\\n[\\s\\S]*?status == "${view.toLowerCase()}"`).test(base)) bad.push(`${v} ${view} view`);
+      if (!/name: Open[\s\S]*?property: deadline\n\s+direction: ASC/.test(base)) bad.push('Open view is not sorted by deadline');
+      for (const t of ['question', 'locks', 'locked_by', 'affects', 'deadline']) if (!JSON.parse(rd(v, '.obsidian/types.json')).types[t]) bad.push(`${v} type ${t}`);
+      if (!fs.existsSync(path.join(ROOT, v, v === 'vault-template' ? 'Decisions/.gitkeep' : 'Decisions'))) bad.push(`${v} Decisions folder`);
+      if (!rd(v, 'trip.md').includes('\nstage: planning\n')) bad.push(`${v} trip.md stage`);
+    }
+    return bad.join('; ');
+  });
+  test('decisions: a Decision note belongs in Decisions/', () => {
+    const v = path.join(TMP, 'dec-folder');
+    fs.cpSync(path.join(ROOT, 'example-vault'), v, { recursive: true });
+    fs.renameSync(path.join(v, 'Decisions', LOCKED + '.md'), path.join(v, 'Locations', LOCKED + '.md'));
+    return warnLine(errorsOf(check(v).out), LOCKED, 'a "decision" note must live in Decisions/') ? '' : 'no folder error';
+  });
+
+  // errors
+  test('decisions: a status other than open, decided or locked is an error', () => {
+    const r = dvariant('status', LOCKED, t => t.replace('status: locked', 'status: final'));
+    return r.code === 1 && warnLine(errorsOf(r.out), LOCKED, 'status "final" must be one of: open | decided | locked') ? '' : r.out;
+  });
+  test('decisions: decided_option must be one of the options', () => {
+    const r = dvariant('opt', LOCKED, t => t.replace('decided_option: Hired van with a driver', 'decided_option: A hot air balloon'));
+    return r.code === 1 && warnLine(errorsOf(r.out), LOCKED, 'decided_option "A hot air balloon" is not one of the options') ? '' : r.out;
+  });
+  test('decisions: decided_option works as a link as well as plain text', () => {
+    const r = dvariant('link', SOHRA, lockSohra, select('Stays/Sohra Plaza.md'));
+    return r.code === 0 && !mineD(r.out).length ? '' : r.out;
+  });
+  test('decisions: decided_option is not allowed while the decision is open', () => {
+    const r = dvariant('openopt', SOHRA, t => t.replace('decided_option:', 'decided_option: "[[Sohra Plaza]]"'));
+    return r.code === 1 && warnLine(errorsOf(r.out), SOHRA, 'decided_option is set but status is open') ? '' : r.out;
+  });
+  test('decisions: decided or locked with no decided_option is an error', () => {
+    const a = dvariant('nochoice-d', SOHRA, t => t.replace('status: open', 'status: decided'));
+    const b = dvariant('nochoice-l', LOCKED, t => t.replace('decided_option: Hired van with a driver', 'decided_option:'));
+    return warnLine(errorsOf(a.out), SOHRA, 'status is decided but decided_option is empty') && warnLine(errorsOf(b.out), LOCKED, 'status is locked but decided_option is empty') ? '' : a.out + b.out;
+  });
+  test('decisions: locked needs locked_by (an error) and locks (a warning)', () => {
+    const a = dvariant('nolockedby', LOCKED, t => t.replace('locked_by: van booked', 'locked_by:'));
+    const b = dvariant('nolocks', LOCKED, t => t.replace('locks:\n  - vehicle', 'locks: []'));
+    return a.code === 1 && warnLine(errorsOf(a.out), LOCKED, 'locked_by is empty') && b.code === 0 && warnLine(b.out, LOCKED, 'locks is empty') ? '' : a.out + b.out;
+  });
+  test('decisions: a locks value outside the list, a repeated option, no question and no reason are warnings', () => {
+    const r = dvariant('warns', LOCKED, t => t.replace('  - vehicle', '  - weather').replace('  - Self-drive', '  - Self-drive\n  - Self-drive')
+      .replace('question: How do we get around for the whole trip?', 'question:').replace(/decision_reason: .*/, 'decision_reason:'));
+    return r.code === 0 && warnLine(r.out, LOCKED, 'locks "weather" is not one of: dates | arrival | departure | route | stay | place | vehicle | activity | budget')
+      && warnLine(r.out, LOCKED, 'options lists the same choice twice') && warnLine(r.out, LOCKED, 'question is empty') && warnLine(r.out, LOCKED, 'no decision_reason') ? '' : r.out;
+  });
+  test('decisions: tags must include decision, and a template placeholder left in is an error', () => {
+    const a = dvariant('tags', LOCKED, t => t.replace('  - decision\n---', '  - other\n---'));
+    const b = dvariant('placeholder', LOCKED, t => t.replace('# Decision - How we get around', '# {{title}}'));
+    return warnLine(errorsOf(a.out), LOCKED, 'tags must include "decision"') && warnLine(errorsOf(b.out), LOCKED, 'template placeholder') ? '' : a.out + b.out;
+  });
+
+  // conflicts with a locked decision (warnings)
+  test('decisions: a locked stay that is not selected is flagged, and is fine once the stay is selected', () => {
+    const bad = dvariant('stay-bad', SOHRA, lockSohra);
+    const ok = dvariant('stay-ok', SOHRA, lockSohra, select('Stays/Sohra Plaza.md'));
+    return bad.code === 0 && warnLine(bad.out, SOHRA, 'locked on [[Sohra Plaza]], but that stay is "considering", not selected') && !mineD(ok.out).length ? '' : bad.out + ok.out;
+  });
+  test('decisions: a locked place that is not selected is flagged', () => {
+    const r = dvariant('place', SOHRA, t => lockSohra(t).replace('options:\n', 'options:\n  - "[[Umngot River (Dawki)]]"\n')
+      .replace('decided_option: "[[Sohra Plaza]]"', 'decided_option: "[[Umngot River (Dawki)]]"'));
+    return warnLine(r.out, SOHRA, 'locked on [[Umngot River (Dawki)]], but that place is "considering", not selected') ? '' : r.out;
+  });
+  test('decisions: a locked route must be agreed or booked', () => {
+    const lockRoute = t => t.replace('status: open', 'status: locked').replace('options:\n', 'options:\n  - "[[Route - Main]]"\n').replace('decided_option:', 'decided_option: "[[Route - Main]]"')
+      .replace('decision_reason:', 'decision_reason: agreed').replace('locked_by:', 'locked_by: route booked').replace('  - stay', '  - route');
+    const mk = (tag, status) => dvariant(tag, SOHRA, lockRoute, v => {
+      fs.mkdirSync(path.join(v, 'Itinerary'), { recursive: true });
+      fs.writeFileSync(path.join(v, 'Itinerary/Route - Main.md'), rd('example-vault', 'Templates/Route.md').replace('{{title}}', 'Route - Main').replace('status: draft', 'status: ' + status));
+    });
+    const draft = mk('route-draft', 'draft'), agreed = mk('route-agreed', 'agreed'), booked = mk('route-booked', 'booked');
+    return warnLine(draft.out, SOHRA, 'locked on the route [[Route - Main]], but that Route note is "draft"') && !mineD(agreed.out).length && !mineD(booked.out).length ? '' : draft.out + agreed.out + booked.out;
+  });
+  test('decisions: a dropped note in affects of a locked decision is flagged, but not for one that is only decided', () => {
+    const prep = v => {
+      select('Stays/Sohra Plaza.md')(v);
+      setIn(v, 'Stays/Polo Cherrapunjee Resort.md', 'decision: considering', 'decision: dropped');
+      setIn(v, 'Stays/Polo Cherrapunjee Resort.md', 'decision_reason:', 'decision_reason: too far');
+    };
+    const locked = dvariant('dropped-l', SOHRA, lockSohra, prep);
+    const decided = dvariant('dropped-d', SOHRA, t => lockSohra(t).replace('status: locked', 'status: decided').replace('locked_by: stay booked', 'locked_by:'), prep);
+    return warnLine(locked.out, SOHRA, 'affects [[Polo Cherrapunjee Resort]], which the group dropped') && !warnLine(decided.out, SOHRA, 'dropped') ? '' : locked.out + decided.out;
+  });
+  test('decisions: locked dates while dates_fixed is false is flagged, and is fine when dates_fixed is true or absent', () => {
+    const lockDates = t => t.replace('  - vehicle', '  - dates');
+    const bad = dvariant('dates-bad', LOCKED, lockDates);
+    const ok = dvariant('dates-ok', LOCKED, lockDates, v => setIn(v, 'trip.md', 'dates_fixed: false', 'dates_fixed: true'));
+    const none = dvariant('dates-none', LOCKED, lockDates, v => setIn(v, 'trip.md', 'dates_fixed: false\n', ''));
+    return warnLine(bad.out, LOCKED, 'locks the dates, but dates_fixed is false') && !mineD(ok.out).length && !mineD(none.out).length ? '' : bad.out + ok.out + none.out;
+  });
+
+  // the stage in trip.md
+  test('stage: every stage word passes, a bad one is a warning, and a vault with no stage line is fine', () => {
+    const one = (tag, to) => { const v = path.join(TMP, 'stage-' + tag); fs.cpSync(path.join(ROOT, 'example-vault'), v, { recursive: true }); setIn(v, 'trip.md', 'stage: planning\n', to); return check(v); };
+    const words = ['planning', 'booking', 'travelling', 'after'].map(w => one(w, `stage: ${w}\n`));
+    const bad = one('bad', 'stage: holiday\n'), none = one('none', '');
+    return words.every(r => r.code === 0 && !/stage "/.test(r.out)) && bad.code === 0 && warnLine(bad.out, 'trip.md', 'stage "holiday" is not one of: planning | booking | travelling | after')
+      && none.code === 0 && counts(none.out).warnings === counts(check(path.join(ROOT, 'example-vault')).out).warnings ? '' : bad.out + none.out;   // the example's own warnings (Food notes with no coordinates) are the baseline
+  });
+  test('trip-init: a new vault gets stage planning and the Decision files, and passes the checker', () => {
+    const t = fs.readFileSync(path.join(portugal, 'trip.md'), 'utf8');
+    const r = check(portugal);
+    return /\nstage: planning\n/.test(t) && fs.existsSync(path.join(portugal, 'Decisions')) && fs.existsSync(path.join(portugal, 'Templates/Decision.md'))
+      && fs.existsSync(path.join(portugal, 'Bases/Decisions.base')) && r.code === 0 && counts(r.out).errors === 0 ? '' : t + r.out;
+  });
+  test('trip-init: the stage is written from the answers, kept on reconfigure when left out, and a bad one is refused', () => {
+    const v = path.join(TMP, 'stage-init');
+    fs.cpSync(path.join(ROOT, 'example-vault'), v, { recursive: true });
+    const answers = (name, extra) => {
+      const f = path.join(TMP, name + '.json');
+      fs.writeFileSync(f, JSON.stringify({ ...JSON.parse(fs.readFileSync(path.join(ANSWERS, 'example-vault-answers.json'), 'utf8')), ...extra }));
+      return f;
+    };
+    const stageOf = dir => fs.readFileSync(path.join(dir, 'trip.md'), 'utf8').match(/^stage: (.*)$/m)?.[1];
+    const a = run(INIT, ['--answers', answers('st-booking', { stage: 'booking' }), '--vault', v, '--reconfigure']);
+    const afterA = stageOf(v);
+    const b = run(INIT, ['--answers', answers('st-none', {}), '--vault', v, '--reconfigure']);   // left out: kept
+    const afterB = stageOf(v);
+    const before = fs.readFileSync(path.join(v, 'trip.md'), 'utf8');
+    const bad = run(INIT, ['--answers', answers('st-bad', { stage: 'holiday' }), '--vault', v, '--reconfigure']);
+    const refusedKept = fs.readFileSync(path.join(v, 'trip.md'), 'utf8') === before;
+    const c = run(INIT, ['--answers', answers('st-back', { stage: 'planning' }), '--vault', v, '--reconfigure']);
+    const same = run(INIT, ['--answers', path.join(ANSWERS, 'example-vault-answers.json'), '--vault', v, '--reconfigure']);
+    const old = path.join(TMP, 'stage-old');   // an older trip.md with no stage line gets planning
+    fs.cpSync(path.join(ROOT, 'example-vault'), old, { recursive: true });
+    setIn(old, 'trip.md', 'stage: planning\n', '');
+    const o = run(INIT, ['--answers', path.join(ANSWERS, 'example-vault-answers.json'), '--vault', old, '--reconfigure']);
+    return a.code === 0 && afterA === 'booking' && b.code === 0 && afterB === 'booking' && bad.code === 1 && /stage "holiday" is not one of/.test(bad.out) && refusedKept
+      && c.code === 0 && stageOf(v) === 'planning' && same.out.includes('Nothing changed') && o.code === 0 && stageOf(old) === 'planning' ? ''
+      : JSON.stringify({ afterA, afterB, refusedKept, old: stageOf(old) }) + a.out + bad.out + o.out;
+  });
+  test('trip-init: reconfigure leaves the Decision notes alone', () => {
+    const v = path.join(TMP, 'stage-notes');
+    fs.cpSync(path.join(ROOT, 'example-vault'), v, { recursive: true });
+    const snap = () => DEC.map(n => fs.readFileSync(path.join(v, 'Decisions', n + '.md'), 'utf8')).join('\n');
+    const before = snap();
+    const f = path.join(TMP, 'st-notes.json');
+    fs.writeFileSync(f, JSON.stringify({ ...JSON.parse(fs.readFileSync(path.join(ANSWERS, 'example-vault-answers.json'), 'utf8')), stage: 'travelling' }));
+    const r = run(INIT, ['--answers', f, '--vault', v, '--reconfigure']);
+    return r.code === 0 && snap() === before ? '' : r.out;
+  });
+
+  // the skills and the roadmap
+  test('group-decisions: the skill names the stages and the lock table, and the other skills read locked decisions', () => {
+    const sk = n => fs.readFileSync(path.join(ROOT, 'skills', n, 'SKILL.md'), 'utf8');
+    const bad = [];
+    const g = sk('group-decisions');
+    for (const w of ['planning', 'booking', 'travelling', 'after', 'flights booked', 'dates, arrival, departure', 'never choose', 'Budget snapshot', 'cost_split_units', 'Unlock']) if (!new RegExp(w, 'i').test(g)) bad.push(`group-decisions: ${w}`);
+    for (const n of ['plan-day', 'review-travel-times', 'compare-itineraries', 'add-place', 'add-source']) {
+      const t = sk(n);
+      if (!/Decisions\//.test(t) || !/status: locked|`status: locked`/.test(t)) bad.push(`${n} does not read locked decisions`);
+    }
+    for (const n of ['plan-day', 'review-travel-times', 'compare-itineraries', 'add-place', 'add-source']) if (!/unlock/.test(sk(n))) bad.push(`${n} does not mention unlocking`);
+    if (!/stage/.test(sk('trip-init'))) bad.push('trip-init does not mention stage');
+    if (!/Locked decisions are rules/.test(rd('vault-template', '.claude/CLAUDE.md'))) bad.push('vault CLAUDE.md rule');
+    return bad.join('; ');
+  });
+  test('group-decisions: the roadmap marks it done and lists the booking phase; the plan says built', () => {
+    const r = rd('.', 'docs/ROADMAP.md');
+    const bad = [];
+    if (!/\[x\] \(v0\.10\.0\) \*\*`group-decisions`\*\*/.test(r)) bad.push('not marked done');
+    if (!/## Phase: booking and beyond/.test(r)) bad.push('no booking phase');
+    for (const w of ['Booking task list', 'Booking deadlines', 'Travelling', 'After travel', 'settle-up per family', 'would we go again']) if (!r.includes(w)) bad.push(w);
+    if (!/^Status: built \(v0\.10\.0\)/m.test(rd('.', 'docs/PLAN-group-decisions.md'))) bad.push('plan status line');
+    return bad.join('; ');
+  });
+}
+
+test('plugin: both manifests have the same version, and it is 0.10.0', () => {
   const a = JSON.parse(fs.readFileSync(path.join(ROOT, '.claude-plugin/plugin.json'), 'utf8')).version;
   const b = JSON.parse(fs.readFileSync(path.join(ROOT, '.claude-plugin/marketplace.json'), 'utf8')).plugins[0].version;
-  return a === b && a === '0.9.0' ? '' : `plugin.json ${a}, marketplace.json ${b}`;
+  return a === b && a === '0.10.0' ? '' : `plugin.json ${a}, marketplace.json ${b}`;
 });
 // ---- Food spots (restaurants and cafes): the template, the Base, the folder, the example notes and the old-vault upgrade
 {
@@ -975,6 +1190,10 @@ fs.writeFileSync(path.join(broken, 'Food/Cafe.md'), fs.readFileSync(path.join(br
   .replace('{{title}}', 'Cafe').replace('decision: considering', 'decision: maybe').replace('kind:', 'kind: diner'));
 fs.writeFileSync(path.join(broken, 'Itinerary/Route.md'), fs.readFileSync(path.join(broken, 'Templates/Route.md'), 'utf8')
   .replace('{{title}}', 'Route').replace('bases: []', 'bases: [A, B]').replace('nights_per_base: []', 'nights_per_base: [2]'));
+// A locked Decision note with no locked_by.
+fs.mkdirSync(path.join(broken, 'Decisions'), { recursive: true });
+fs.writeFileSync(path.join(broken, 'Decisions/Decision - Van.md'), fs.readFileSync(path.join(broken, 'Templates/Decision.md'), 'utf8')
+  .replace('{{title}}', 'Decision - Van').replace('options: []', 'options:\n  - Van').replace('status: open', 'status: locked').replace('decided_option:', 'decided_option: Van'));
 
 const brokenRun = check(broken);
 const expectIn = (name, file, text, level) => test(`checker finds: ${name}`, () => {
@@ -993,6 +1212,7 @@ expectIn('Day note in the wrong folder', 'Locations/Day 01.md', 'must live in It
 expectIn('bad number in a Day note', 'Itinerary/Day 02.md', 'drive_hrs must be a plain number', 'error');
 expectIn('bad decision value in a Food note', 'Food/Cafe.md', 'decision "maybe" is not one of', 'error');
 expectIn('kind outside the list in a Food note', 'Food/Cafe.md', 'kind "diner" is not one of', 'warning');
+expectIn('locked Decision note with no locked_by', 'Decisions/Decision - Van.md', 'locked_by is empty', 'error');
 expectIn('Route nights that do not match the bases', 'Itinerary/Route.md', 'nights_per_base', 'warning');
 
 fs.rmSync(TMP, { recursive: true, force: true });

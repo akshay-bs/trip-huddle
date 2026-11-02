@@ -36,6 +36,15 @@ To insert a template by hand, use the Command palette → *Templates: Insert tem
 ## Stays to book
 ![[Stays.base#Booking tracker]]
 
+## Group decisions
+Decision notes in `Decisions/` record what the group still has to decide and what it has fixed. A **locked** decision is a rule: no plan changes it unless the group unlocks it. Ask Claude to "update the group decisions" (the `group-decisions` skill).
+
+### Open decisions
+![[Decisions.base#Open]]
+
+### Locked rules
+![[Decisions.base#Locked]]
+
 ## Open questions for the group
 - [ ] 
 

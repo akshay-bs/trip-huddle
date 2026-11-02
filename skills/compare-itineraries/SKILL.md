@@ -26,6 +26,7 @@ The vault root is the current working directory.
   node "${CLAUDE_PLUGIN_ROOT}/skills/review-travel-times/scripts/travel.mjs" config
   ```
   Besides the speeds, it prints `limits`: `slack_ok_hrs`, `dark_drive_tight_min`, `late_finish_min` and `max_drive_hrs_day`. These are defaults the group changes in `trip.md` as it plans. A day with more driving than `max_drive_hrs_day` is flagged in the comparison. Do not use any other fixed number.
+- **Read the locked decisions** in `Decisions/` (it may not exist in an older vault). A decision with `status: locked` is a hard rule. Check every option against them (dates, arrival and departure, route and bases, stay, vehicle, activities already booked). An option that breaks one gets a row in the table, "Breaks a decision you locked: <which, in plain words>", and a question in *Ask before deciding*. Do not recommend it without saying so in the bottom line, and never suggest unlocking as if it were free: say what unlocking would undo. If every option breaks a lock, say that first and ask the user whether to unlock (the `group-decisions` skill does it).
 - Read `Templates/Comparison.md`. **The template is the schema:** use its property list, property order and section names. If it does not exist, the vault is older than 0.8.0: tell the user, and ask before you add `Templates/Comparison.md` and the four types `options`, `compared_on`, `recommended` and `decided_option` to `.obsidian/types.json`, copying them exactly from `${CLAUDE_PLUGIN_ROOT}/vault-template/`.
 - Everything you create stays inside the vault. Scratch files go in `.claude/scratch/` and get deleted at the end.
 
@@ -92,4 +93,5 @@ Only when the user says which option they chose. Then:
 4. **Home:** remove the *Choose between the options* line from *Open questions for the group*. Add a line for each *Ask before deciding* question about the chosen option that is still unanswered, for the group to follow up.
 5. **Places the chosen option adds** that are not in the vault: offer `add-source` (for the Source note) and then `add-place`, and say they will come in as `considering`. **Places in it that the group dropped or has not selected:** list them and ask. Never change a `decision` yourself.
 6. **Offer `plan-day`** for the days of the chosen route, in one line. If the chosen option has a day that was too much, say so and offer `review-travel-times` on it.
-7. **Validate again** (section 6) and report in a few lines: what was recorded, what was offered.
+7. **Decisions:** if the chosen option settles a question in `Decisions/`, offer `group-decisions` to record it as decided. If it breaks a locked decision, do not go ahead until the user has unlocked it.
+8. **Validate again** (section 6) and report in a few lines: what was recorded, what was offered.

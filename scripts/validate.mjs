@@ -16,7 +16,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { TOO_MUCH_BELOW_HRS } from '../skills/plan-day/scripts/sun.mjs';   // the slack verdict thresholds
-import { loadPlanningLimits } from './trip-settings.mjs';
+import { loadPlanningLimits, stageProblems } from './trip-settings.mjs';
 
 // ---------- arguments ----------
 const argv = process.argv.slice(2);
@@ -137,7 +137,8 @@ const eveningBases = Array.isArray(trip.evening_bases) ? trip.evening_bases.map(
 const regions = Array.isArray(trip.regions) && trip.regions.length ? trip.regions.map(String) : null;
 const decisionValues = Array.isArray(trip.decision_values) && trip.decision_values.length
   ? trip.decision_values.map(String) : ['considering', 'selected', 'backup', 'dropped'];
-const FOLDERS = { location: 'Locations', stay: 'Stays', day: 'Itinerary', source: 'Sources', comparison: 'Sources', food: 'Food', route: 'Itinerary', transport: 'Logistics' };
+const FOLDERS = { location: 'Locations', stay: 'Stays', day: 'Itinerary', source: 'Sources', comparison: 'Sources', decision: 'Decisions', food: 'Food', route: 'Itinerary', transport: 'Logistics' };
+const DECISION_STATUSES = ['open', 'decided', 'locked'];   // see decisionChecks
 const planning = loadPlanningLimits(VAULT);   // the defaults, changed by planning_limits in trip.md
 if (trip.folders && typeof trip.folders === 'object' && !Array.isArray(trip.folders)) {
   for (const [t, f] of Object.entries(trip.folders)) if (f) FOLDERS[t] = String(f).replace(/^\/+|\/+$/g, '');
@@ -167,6 +168,7 @@ const errors = [], warnings = [], droppedNoReason = [];
 const err = (f, msg) => errors.push(`${rel(f)}: ${msg}`);
 const warn = (f, msg) => warnings.push(`${rel(f)}: ${msg}`);
 for (const p of planning.problems) warnings.push(`trip.md: ${p}. The default is used instead`);
+for (const p of stageProblems(trip.stage)) warnings.push(`trip.md: ${p}`);
 const strayEvening = Array.isArray(trip.bases) ? eveningBases.filter(x => !trip.bases.map(String).includes(x)) : [];
 if (strayEvening.length) warnings.push(`trip.md: evening_bases has towns that are not in bases: ${strayEvening.join(', ')}. Use the same spelling as in bases`);
 
@@ -234,6 +236,7 @@ for (const f of targets) {
     const v = fm.data[k];
     if (v === null || v === undefined || (typeof v === 'object' && !Array.isArray(v)) || k === 'decision') continue;
     if (k === 'state' && regions) continue;   // checked against the trip.md regions below
+    if (type === 'decision' && k === 'status') continue;   // decisionChecks makes a bad status an error
     // A list property (like best_time_of_day: [sunrise, evening]) is checked item by item.
     for (const item of Array.isArray(v) ? v : [v]) {
       if (!allowed.has(String(item))) warn(f, `${k} "${item}" is not one of: ${[...allowed].join(' | ')}. Use one of these, or add the new value to the list in ${t.file}.`);
@@ -296,6 +299,7 @@ for (const f of targets) {
     dayChecks(f, fm.data, fm.body);
   }
   if (type === 'comparison') comparisonChecks(f, fm.data);
+  if (type === 'decision') decisionChecks(f, fm.data);
   if (type === 'source' && String(fm.data.processed) === 'true') {
     for (const l of new Set(wikilinks(fm.body))) if (!resolves(l)) warn(f, `marked processed, but [[${l}]] has no note yet`);
     const open = fm.body.replace(/<!--[\s\S]*?-->/g, '').split('\n').filter(l => /^\s*- \[ \]\s*\S/.test(l) && !/^\s*- \[ \]\s*(\[\[\s*\]\])\s*$/.test(l));
@@ -330,6 +334,47 @@ function comparisonChecks(f, d) {
   if (has(d.decided_option) && !options.includes(linkName(d.decided_option))) err(f, `decided_option [[${linkName(d.decided_option)}]] is not one of the options`);
   if (has(d.decided_option) && !decided) warn(f, `decided_option is set but status is "${d.status ?? ''}". Set status: decided, or clear decided_option`);
   if (decided && !has(d.decided_option)) warn(f, 'status is decided but decided_option is empty. Say which option the group chose');
+}
+
+// Decision notes (group-decisions): the status is one of three, the chosen option is one of the options and only exists
+// once decided, and a locked decision says what locked it. A locked decision is a hard rule, so the few conflicts that can
+// be read reliably are warnings: a chosen stay or place that is not selected, a route that is not agreed, a dropped note
+// the decision affects, and fixed dates while trip.md says the dates are flexible.
+function decisionChecks(f, d) {
+  const linkTarget = v => { const m = String(v ?? '').trim().match(/^\[\[([^\]]*)\]\]$/); return m ? m[1].split('|')[0].split('#')[0].trim() : null; };
+  const plain = v => linkTarget(v) ?? String(v ?? '').trim();
+  const has = v => v !== null && v !== undefined && String(v).trim() !== '';
+  const list = v => (Array.isArray(v) ? v : has(v) ? [v] : []);
+  const status = String(d.status ?? '');
+  if (!DECISION_STATUSES.includes(status)) err(f, `status "${status}" must be one of: ${DECISION_STATUSES.join(' | ')}`);
+  if (!has(d.question)) warn(f, 'question is empty. Write what the group has to decide');
+  const options = list(d.options).map(plain).filter(Boolean);
+  if (new Set(options).size < options.length) warn(f, 'options lists the same choice twice');
+  const chosen = has(d.decided_option);
+  if (chosen && !options.includes(plain(d.decided_option))) err(f, `decided_option "${plain(d.decided_option)}" is not one of the options`);
+  if (chosen && status === 'open') err(f, 'decided_option is set but status is open. Set status: decided, or clear decided_option');
+  if ((status === 'decided' || status === 'locked') && !chosen) err(f, `status is ${status} but decided_option is empty. Say which option the group chose`);
+  if (status === 'locked' && !has(d.locked_by)) err(f, 'status is locked but locked_by is empty. Say what made it fixed, for example "flights booked"');
+  if (status === 'locked' && !list(d.locks).length) warn(f, 'locked, but locks is empty. Say what it fixes (dates, stay, vehicle, ...)');
+  if ((status === 'decided' || status === 'locked') && !has(d.decision_reason)) warn(f, `${status} with no decision_reason. Add a few words on why`);
+  if (status !== 'locked') return;
+
+  // conflicts with a locked decision
+  const noteOf = name => { const p = (byBase.get(name) || []).find(x => x.endsWith('.md') && !rel(x).startsWith('Templates/')); return p ? parseFrontmatter(read(p)) : null; };
+  const target = linkTarget(d.decided_option) && noteOf(linkTarget(d.decided_option));
+  if (target && (target.data.type === 'stay' || target.data.type === 'location') && target.data.decision !== 'selected') {
+    warn(f, `locked on [[${linkTarget(d.decided_option)}]], but that ${target.data.type === 'stay' ? 'stay' : 'place'} is "${target.data.decision ?? ''}", not selected. Select it (the group's call), or unlock this decision`);
+  }
+  if (target && target.data.type === 'route' && !['agreed', 'booked'].includes(String(target.data.status))) {
+    warn(f, `locked on the route [[${linkTarget(d.decided_option)}]], but that Route note is "${target.data.status ?? ''}". A locked route should be agreed or booked`);
+  }
+  for (const a of list(d.affects).map(linkTarget).filter(Boolean)) {
+    const n = noteOf(a);
+    if (n?.data.decision === 'dropped') warn(f, `affects [[${a}]], which the group dropped. A locked decision cannot rest on a dropped note: unlock it, or take the link out`);
+  }
+  if (list(d.locks).includes('dates') && String(trip.dates_fixed) === 'false') {
+    warn(f, 'locks the dates, but dates_fixed is false in trip.md. Set dates_fixed to true (run trip-init settings), or unlock this decision');
+  }
 }
 
 // Day notes: sun times and the daylight arithmetic must agree with each other.

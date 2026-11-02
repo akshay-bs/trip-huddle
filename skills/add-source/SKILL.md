@@ -12,6 +12,7 @@ The vault root is the current working directory.
 
 ## 1. Read the trip
 - Read `trip.md` (currency, regions, bases, folders) and **Trip facts** in `00 Home.md`.
+- Read the locked decisions in `Decisions/` (the folder may not exist in an older vault). A decision with `status: locked` is a hard rule. A source that goes against one (an itinerary with other dates, a different route or base, another vehicle, a stay in a base whose stay is locked) is still recorded as it was given, but flag it in the report and under *Notes / opinions from the source*, and ask before anything else is done with it. Never change a locked decision.
 - Read `Templates/Source Itinerary.md`. **The template is the schema:** use its property list, property order and section names. If the template has changed, follow the template, not this skill.
 - Everything you create stays inside the vault. Scratch files go in `.claude/scratch/` and get deleted at the end.
 
@@ -80,4 +81,5 @@ Keep it short:
 - How many places and stays: new, and already in the vault.
 - What the source says about route, days, nights and price, in one line, if it's an itinerary or quote.
 - What's still open: items not yet noted, questions for the group, and whether the source is in the Home inbox or closed.
+- If it conflicts with a locked decision, say which one, in plain words, near the top, and ask whether the group wants to unlock it or set the source aside. Offer the `group-decisions` skill if the source settles or opens a question.
 - If the vault now holds two or more itineraries or quotes (this source and another, or a Route note drafted by the group), offer once, in one line, to compare them with the `compare-itineraries` skill.

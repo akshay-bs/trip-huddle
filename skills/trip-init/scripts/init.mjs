@@ -12,7 +12,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { settingsProblems } from '../../review-travel-times/scripts/travel.mjs';
-import { tripSetting, PLANNING_LIMIT_DEFAULTS, planningLimitsProblems } from '../../../scripts/trip-settings.mjs';
+import { tripSetting, PLANNING_LIMIT_DEFAULTS, planningLimitsProblems, STAGES, DEFAULT_STAGE, stageProblems } from '../../../scripts/trip-settings.mjs';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const SKILL = path.resolve(HERE, '..');
@@ -31,7 +31,7 @@ if (!ANSWERS) die('missing --answers <file.json>');
 // ---------- the answers ----------
 // Property order and defaults, the same as vault-template/trip.md.
 const DEFAULTS = {
-  schema_version: '0.2', trip_name: '', destination: '', start_date: '', end_date: '', dates_fixed: false,
+  schema_version: '0.2', trip_name: '', destination: '', start_date: '', end_date: '', dates_fixed: false, stage: DEFAULT_STAGE,
   arrival: '', departure: '', travellers: '', cost_split_units: 1, cost_split_label: 'person',
   traveller_notes: '', pace: '', food_needs: '', group_vehicle: '', currency: '', currency_symbol: '',
   season: '', daylight_hrs: 10, day_start: '08:00', sunset: '18:00', regions: [], bases: [], evening_bases: [],
@@ -50,9 +50,16 @@ try {
   nowLimits = tripSetting(old, 'planning_limits');
 } catch { nowLimits = undefined; }   // an unreadable old value is replaced by the defaults
 const limitsOk = x => x && typeof x === 'object' && !Array.isArray(x) && !planningLimitsProblems(x).length;
+// stage: the answer, else what trip.md has now (on --reconfigure), else planning. An old trip.md with no stage gets planning.
+let nowStage;
+try {
+  const old = RECONF && fs.existsSync(path.join(VAULT, 'trip.md')) ? fs.readFileSync(path.join(VAULT, 'trip.md'), 'utf8').match(/^---\r?\n([\s\S]*?)\r?\n---/)?.[1] || '' : '';
+  nowStage = tripSetting(old, 'stage');
+} catch { nowStage = undefined; }
+A.stage = raw.stage !== undefined && raw.stage !== '' ? raw.stage : (STAGES.includes(nowStage) ? nowStage : DEFAULT_STAGE);
 A.planning_limits = { ...PLANNING_LIMIT_DEFAULTS, ...(limitsOk(nowLimits) ? nowLimits : {}), ...(raw.planning_limits && typeof raw.planning_limits === 'object' ? raw.planning_limits : {}) };
 
-const problems = [];
+const problems = [...stageProblems(A.stage)];
 const isTime = v => /^\d{2}:\d{2}$/.test(v);
 const isDate = v => v === '' || /^\d{4}-\d{2}-\d{2}$/.test(v);
 if (!isTime(A.day_start)) problems.push('day_start must look like "08:00"');

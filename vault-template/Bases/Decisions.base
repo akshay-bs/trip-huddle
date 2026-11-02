@@ -1,0 +1,57 @@
+filters:
+  and:
+    - type == "decision"
+    - '!file.inFolder("Templates")'
+properties:
+  decided_option:
+    displayName: Chosen
+  decision_reason:
+    displayName: Why
+  decided_on:
+    displayName: Decided on
+  locked_by:
+    displayName: Locked by
+views:
+  - type: table
+    name: Open
+    filters:
+      and:
+        - status == "open"
+    order:
+      - file.name
+      - question
+      - deadline
+      - locks
+      - affects
+    sort:
+      - property: deadline
+        direction: ASC
+  - type: table
+    name: Decided
+    filters:
+      and:
+        - status == "decided"
+    order:
+      - file.name
+      - decided_option
+      - decision_reason
+      - decided_on
+      - locks
+      - affects
+    sort:
+      - property: decided_on
+        direction: DESC
+  - type: table
+    name: Locked
+    filters:
+      and:
+        - status == "locked"
+    order:
+      - file.name
+      - decided_option
+      - locks
+      - locked_by
+      - affects
+    sort:
+      - property: file.name
+        direction: ASC

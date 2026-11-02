@@ -18,56 +18,63 @@ You scroll up. You find three versions of the plan, two agency PDFs, a voice not
 
 > **Status:** early, and growing. It was built on one real group trip to Assam and Meghalaya, with the private details removed. The solid road works today; the dotted road is on the [roadmap](docs/ROADMAP.md).
 
-## 1. Choose
+## Where group trips go wrong
 
-*Where we go, where we sleep, how we get there, and when.*
+Each box holds the questions that sink a trip at that stage. Solid boxes: trip-huddle answers them today. Dotted boxes: coming next.
 
-| What goes wrong | What trip-huddle does |
-|---|---|
-| **The buried link.** Priya's link from three weeks ago is under 300 messages and a good-morning sticker. | Paste any message, quote or link. Every place, stay and café gets its own note with the name of whoever suggested it, and duplicates are caught even when they're spelled differently. |
-| **The "easy walk".** The "easy walk" to the root bridge is 3,000 steps down. And 3,000 back up. With grandparents. | Each place notes how hard the walk is and whether it suits your group. |
-| **Wrong season.** The waterfall everyone voted for is a trickle in December. | Each place is checked for the season you travel in. |
+```text
+1. CHOOSE                        2. AGREE THE ROUTE                3. BOOK
 
-## 2. Agree the route
+┌──────────────────────────┐
+│ PLACES                   │──┐
+│ · Laboon or Labon Falls? │  │
+│   Same place?            │  │
+│ · Elephant Falls is a    │  │
+│   must-see. Why is it    │  │
+│   not on our list?       │  │
+│ · Seven Sisters Falls in │  │
+│   December? A trickle.   │  │
+│ · "Easy walk." 3,000     │  │
+│   steps down. And back   │  │
+│   up.                    │  │  ┌────────────────────────────┐    ┌────────────────────────────┐
+└──────────────────────────┘  │  │ · "It's just two hours."   │    │ · Did we decide this, or   │
+                              │  │   Hairpins, fog and photo  │    │   did someone just book    │
+┌──────────────────────────┐  │  │   stops: closer to four.   │    │   it?                      │
+│ STAYS                    │──┤  │ · Sunset is 4:38 pm. Are   │    │ · Who paid the advance?    │
+│ · Three hotel lists.     │  │  │   we still driving at 7?   │    │   What is still owed?      │
+│   Which one did we like? │  │  │ · Which day is the         │    │ · Where is the             │
+│ · On tomorrow's route,   │  ├─▶│   heaviest?                │───▶│   confirmation number?     │
+│   or an hour the wrong   │  │  │ · Eleven days of must-     │    │ · Boat ride at Dawki, jeep │
+│   way?                   │  │  │   sees. Seven days of      │    │   safari at Kaziranga:     │
+│ · Who suggested it, and  │  │  │   leave.                   │    │   booked ahead, or sold    │
+│   why?                   │  │  │ · Agency A, agency B, or   │    │   out at the gate?         │
+└──────────────────────────┘  │  │   our own plan?            │    │ · Hotel booked. Is the     │
+                              │  └────────────────────────────┘    │   plan still built around  │
+┌──────────────────────────┐  │                                    │   it?                      │
+│ FOOD                     │──┤                                    └────────────────────────────┘
+│ · That café from Priya's │  │                                                   │
+│   link. What was it      │  │                 ┌─────────────────────────────────┘
+│   called?                │  │                 ▼
+│ · On the way, or a       │  │  4. TRAVEL                         5. COME HOME
+│   detour at lunch?       │  │  ┌┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┐    ┌┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┐
+│ · Open in December?      │  │  ┆ · "What time do we leave?" ┆    ┆ · Who owes whom, per       ┆
+└──────────────────────────┘  │  ┆ · Two hours late. Which    ┆┄┄┄▶┆   family?                  ┆
+                              │  ┆   stop do we drop?         ┆    ┆ · "Gentle reminder re: van ┆
+┌──────────────────────────┐  │  ┆ · Who paid for fuel on day ┆    ┆   money."                  ┆
+│ CAR OR VAN               │──┘  ┆   four?                    ┆    └┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┘
+│ · One big van or two     │     └┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┘
+│   cars?                  │
+│ · Will it make the hill  │
+│   roads?                 │
+│ · How many hours a day   │
+│   can the driver drive?  │
+└──────────────────────────┘
+```
 
-*Turn the choices into one plan the group signs off on, before anyone books.*
-
-| What goes wrong | What trip-huddle does |
-|---|---|
-| **4:38 pm.** The map says two hours. With hairpin bends, fog and photo stops it's closer to four. In December the sun sets at 4:38 pm in Sohra. | Every drive is checked three ways (a map, the kind of road, recent local reports) against that date's real sunset. Each day comes back ok, tight or too much, with fixes to choose from. |
-| **Eleven days of must-sees.** Every family has a must-see. Together they need eleven days. You have seven. | Agency quotes and your own draft are compared side by side: which must-sees each covers, nights, hours in the car, driving after dark, cost per family. A plain recommendation, and no scores. |
-| **Booked before agreed.** Someone books a hotel before the route is agreed. Now the whole route bends around it. | *Coming next:* a warning before anyone books ahead of the agreed route. |
-| **The zig-zag.** The plan goes Shillong, Dawki, Sohra, then back to Dawki. Nobody looked at a map. | *Coming next:* a first route built from what the group chose, with the places in a sensible order. |
-
-## 3. Book
-
-*One list, and one name on every task.*
-
-| What goes wrong | What trip-huddle does |
-|---|---|
-| **Did anyone pay the hotel?** Two people each think the other one paid. | One booking list, made from what the group chose: what's booked, what's paid, what's still owed, and where the voucher is. Once something is booked it's locked, and nothing gets planned against it. |
-| **"Someone should book the van."** Everyone agrees someone should book the van. Nobody is someone. | *Coming next:* a person named on every task. |
-| **Sold out at the gate.** Nobody pre-booked the boat ride. It's sold out the morning you arrive. | Places that need tickets land on the booking list by themselves. |
-
-## 4. Travel
-
-*When the plan meets the road.*
-
-| What goes wrong | What trip-huddle does |
-|---|---|
-| **"What time are we leaving?"** Asked twenty times before breakfast. | *Coming next:* a plan for today, with leave times. |
-| **Two hours behind.** Which stop do you drop? | *Coming next:* a quick re-plan of the rest of the trip that keeps the must-sees and everything already booked. |
-| **"I'll get this one."** Six people each said it over three days. | *Coming next:* an expense log as you go. |
-
-## 5. Come home
-
-*Settle up, and remember.*
-
-| What goes wrong | What trip-huddle does |
-|---|---|
-| **Gentle reminder.** Three months later: "gentle reminder re: van money 🙏". | *Coming next:* a settle-up per family that closes the books. |
-| **"Did the fuel count?"** "I paid for fuel on day four. Did that count?" Nobody knows. | *Coming next:* who paid what, kept as you go. |
-| **"Can you send your itinerary?"** A friend asks for your itinerary. You forward forty messages. | The vault already is the itinerary. Share the folder. |
+**How it answers them**
+- **Choose.** Paste any message, quote or link. Every place, stay, café and vehicle gets one note, with who suggested it. "Laboon" finds the existing *Labon Falls*. Each place is checked for your season, how hard the walk is, and whether it suits your group.
+- **Agree the route.** Every drive is checked three ways (a map, the kind of road, recent local reports) against that date's real sunset. Each day comes back ok, tight or too much. Agency quotes and your own plan are compared side by side, with no scores.
+- **Book.** One booking list, made from what the group chose: what's booked, what's paid, what's owed, and where the voucher is. Places that need tickets land on it by themselves. Once something is booked it's locked, and nothing gets planned against it.
 
 **You'll still argue about the hotel. You'll just argue about it once.**
 

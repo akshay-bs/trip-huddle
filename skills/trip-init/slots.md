@@ -100,17 +100,26 @@ How to use this file:
 - Meaning: heading of the nightly-price column.
 - From: `currency_symbol`. With a symbol S write `S / night`. With no symbol leave `Per night`.
 
+### S13. Itinerary base: the "ok" threshold of the verdict
+- File: `Bases/Itinerary.base` (the `verdict` formula)
+- Template text: `formula.slack_hrs < 1.5` (in `if(formula.slack_hrs < 0, "too much", if(formula.slack_hrs < 1.5, "tight", "ok"))`)
+- Example text: the same, `1.5`
+- Meaning: the slack, in hours, that a day needs to be "ok". A Base formula cannot read `trip.md`, so this is the one place where a `planning_limits` value is written into a file instead of being read. Everything else (`sun.mjs slack`, `travel.mjs`, the checker) reads `trip.md` itself.
+- From: `planning_limits.slack_ok_hrs` (default 1.5). Replace only the number after `formula.slack_hrs < ` in the second comparison. The `< 0` never changes.
+
 ## Not text slots (the code reads `trip.md` itself)
 
 - Map box: `scripts/validate.mjs` reads `map_box` (`{lat_min, lat_max, lng_min, lng_max}`) from `trip.md` at the vault root. When `trip.md` or `map_box` is missing or empty, the coordinate box check is skipped. Nothing to replace.
 - Regions: the validator reads `regions` (a list) from `trip.md` and warns when a Location's `state` is not in it. When absent, it falls back to the FIELD GUIDE list (S4). When `regions` is set, the S4 list is not checked.
 - Trip facts in `00 Home.md`: `init.mjs` fills a line only while it still holds the starter text (`<...>` or empty). Hand-written lines are kept.
 - Travel settings: `skills/review-travel-times/scripts/travel.mjs` reads the optional `road_speeds` (e.g. `{hill: {car: 30, group: 22}}`) and `stop_buffer` (`{min_per_hour: 10, min_per_stop: 15}`) from `trip.md`, and the vehicle class from `group_vehicle`. They are not in the starter `trip.md`; the answers file can carry them, `init.mjs` checks them (with `settingsProblems` from `travel.mjs`) and writes them after `field_packs`, and `--reconfigure` keeps the existing ones when the answers leave them out. Nothing to replace in the templates.
+- Planning limits: `planning_limits` (`slack_ok_hrs` 1.5, `dark_drive_tight_min` 30, `late_finish_min` 60, `max_drive_hrs_day` 6) is in the starter `trip.md`. `scripts/trip-settings.mjs` reads it for `scripts/validate.mjs`, `skills/plan-day/scripts/sun.mjs` (`slack`), `skills/review-travel-times/scripts/travel.mjs` and `init.mjs`. Only `slack_ok_hrs` also has a text slot (S13, the Itinerary base). `init.mjs` merges the answers over the vault's current values (on `--reconfigure`) over the defaults, so giving one limit never resets the others, and it rejects values that are not numbers.
+- Comparison template: `Templates/Comparison.md` has no slot. It is copied with the rest of `vault-template` into a new vault, is the same in `example-vault`, and `--reconfigure` does not add it to an older vault (the `compare-itineraries` skill asks before adding it).
 - Field packs (`field-packs/*.json`): extra properties added before `recommended_by:` and extra FIELD GUIDE lines, plus their types in `.obsidian/types.json`. Packs not chosen are taken out again; their types stay (harmless).
 
 ## Check
 
 After filling the slots, these must still hold:
 - `diff -r vault-template/Templates example-vault/Templates` shows only lines from S1 to S8.
-- `diff -r vault-template/Bases example-vault/Bases` shows only lines from S9 to S12.
+- `diff -r vault-template/Bases example-vault/Bases` shows only lines from S9 to S13 (S13 matches while `slack_ok_hrs` is the default 1.5).
 - `diff -r vault-template/.obsidian example-vault/.obsidian` shows nothing.

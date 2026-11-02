@@ -36,6 +36,7 @@ Write the answers as JSON to `.claude/scratch/trip-answers.json` inside the targ
 - `cost_split_label` singular and lowercase: `family`, `couple`, `person`.
 - Unknown values: `""` (or `[]` for lists).
 - `road_speeds` and `stop_buffer` are optional settings for `review-travel-times`. Don't ask about them in the interview, and leave them out of the answers unless the user gives them ("our van is slow on hills, 18 km/h"). Shapes: `"road_speeds": {"hill": {"car": 30, "group": 18}}` (road types: motorway, highway, rural, hill, city, track; leave out what stays at the default) and `"stop_buffer": {"min_per_hour": 10, "min_per_stop": 15}`. The script checks them. In the change-settings mode, leaving them out keeps the vault's current values.
+- `planning_limits` are the limits the skills plan and judge by, with defaults the group changes as it plans: `"planning_limits": {"slack_ok_hrs": 1.5, "dark_drive_tight_min": 30, "late_finish_min": 60, "max_drive_hrs_day": 6}` (hours of daylight slack for a day to be "ok"; minutes of unagreed driving on a road to avoid in the dark before a day is "too much"; minutes after sunset a day may end somewhere without evenings out; hours of driving a day before `compare-itineraries` flags it). Don't ask about them in the interview. Leave them out, or give only the ones the user wants changed ("we're fine with a 12-hour drive day"): anything left out keeps its current value, or the default in a new vault. The script checks them.
 
 ## 4. Run the script
 From the target folder:
@@ -45,7 +46,7 @@ node "${CLAUDE_PLUGIN_ROOT}/skills/trip-init/scripts/init.mjs" --answers .claude
 Add `--reconfigure` in the change-settings mode. The script:
 - copies the empty vault (including the hidden `.obsidian/` and `.claude/` folders) when the folder is new,
 - writes `trip.md`,
-- fills the per-trip values into the templates and Bases (cost split, currency symbol, value lists, day defaults),
+- fills the per-trip values into the templates and Bases (cost split, currency symbol, value lists, day defaults, and `slack_ok_hrs` into the Itinerary base, which cannot read `trip.md`),
 - adds or removes the chosen field packs in the templates and `.obsidian/types.json`,
 - fills in **Trip facts** in `00 Home.md`,
 - and prints every file it changed.

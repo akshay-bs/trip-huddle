@@ -80,3 +80,4 @@ Keep it short:
 - How many places and stays: new, and already in the vault.
 - What the source says about route, days, nights and price, in one line, if it's an itinerary or quote.
 - What's still open: items not yet noted, questions for the group, and whether the source is in the Home inbox or closed.
+- If the vault now holds two or more itineraries or quotes (this source and another, or a Route note drafted by the group), offer once, in one line, to compare them with the `compare-itineraries` skill.

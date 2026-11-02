@@ -19,12 +19,12 @@ The vault root is the current working directory.
 **Pipeline:** read the trip → pick what to check → three estimates per leg → sun times and bends → run the script → verdict → fixes and one question → write → validate → report.
 
 ## 1. Read the trip
-- Read `trip.md`: `group_vehicle`, `bases`, `evening_bases`, `day_start`, the fallback `daylight_hrs` and `sunset`, and the optional `road_speeds` and `stop_buffer`. Read **Trip facts** in `00 Home.md` and `Memories/MEMORY.md`. Read `Logistics/Transport.md` if it exists (the vehicle, and the daily limits).
+- Read `trip.md`: `group_vehicle`, `bases`, `evening_bases`, `day_start`, the fallback `daylight_hrs` and `sunset`, and the optional `road_speeds` and `stop_buffer`. Also read `planning_limits`: `slack_ok_hrs`, `dark_drive_tight_min` and `late_finish_min` set the verdict in section 6, and `max_drive_hrs_day` is used by `compare-itineraries`. The group changes them in `trip.md` as it plans, and the script reads them itself. Read **Trip facts** in `00 Home.md` and `Memories/MEMORY.md`. Read `Logistics/Transport.md` if it exists (the vehicle, and the daily limits).
 - Print the settings in force:
   ```bash
   node "${CLAUDE_PLUGIN_ROOT}/skills/review-travel-times/scripts/travel.mjs" config
   ```
-  It prints the vehicle class, the speeds for that class and the stops buffer. The defaults are below; `road_speeds` and `stop_buffer` in `trip.md` change them (any road type or setting left out keeps its default).
+  It prints the vehicle class, the speeds for that class, the stops buffer and the planning limits (`limits`). The defaults are below; `road_speeds` and `stop_buffer` in `trip.md` change them (any road type or setting left out keeps its default).
   | Road type (name in the script) | Car, km/h | Group vehicle, km/h |
   |---|---|---|
   | Motorway or 4-lane (`motorway`) | 70 | 55 |
@@ -86,9 +86,9 @@ The output has, for each leg: the road-type time, the map time, the estimate kep
 The day's verdict is the **worst** of these:
 | Check | Result |
 |---|---|
-| Slack, from the drive hours (with stops), the activity hours and the daylight. Same thresholds as plan-day: 1.5 hrs or more is ok, 0 to under 1.5 is tight, below 0 is too much | ok / tight / too much |
-| An `avoid` leg driven after sunset (or before sunrise) beyond what the group agreed to: up to 30 minutes is tight, more is too much | tight / too much |
-| The day ends more than an hour after sunset at a base that is not in `evening_bases` | tight |
+| Slack, from the drive hours (with stops), the activity hours and the daylight. Same thresholds as plan-day: `slack_ok_hrs` (1.5 hrs by default) or more is ok, 0 to under that is tight, below 0 is too much | ok / tight / too much |
+| An `avoid` leg driven after sunset (or before sunrise) beyond what the group agreed to: up to `dark_drive_tight_min` (30 by default) minutes is tight, more is too much | tight / too much |
+| The day ends more than `late_finish_min` (60 by default) minutes after sunset at a base that is not in `evening_bases` | tight |
 | A road that is closed | too much |
 
 So the travel verdict is never kinder than plan-day's slack verdict for the same day: it uses the same slack rule on the checked drive hours, and adds the after-dark checks that slack cannot see (slack only counts hours, not when they fall). Bends that were agreed and are no longer worse do not change the verdict, but are named in the report.

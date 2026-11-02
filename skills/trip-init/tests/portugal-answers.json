@@ -52,5 +52,6 @@
   ],
   "road_speeds": {
     "motorway": { "car": 90, "group": 80 }
-  }
+  },
+  "planning_limits": { "max_drive_hrs_day": 6 }
 }

@@ -12,6 +12,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { settingsProblems } from '../../review-travel-times/scripts/travel.mjs';
+import { tripSetting, PLANNING_LIMIT_DEFAULTS, planningLimitsProblems } from '../../../scripts/trip-settings.mjs';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const SKILL = path.resolve(HERE, '..');
@@ -35,12 +36,21 @@ const DEFAULTS = {
   traveller_notes: '', pace: '', food_needs: '', group_vehicle: '', currency: '', currency_symbol: '',
   season: '', daylight_hrs: 10, day_start: '08:00', sunset: '18:00', regions: [], bases: [], evening_bases: [],
   categories: ['viewpoint', 'nature', 'old-town', 'museum', 'market', 'food', 'activity', 'beach', 'hike'],
-  map_box: null, field_packs: [],
+  map_box: null, field_packs: [], planning_limits: PLANNING_LIMIT_DEFAULTS,
 };
 let raw;
 try { raw = JSON.parse(fs.readFileSync(path.resolve(ANSWERS), "utf8")); }
 catch (e) { die(`can't read the answers file ${ANSWERS}: ${e.message}`); }
 const A = { ...DEFAULTS, ...raw, schema_version: '0.2' };
+// planning_limits: the defaults, then what trip.md has now (on --reconfigure), then what the answers give.
+// Anything left out keeps its current value, so changing one limit never resets the others.
+let nowLimits;
+try {
+  const old = RECONF && fs.existsSync(path.join(VAULT, 'trip.md')) ? fs.readFileSync(path.join(VAULT, 'trip.md'), 'utf8').match(/^---\r?\n([\s\S]*?)\r?\n---/)?.[1] || '' : '';
+  nowLimits = tripSetting(old, 'planning_limits');
+} catch { nowLimits = undefined; }   // an unreadable old value is replaced by the defaults
+const limitsOk = x => x && typeof x === 'object' && !Array.isArray(x) && !planningLimitsProblems(x).length;
+A.planning_limits = { ...PLANNING_LIMIT_DEFAULTS, ...(limitsOk(nowLimits) ? nowLimits : {}), ...(raw.planning_limits && typeof raw.planning_limits === 'object' ? raw.planning_limits : {}) };
 
 const problems = [];
 const isTime = v => /^\d{2}:\d{2}$/.test(v);
@@ -62,6 +72,7 @@ if (A.map_box) {
 }
 // Optional travel settings, read by the review-travel-times skill (see ../slots.md). Left out of trip.md unless given.
 problems.push(...settingsProblems(A.road_speeds, A.stop_buffer));
+problems.push(...planningLimitsProblems(raw.planning_limits));   // a limit is a number; see PLANNING_LIMIT_DEFAULTS
 const PACK_DIR = path.join(SKILL, 'field-packs');
 const PACKS = Object.fromEntries(fs.readdirSync(PACK_DIR).filter(f => f.endsWith('.json'))
   .map(f => [f.replace(/\.json$/, ''), JSON.parse(fs.readFileSync(path.join(PACK_DIR, f), 'utf8'))]));
@@ -150,6 +161,9 @@ edit('Templates/Stay.md', t => guideLine(t, 'base_town',
   list(A.bases, true) ? `base_town: ${list(A.bases, true)}` : 'base_town: base town the stay is in  (set your list at trip setup)'));
 edit('Templates/Food Spot.md', t => guideLine(t, 'price_band',
   sym ? `price_band: ${sym} | ${sym.repeat(2)} | ${sym.repeat(3)}` : 'price_band: low | mid | high'));
+// The Itinerary base cannot read trip.md, so the "ok" threshold of its verdict is written into it (slot S13).
+edit('Bases/Itinerary.base', t => sub(t, /(formula\.slack_hrs < 0, "too much", if\(formula\.slack_hrs < )[\d.]+/, `$1${Number(A.planning_limits.slack_ok_hrs)}`,
+  'the slack verdict formula (S13)'));
 edit('Bases/Stays.base', t => {
   t = sub(t, /est_total \/ [\d.]+/, `est_total / ${A.cost_split_units}`, 'the cost split formula (S9)');
   const label = (key, value, slot) => { t = sub(t, new RegExp(`(^\\s*${key.replace('.', '\\.')}:\\s*\\n\\s*displayName: ).*$`, 'm'), `$1${value}`, `the ${key} column name (${slot})`); };

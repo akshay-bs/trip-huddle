@@ -4,12 +4,12 @@
 //   node travel.mjs config [--vault <folder>] [--vehicle car|group]
 //   node travel.mjs check --input <day.json> [--vault <folder>] [--vehicle car|group]
 //
-// `config` prints the settings in force: vehicle class, speeds (km/h) and the stops buffer. They come from the
-// plan's defaults, changed by `road_speeds` and `stop_buffer` in trip.md (in --vault <folder>, or the current folder).
+// `config` prints the settings in force: vehicle class, speeds (km/h), the stops buffer and the planning limits. They come from the
+// plan's defaults, changed by `road_speeds`, `stop_buffer` and `planning_limits` in trip.md (in --vault <folder>, or the current folder).
 // `check` takes one day's legs (JSON, see references/checked-example-input.json) and prints one JSON object:
 // the road-type time for each leg, the estimate kept, the checked range, the stops buffer, the day's drive hours,
 // the slack and verdict (the same rule as the Itinerary base, from plan-day/scripts/sun.mjs), the driving that falls
-// after sunset on `avoid` legs, and a day verdict that takes the worst of them.
+// after sunset on `avoid` legs, whether the day is over `max_drive_hrs_day`, and a day verdict that takes the worst of them.
 //
 // Vehicle class: `group` for a van, bus, coach or anything with 6 or more seats, else `car`. It is read from
 // `group_vehicle` in trip.md. A flag (--vehicle) or "vehicle" in the input overrides it.
@@ -17,6 +17,8 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { slack, toMinutes } from '../../plan-day/scripts/sun.mjs';
+import { tripSetting, tripFrontmatter, strictPlanningLimits, PLANNING_LIMIT_DEFAULTS } from '../../../scripts/trip-settings.mjs';
+export { tripSetting };
 
 // ---- the approved defaults. Keep in step with docs/PLAN-travel-times.md and review-travel-times/SKILL.md.
 export const ROAD_TYPES = ['motorway', 'highway', 'rural', 'hill', 'city', 'track'];
@@ -30,9 +32,10 @@ export const DEFAULT_SPEEDS = {   // km/h
   track: { car: 15, group: 10 },      // rough track
 };
 export const DEFAULT_STOP_BUFFER = { min_per_hour: 10, min_per_stop: 15 };
-// ---- how the day verdict is made (guidelines, not law; the group may bend them)
-export const DARK_TOO_MUCH_MIN = 30;   // driving an `avoid` leg this long after sunset (or before sunrise), unagreed, is "too much"; less is "tight"
-export const LATE_ARRIVAL_MIN = 60;    // a day that ends at a base without evenings out is "tight" if it ends this long after sunset
+// ---- how the day verdict is made (guidelines, not law; the group may bend them). These are the defaults of the
+// `planning_limits` in trip.md (slack_ok_hrs, dark_drive_tight_min, late_finish_min, max_drive_hrs_day), which change them.
+export const DARK_TOO_MUCH_MIN = PLANNING_LIMIT_DEFAULTS.dark_drive_tight_min;   // driving an `avoid` leg this long after sunset (or before sunrise), unagreed, is "too much"; less is "tight"
+export const LATE_ARRIVAL_MIN = PLANNING_LIMIT_DEFAULTS.late_finish_min;         // a day that ends at a base without evenings out is "tight" if it ends this long after sunset
 
 const RANK = { ok: 0, tight: 1, 'too much': 2 };
 const NAMES = Object.keys(RANK);
@@ -42,66 +45,6 @@ const mod = (a, n) => ((a % n) + n) % n;
 const hhmm = min => { const r = Math.round(mod(min, 1440)) % 1440; return `${String(Math.floor(r / 60)).padStart(2, '0')}:${String(r % 60).padStart(2, '0')}`; };
 const hm = hrs => { const m = Math.round(hrs * 12) * 5; return m >= 60 ? `${Math.floor(m / 60)} h ${String(m % 60).padStart(2, '0')}` : `${m} min`; };   // nearest 5 minutes
 const isNum = x => typeof x === 'number' && Number.isFinite(x);
-
-// ---- a very small reader for the two YAML shapes trip.md may use: {a: {b: 1}} on one line, or indented lines
-function parseFlow(src) {
-  let i = 0;
-  const ws = () => { while (i < src.length && /\s/.test(src[i])) i++; };
-  const fail = () => { throw new Error(`can't read "${src.trim()}" (expected something like {hill: {car: 30, group: 22}})`); };
-  const scalar = () => {
-    ws();
-    if (src[i] === '"' || src[i] === "'") { const q = src[i++]; let s = ''; while (i < src.length && src[i] !== q) s += src[i++]; if (src[i] !== q) fail(); i++; return s; }
-    const m = /[^,}\]:]+/y; m.lastIndex = i; const r = m.exec(src); if (!r) fail();
-    i += r[0].length; const t = r[0].trim();
-    return /^-?\d+(\.\d+)?$/.test(t) ? Number(t) : t;
-  };
-  const value = () => {
-    ws();
-    if (src[i] === '{') {
-      i++; const o = {}; ws();
-      while (src[i] !== '}') {
-        const k = scalar(); ws(); if (src[i] !== ':') fail(); i++;
-        o[String(k)] = value(); ws();
-        if (src[i] === ',') i++; ws(); if (i >= src.length) fail();
-      }
-      i++; return o;
-    }
-    if (src[i] === '[') {
-      i++; const a = []; ws();
-      while (src[i] !== ']') { a.push(value()); ws(); if (src[i] === ',') i++; ws(); if (i >= src.length) fail(); }
-      i++; return a;
-    }
-    return scalar();
-  };
-  const v = value(); ws(); if (i < src.length) fail();
-  return v;
-}
-function parseBlock(lines) {   // indented "key: value" lines -> nested object
-  const root = {}, stack = [{ indent: -1, obj: root }];
-  for (const line of lines) {
-    const m = line.match(/^(\s+)([\w-]+):\s*(.*?)\s*$/);
-    if (!m) continue;
-    while (stack.length > 1 && stack[stack.length - 1].indent >= m[1].length) stack.pop();
-    const parent = stack[stack.length - 1].obj;
-    if (m[3] === '') { parent[m[2]] = {}; stack.push({ indent: m[1].length, obj: parent[m[2]] }); }
-    else parent[m[2]] = parseFlow(m[3]);
-  }
-  return root;
-}
-// Read one top-level property of trip.md: a scalar, a flow map, or an indented block. undefined if absent or empty.
-export function tripSetting(frontmatter, key) {
-  const lines = frontmatter.split(/\r?\n/);
-  const at = lines.findIndex(l => l.startsWith(key + ':'));
-  if (at < 0) return undefined;
-  const rest = lines[at].slice(key.length + 1).trim();
-  if (rest) {
-    const unhashed = /^["']/.test(rest) ? rest : rest.replace(/\s+#.*$/, '');
-    return /^[{[]/.test(unhashed) ? parseFlow(unhashed) : unhashed.replace(/^"(.*)"$/, '$1').replace(/^'(.*)'$/, '$1');
-  }
-  const block = [];
-  for (const l of lines.slice(at + 1)) { if (/^\s+\S/.test(l)) block.push(l); else if (l.trim() !== '') break; }
-  return block.length ? parseBlock(block) : undefined;
-}
 
 // ---- settings
 // Problems with a road_speeds / stop_buffer value, as plain sentences (empty list = fine). trip-init uses this too.
@@ -142,8 +85,7 @@ export function vehicleClass(text) {
 }
 
 export function loadSettings(vault, vehicleOverride) {
-  let fm = '';
-  try { fm = fs.readFileSync(path.join(path.resolve(vault), 'trip.md'), 'utf8').match(/^---\r?\n([\s\S]*?)\r?\n---/)?.[1] || ''; } catch { /* no trip.md: defaults */ }
+  const fm = tripFrontmatter(vault);   // '' when there is no trip.md: defaults
   const roadSpeeds = tripSetting(fm, 'road_speeds'), stopBuffer = tripSetting(fm, 'stop_buffer');
   const problems = settingsProblems(roadSpeeds, stopBuffer);
   if (problems.length) throw new Error('trip.md has a problem:\n  - ' + problems.join('\n  - '));
@@ -153,6 +95,7 @@ export function loadSettings(vault, vehicleOverride) {
     else Object.assign(speeds[type], v);
   }
   const buffer = { ...DEFAULT_STOP_BUFFER, ...(stopBuffer || {}) };
+  const planning = strictPlanningLimits(vault);
   let vehicle;
   if (vehicleOverride) {
     if (!CLASSES.includes(vehicleOverride)) throw new Error(`vehicle must be car or group, got "${vehicleOverride}"`);
@@ -162,7 +105,8 @@ export function loadSettings(vault, vehicleOverride) {
     vehicle_class: vehicle.cls, vehicle_why: vehicle.why,
     speeds_kmh: Object.fromEntries(ROAD_TYPES.map(t => [t, speeds[t][vehicle.cls]])),
     stop_buffer: buffer,
-    changed_in_trip_md: { road_speeds: roadSpeeds ? Object.keys(roadSpeeds) : [], stop_buffer: stopBuffer ? Object.keys(stopBuffer) : [] },
+    limits: planning.limits,
+    changed_in_trip_md: { road_speeds: roadSpeeds ? Object.keys(roadSpeeds) : [], stop_buffer: stopBuffer ? Object.keys(stopBuffer) : [], planning_limits: planning.changed },
   };
 }
 
@@ -215,6 +159,7 @@ function legEstimates(leg, speeds) {
 export function checkDay(input, settings) {
   if (!input || !Array.isArray(input.legs) || !input.legs.length) throw new Error('the input needs a "legs" list');
   const { speeds_kmh, stop_buffer: buf } = settings;
+  const lim = { ...PLANNING_LIMIT_DEFAULTS, ...(settings.limits || {}) };   // planning_limits from trip.md
   const legs = input.legs.map(l => ({ src: l, ...legEstimates(l, speeds_kmh) }));
   const extraStops = input.legs.reduce((n, l) => n + (isNum(l.extra_stops) ? l.extra_stops : 0), 0);
   const stops = legs.length - 1 + extraStops;
@@ -239,7 +184,7 @@ export function checkDay(input, settings) {
       return { depart, arrive, dark, agreed, uncovered: Math.max(0, dark - agreed) };
     });
   };
-  const darkRank = tl => Math.max(0, ...tl.map(x => (x.uncovered > DARK_TOO_MUCH_MIN ? 2 : x.uncovered > 0 ? 1 : 0)));
+  const darkRank = tl => Math.max(0, ...tl.map(x => (x.uncovered > lim.dark_drive_tight_min ? 2 : x.uncovered > 0 ? 1 : 0)));
   if (!input.start) throw new Error('the input needs "start" (the time the first drive begins, like "08:30")');
   const tl = timeline(0);
   legs.forEach((l, i) => Object.assign(l, {
@@ -256,20 +201,20 @@ export function checkDay(input, settings) {
   let sl = null;
   if (Number.isFinite(daylight) && daylight > 0) {
     const act = Number(input.activity_hrs) || 0, pre = Number(input.predawn_hrs) || 0;
-    sl = slack({ daylight, drive: driveHrs, activity: act, predawn: pre });
+    sl = slack({ daylight, drive: driveHrs, activity: act, predawn: pre, okHrs: lim.slack_ok_hrs });
     if (sl.verdict !== 'ok') add(sl.verdict, `${driveHrs} hrs of driving including stops, plus ${act} hrs at the places, leaves ${sl.slack_hrs} hrs of ${daylight} hrs of daylight`);
   }
   // 2. Driving an `avoid` leg after sunset or before sunrise, beyond what the group agreed to
   for (const [i, x] of tl.entries()) {
     if (!x.uncovered) continue;
     const l = legs[i];
-    add(x.uncovered > DARK_TOO_MUCH_MIN ? 'too much' : 'tight',
+    add(x.uncovered > lim.dark_drive_tight_min ? 'too much' : 'tight',
       `${l.from} to ${l.to} is a road to avoid in the dark, and the checked times put ${x.uncovered} min of it ${sunset !== null && tl[i].arrive > sunset ? 'after sunset' : 'before sunrise'}${l.bent ? ' on top of what was agreed' : ''}`);
   }
   // 3. A day that ends late somewhere without evenings out
   const homeAt = tl[tl.length - 1].arrive;
   const lateBy = sunset === null ? 0 : Math.round(homeAt - sunset);
-  if (input.evening_base_end === false && lateBy > LATE_ARRIVAL_MIN) add('tight', `the day ends ${lateBy} min after sunset at a base without evenings out`);
+  if (input.evening_base_end === false && lateBy > lim.late_finish_min) add('tight', `the day ends ${lateBy} min after sunset at a base without evenings out`);
   // 4. A road that is closed
   for (const l of legs) if (l.src.blocked) add('too much', `${l.from} to ${l.to}: ${l.src.blocked}`);
 
@@ -285,6 +230,7 @@ export function checkDay(input, settings) {
     day: {
       date: input.date || null, start: input.start, sunrise: input.sunrise || null, sunset: input.sunset || null,
       drive_legs_hrs: driveLegs, stops, buffer_hrs: bufferHrs, drive_hrs: driveHrs,
+      max_drive_hrs_day: lim.max_drive_hrs_day, over_max_drive: driveHrs > lim.max_drive_hrs_day,
       drive_text: `${driveHrs} hrs (${driveLegs} of driving + ${bufferHrs} for stops)`,
       predawn_drive_hrs: round1(predawnDrive),
       slack: sl, ends_at: hhmm(homeAt), ends_min_after_sunset: sunset === null ? null : lateBy,
@@ -306,7 +252,7 @@ function main(argv) {
     let input;
     try { input = JSON.parse(fs.readFileSync(path.resolve(file), 'utf8')); } catch (e) { throw new Error(`can't read ${file}: ${e.message}`); }
     const settings = loadSettings(vault, opt('--vehicle') || input.vehicle);
-    return { settings: { vehicle_class: settings.vehicle_class, vehicle_why: settings.vehicle_why, speeds_kmh: settings.speeds_kmh, stop_buffer: settings.stop_buffer }, ...checkDay(input, settings) };
+    return { settings: { vehicle_class: settings.vehicle_class, vehicle_why: settings.vehicle_why, speeds_kmh: settings.speeds_kmh, stop_buffer: settings.stop_buffer, limits: settings.limits }, ...checkDay(input, settings) };
   }
   throw new Error('usage: travel.mjs config [--vault <folder>] [--vehicle car|group]\n       travel.mjs check --input <day.json> [--vault <folder>] [--vehicle car|group]');
 }

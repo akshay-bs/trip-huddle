@@ -1,6 +1,19 @@
 # Plan: compare-itineraries skill
 
-Status: proposal, not built yet.
+Status: built (v0.8.0).
+
+How it was built, where it differs from the proposal below:
+- **`planning_limits` has one shared reader**, `scripts/trip-settings.mjs` (it also holds the `trip.md` reader that used to live in `travel.mjs`). `sun.mjs slack` (`slack_ok_hrs`), `travel.mjs` (`slack_ok_hrs`, `dark_drive_tight_min`, `late_finish_min`, and an `over_max_drive` flag for `max_drive_hrs_day`), the checker (`slack_ok_hrs`, for the `travel_verdict` warning) and `trip-init` read it. The checker warns about a bad value and uses the default instead; the scripts stop with the problem.
+- **The Itinerary base hardcoded 1.5**, and a base cannot read `trip.md`. `trip-init` now writes `slack_ok_hrs` into the base's formula (slot S13 in `slots.md`), so the example stays identical at the default. After a change in `trip.md` the group asks for "re-run trip-init settings" for the base to follow. The Day Plan template's guide line no longer says 1.5; it names `slack_ok_hrs`.
+- **`trip-init` merges `planning_limits`:** defaults, then the vault's current values (on `--reconfigure`), then the answers, so changing one limit never resets the others. `--reconfigure` does not add `Templates/Comparison.md` to an older vault; the skill asks first and copies it (and the four types) from `vault-template/`.
+- **Checker for Comparison notes:** fewer than 2 `options` and a `decided_option` that is not one of them are errors; the rest are warnings (a valid `status`, `decided_option` set while the status is not `decided`, `decided` with no `decided_option`, `recommended` not one of the options, an option that is not a Source or Route note, the same option twice). There is no `checker:` hint in templates: the folder comes from the checker's folder defaults (`comparison: Sources`), which `folders.comparison` in `trip.md` can change.
+- **No Comparisons view** was added to a Base. The Sources folder has no Base, and a view with its own filter could not be tested here.
+- **The driving check does not write to the Source notes.** The skill follows `review-travel-times` in Source mode but keeps its results in the scratch folder, so the Comparison note is the only thing written. A Route option with no day-by-day gets only its base-to-base drives checked.
+- **`plan-day` reads the Route note whose status is `agreed`** (or `booked`), then `Itinerary/Route.md`, because several Route options can now exist. `late_finish_min` also replaces the fixed hour in plan-day's rule for a day that ends away from an evening base.
+- **The made-up example** is in `skills/compare-itineraries/references/`, with the two notes it compares in `example-context/` and the input for the agency's long day. The tests check that its driving figures and prices match the travel script and the quote.
+
+---
+
 
 This is a reusable process for any trip. Every number below is a default that a group changes in `trip.md` as it plans.
 

@@ -2,14 +2,16 @@
 // Covers: the checker on the example vault, trip-init reconfigure leaving the example vault unchanged,
 // trip-init making a new vault the checker accepts, the plan-day sun script and example, the after-dark checks
 // and migration, the review-travel-times script (road-type time, stops buffer, trip.md settings, verdicts), its
-// made-up checked example, the travel_verdict warning, and a deliberately broken vault where every problem
-// must be reported. Works on temporary copies, so the repo is never modified. Exits 1 if anything fails.
+// made-up checked example, the travel_verdict warning, the planning_limits in trip.md (they change the verdicts, reach the
+// Itinerary base through trip-init, and are checked), Comparison notes and the made-up comparison, and a deliberately
+// broken vault where every problem must be reported. Works on temporary copies, so the repo is never modified. Exits 1 if anything fails.
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { sunTimes, slack, tzOffsetMinutes, TIGHT_BELOW_HRS, TOO_MUCH_BELOW_HRS } from '../skills/plan-day/scripts/sun.mjs';
+import { loadPlanningLimits, planningLimitsProblems, PLANNING_LIMIT_DEFAULTS } from './trip-settings.mjs';
 import { vehicleClass, loadSettings, checkDay, settingsProblems, DEFAULT_SPEEDS, DEFAULT_STOP_BUFFER, DARK_TOO_MUCH_MIN } from '../skills/review-travel-times/scripts/travel.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -545,20 +547,232 @@ const warnLine = (out, file, text) => out.split('\n').some(l => l.includes(file)
     return /rule_bends,travel_checked,travel_verdict,tags/.test(keys(tpl)) && keys(tpl) === keys(fs.readFileSync(path.join(CHECKED, 'checked-example.md'), 'utf8')) ? '' : keys(tpl);
   });
 }
-test('plugin: both manifests have the same version, and it is 0.7.0', () => {
+// ---- planning_limits in trip.md: defaults, overrides that change the verdicts, trip-init, the checker
+{
+  const withLimits = (name, line) => {   // a copy of the Portugal vault whose trip.md has this planning_limits line ('' = none)
+    const v = path.join(TMP, 'limits-' + name);
+    fs.cpSync(portugal, v, { recursive: true });
+    const f = path.join(v, 'trip.md');
+    fs.writeFileSync(f, fs.readFileSync(f, 'utf8').replace(/^planning_limits:.*\n/m, line ? line + '\n' : ''));
+    return v;
+  };
+  const leg = (km, road, extra = {}) => ({ from: 'A', to: 'B', km, road, after_dark: 'ok', ...extra });
+  const chk = (v, legs, extra = {}) => checkDay({ start: '08:00', sunset: '20:00', sunrise: '06:00', daylight_hrs: 14, activity_hrs: 0, legs, ...extra }, loadSettings(v)).day;
+  const fine = withLimits('default', '');   // no planning_limits at all: the defaults
+
+  test('limits: the defaults are 1.5 hrs of slack, 30 min of dark driving, 60 min late, 6 hrs of driving a day', () => {
+    const none = loadPlanningLimits(fine), starter = loadPlanningLimits(path.join(ROOT, 'vault-template'));
+    return JSON.stringify(PLANNING_LIMIT_DEFAULTS) === '{"slack_ok_hrs":1.5,"dark_drive_tight_min":30,"late_finish_min":60,"max_drive_hrs_day":6}'
+      && JSON.stringify(none.limits) === JSON.stringify(PLANNING_LIMIT_DEFAULTS) && none.changed.length === 0 && !none.problems.length
+      && JSON.stringify(starter.limits) === JSON.stringify(PLANNING_LIMIT_DEFAULTS) && !starter.problems.length ? '' : JSON.stringify([none, starter]);
+  });
+  test('limits: trip.md values are read in flow and block form, and anything left out keeps its default', () => {
+    const flow = loadPlanningLimits(withLimits('flow', 'planning_limits: {slack_ok_hrs: 2, max_drive_hrs_day: 7.5}'));
+    const block = loadPlanningLimits(withLimits('block', 'planning_limits:\n  late_finish_min: 90\n  dark_drive_tight_min: 15'));
+    return flow.limits.slack_ok_hrs === 2 && flow.limits.max_drive_hrs_day === 7.5 && flow.limits.late_finish_min === 60 && flow.changed.join() === 'slack_ok_hrs,max_drive_hrs_day'
+      && block.limits.late_finish_min === 90 && block.limits.dark_drive_tight_min === 15 && block.limits.slack_ok_hrs === 1.5 ? '' : JSON.stringify([flow, block]);
+  });
+  test('limits: planningLimitsProblems names what is wrong', () => {
+    const bad = planningLimitsProblems({ slack_ok_hrs: 'lots', max_drive_hrs_day: 0, speed: 3, late_finish_min: -5 });
+    return !planningLimitsProblems(undefined).length && !planningLimitsProblems({ slack_ok_hrs: 0, max_drive_hrs_day: 8 }).length && !planningLimitsProblems({ slack_ok_hrs: '2' }).length
+      && bad.length === 4 && bad.some(p => /slack_ok_hrs must be/.test(p)) && bad.some(p => /"speed" is not a setting/.test(p)) ? '' : bad.join('; ');
+  });
+  test('limits: slack_ok_hrs changes the plan-day slack verdict (sun.mjs, in code and on the command line)', () => {
+    const at = (okHrs) => slack({ daylight: 10, drive: 4, activity: 4.5, okHrs }).verdict;    // slack 1.5
+    const cli = (v) => JSON.parse(run(SUN, ['slack', '--daylight', '10', '--drive', '4', '--activity', '4.5', '--vault', v]).out);
+    const strict = withLimits('slack2', 'planning_limits: {slack_ok_hrs: 2}');
+    const lax = withLimits('slack1', 'planning_limits: {slack_ok_hrs: 1}');
+    const bad = run(SUN, ['slack', '--daylight', '10', '--drive', '4', '--activity', '4.5', '--vault', withLimits('slackbad', 'planning_limits: {slack_ok_hrs: lots}')]);
+    return at(1.5) === 'ok' && at(2) === 'tight' && at(1) === 'ok' && cli(fine).verdict === 'ok' && cli(strict).verdict === 'tight' && cli(strict).slack_ok_hrs === 2
+      && cli(lax).verdict === 'ok' && cli(fine).limit_source === 'default' && /trip\.md/.test(cli(strict).limit_source)
+      && bad.code === 2 && /slack_ok_hrs/.test(bad.out) ? '' : JSON.stringify([cli(fine), cli(strict)]) + bad.out;
+  });
+  test('limits: slack_ok_hrs changes the travel verdict for a day with no dark driving', () => {
+    const run1 = v => chk(v, [leg(44, 'hill')], { daylight_hrs: 7, activity_hrs: 4 });      // 2 hrs of driving + 0.3 for stops + 4: slack 0.7
+    const a = run1(fine), b = run1(withLimits('slack-low', 'planning_limits: {slack_ok_hrs: 0.5}'));
+    const c = chk(withLimits('slack-high', 'planning_limits: {slack_ok_hrs: 20}'), [leg(44, 'hill')]);   // plenty of daylight, but 20 hrs is asked for
+    return a.verdict === 'tight' && b.verdict === 'ok' && c.verdict === 'tight' && c.slack.slack_ok_hrs === 20 ? '' : JSON.stringify([a, b, c]);
+  });
+  test('limits: dark_drive_tight_min moves the line between tight and too much for unagreed dark driving', () => {
+    const dark = (v, start) => chk(v, [leg(44, 'hill', { after_dark: 'avoid' })], { start, sunset: '20:00' });   // 140 min on the road
+    const wide = withLimits('dark60', 'planning_limits: {dark_drive_tight_min: 60}'), narrow = withLimits('dark10', 'planning_limits: {dark_drive_tight_min: 10}');
+    return dark(fine, '18:30').verdict === 'too much' && dark(wide, '18:30').verdict === 'tight' && dark(fine, '18:00').verdict === 'tight' && dark(narrow, '18:00').verdict === 'too much'
+      && dark(wide, '18:30').leave_earlier?.minutes === 60 ? '' : JSON.stringify([dark(fine, '18:30'), dark(wide, '18:30')]);
+  });
+  test('limits: late_finish_min moves the line for a day that ends late at a base without evenings out', () => {
+    const late = v => chk(v, [leg(44, 'hill')], { start: '16:30', sunset: '17:30', evening_base_end: false, daylight_hrs: 14 });   // ends 80 min after sunset
+    return late(fine).verdict === 'tight' && late(withLimits('late120', 'planning_limits: {late_finish_min: 120}')).verdict === 'ok'
+      && late(withLimits('late30', 'planning_limits: {late_finish_min: 30}')).verdict === 'tight' ? '' : JSON.stringify(late(fine));
+  });
+  test('limits: max_drive_hrs_day flags a day over it (the day is not rewritten, only flagged)', () => {
+    const day = v => chk(v, [leg(44, 'hill'), leg(44, 'hill'), leg(44, 'hill')]);       // 6 hrs of driving + stops
+    const a = day(fine), b = day(withLimits('max9', 'planning_limits: {max_drive_hrs_day: 9}'));
+    return a.over_max_drive === true && a.max_drive_hrs_day === 6 && a.drive_hrs > 6 && b.over_max_drive === false && b.max_drive_hrs_day === 9 ? '' : JSON.stringify([a, b]);
+  });
+  test('limits: travel.mjs config prints the limits and which ones trip.md changed', () => {
+    const j = JSON.parse(run(TRAVEL, ['config', '--vault', withLimits('cfg', 'planning_limits: {late_finish_min: 90}')]).out);
+    const bad = run(TRAVEL, ['config', '--vault', withLimits('cfgbad', 'planning_limits: {late_finish_mins: 90}')]);
+    return j.limits.late_finish_min === 90 && j.limits.slack_ok_hrs === 1.5 && j.changed_in_trip_md.planning_limits.join() === 'late_finish_min'
+      && bad.code === 2 && /"late_finish_mins" is not a setting/.test(bad.out) ? '' : JSON.stringify(j) + bad.out;
+  });
+  test('limits: the checker uses slack_ok_hrs for the travel_verdict warning, and reports a bad planning_limits value', () => {
+    const base = fs.readFileSync(path.join(dayVault, 'Itinerary/Day 05.md'), 'utf8');            // slack 5.4, travel_verdict ok
+    const mk = (name, line) => { const v = withLimits(name, line); fs.cpSync(path.join(dayVault, 'Itinerary'), path.join(v, 'Itinerary'), { recursive: true }); fs.cpSync(path.join(dayVault, 'Locations'), path.join(v, 'Locations'), { recursive: true });
+      fs.cpSync(path.join(dayVault, 'Stays'), path.join(v, 'Stays'), { recursive: true }); fs.cpSync(path.join(dayVault, 'Sources'), path.join(v, 'Sources'), { recursive: true }); return check(v).out; };
+    const none = mk('chk-default', ''), five = mk('chk-5', 'planning_limits: {slack_ok_hrs: 5}'), six = mk('chk-6', 'planning_limits: {slack_ok_hrs: 6}');
+    const bad = mk('chk-bad', 'planning_limits: {slack_ok_hrs: lots, speed: 3}');
+    return base.includes('travel_verdict: ok') && !warnLine(none, 'Day 05.md', 'travel_verdict is') && !warnLine(five, 'Day 05.md', 'travel_verdict is')
+      && warnLine(six, 'Day 05.md', 'travel_verdict is "ok", but the day\'s slack (5.4 hrs) gives "tight"')
+      && warnLine(bad, 'trip.md', 'planning_limits.slack_ok_hrs must be') && warnLine(bad, 'trip.md', '"speed" is not a setting') ? '' : none + five + six + bad;
+  });
+
+  // trip-init
+  const exAnswers = JSON.parse(fs.readFileSync(path.join(ANSWERS, 'example-vault-answers.json'), 'utf8'));
+  const reconf = (v, edit) => {
+    const a = path.join(TMP, 'limits-answers-' + path.basename(v) + '.json'), x = JSON.parse(JSON.stringify(exAnswers));
+    edit(x); fs.writeFileSync(a, JSON.stringify(x));
+    return run(INIT, ['--answers', a, '--vault', v, '--reconfigure']);
+  };
+  const rd = (v, f) => fs.readFileSync(path.join(v, f), 'utf8');
+  test('trip-init: a new vault gets planning_limits in trip.md and the default threshold in the Itinerary base', () => {
+    const t = rd(portugal, 'trip.md'), b = rd(portugal, 'Bases/Itinerary.base');
+    return t.includes('planning_limits: {slack_ok_hrs: 1.5, dark_drive_tight_min: 30, late_finish_min: 60, max_drive_hrs_day: 6}')
+      && b === rd(path.join(ROOT, 'vault-template'), 'Bases/Itinerary.base') && b.includes('formula.slack_hrs < 1.5, "tight"') ? '' : t;
+  });
+  test('trip-init: a changed slack_ok_hrs is written to trip.md and into the Itinerary base, and changing it back restores the example exactly', () => {
+    const v = path.join(TMP, 'limits-reconf');
+    fs.cpSync(path.join(ROOT, 'example-vault'), v, { recursive: true });
+    const r1 = reconf(v, x => { x.planning_limits = { slack_ok_hrs: 2 }; });
+    const t1 = rd(v, 'trip.md'), b1 = rd(v, 'Bases/Itinerary.base');
+    const r2 = reconf(v, x => { delete x.planning_limits; });                                     // answers leave it out: the vault's value is kept
+    const t2 = rd(v, 'trip.md');
+    const r3 = reconf(v, x => { x.planning_limits = { max_drive_hrs_day: 8 }; });                 // one other limit: slack_ok_hrs stays 2
+    const t3 = rd(v, 'trip.md');
+    const r4 = reconf(v, x => { x.planning_limits = { slack_ok_hrs: 1.5, max_drive_hrs_day: 6 }; });
+    const same = ['trip.md', 'Bases/Itinerary.base'].every(f => rd(v, f) === rd(path.join(ROOT, 'example-vault'), f));
+    return r1.code === 0 && t1.includes('planning_limits: {slack_ok_hrs: 2, dark_drive_tight_min: 30, late_finish_min: 60, max_drive_hrs_day: 6}')
+      && b1.includes('if(formula.slack_hrs < 0, "too much", if(formula.slack_hrs < 2, "tight", "ok"))') && /Bases\/Itinerary\.base/.test(r1.out)
+      && t2.includes('slack_ok_hrs: 2,') && r2.out.includes('Nothing changed')
+      && t3.includes('planning_limits: {slack_ok_hrs: 2, dark_drive_tight_min: 30, late_finish_min: 60, max_drive_hrs_day: 8}') && r3.code === 0
+      && r4.code === 0 && same ? '' : [r1.out, t1, b1, r2.out, t2, r3.out, t3, r4.out].join('\n');
+  });
+  test('trip-init: a limit that is not a number, or not a setting, is refused and the vault is left alone', () => {
+    const v = path.join(TMP, 'limits-refuse');
+    fs.cpSync(path.join(ROOT, 'example-vault'), v, { recursive: true });
+    const before = rd(v, 'trip.md');
+    const r = reconf(v, x => { x.planning_limits = { slack_ok_hrs: 'lots', speed: 3 }; });
+    return r.code === 1 && /slack_ok_hrs must be/.test(r.out) && /"speed" is not a setting/.test(r.out) && rd(v, 'trip.md') === before ? '' : r.out;
+  });
+}
+
+// ---- compare-itineraries: the Comparison note checks, and the made-up comparison
+{
+  const REF = path.join(ROOT, 'skills/compare-itineraries/references');
+  const cmpName = 'Sources/Comparison - Agency quote vs Own draft.md';
+  const cmpVault = path.join(TMP, 'compare');
+  fs.cpSync(dayVault, cmpVault, { recursive: true });
+  fs.copyFileSync(path.join(REF, 'example-context/Example Agency - Coast and Plains quote.md'), path.join(cmpVault, 'Sources/Example Agency - Coast and Plains quote.md'));
+  fs.copyFileSync(path.join(REF, 'example-context/Route - Option B.md'), path.join(cmpVault, 'Itinerary/Route - Option B.md'));
+  fs.copyFileSync(path.join(REF, 'comparison-example.md'), path.join(cmpVault, cmpName));
+  const mine = out => out.split('\n').filter(l => /Comparison - Agency|Coast and Plains|Route - Option B/.test(l));
+  const variant = (name, edit) => {
+    const v = path.join(TMP, 'compare-' + name);
+    fs.cpSync(cmpVault, v, { recursive: true });
+    const f = path.join(v, cmpName);
+    fs.writeFileSync(f, edit(fs.readFileSync(f, 'utf8')));
+    return check(v);
+  };
+  const errorsOf = out => out.split('ERRORS')[1].split('WARNINGS')[0];
+  const OPT_B = '  - "[[Route - Option B]]"\n';
+
+  test('compare: the made-up comparison and its two options pass the checker with no errors or warnings about them', () => {
+    const r = check(cmpVault);
+    return r.code === 0 && !mine(r.out).length ? '' : r.out;
+  });
+  test('compare: a Comparison note belongs in Sources/ (the default folder), and the template is the same in both vaults', () => {
+    const same = fs.readFileSync(path.join(ROOT, 'vault-template/Templates/Comparison.md'), 'utf8') === fs.readFileSync(path.join(ROOT, 'example-vault/Templates/Comparison.md'), 'utf8');
+    const v = path.join(TMP, 'compare-folder');
+    fs.cpSync(cmpVault, v, { recursive: true });
+    fs.renameSync(path.join(v, cmpName), path.join(v, 'Itinerary/Comparison - Agency quote vs Own draft.md'));
+    const r = check(v);
+    return same && warnLine(r.out, 'Comparison - Agency', 'a "comparison" note must live in Sources/') ? '' : `template same: ${same}\n` + r.out;
+  });
+  test('compare: fewer than two options is an error', () => {
+    const r = variant('one', t => t.replace(OPT_B, ''));
+    return r.code === 1 && errorsOf(r.out).includes('options needs 2 or more links') ? '' : r.out;
+  });
+  test('compare: an option that is not a Source or Route note is flagged, and a repeated option too', () => {
+    const a = variant('badopt', t => t.replace(OPT_B, '  - "[[Mountain Fort (Example)]]"\n').replace('recommended: "[[Route - Option B]]"', 'recommended:'));
+    const b = variant('twice', t => t.replace(OPT_B, '  - "[[Example Agency - Coast and Plains quote]]"\n').replace('recommended: "[[Route - Option B]]"', 'recommended:'));
+    return warnLine(a.out, 'Comparison - Agency', 'option [[Mountain Fort (Example)]] is not a Source or Route note') && warnLine(b.out, 'Comparison - Agency', 'lists the same note twice') ? '' : a.out + b.out;
+  });
+  test('compare: a status other than draft or decided is flagged', () => {
+    const r = variant('status', t => t.replace('status: draft', 'status: pending'));
+    return warnLine(r.out, 'Comparison - Agency', 'status "pending" is not one of: draft | decided') ? '' : r.out;
+  });
+  test('compare: decided_option must be one of the options, and is a warning when the status is not decided', () => {
+    const notOne = variant('decided-bad', t => t.replace('status: draft\ndecided_option:', 'status: decided\ndecided_option: "[[Old Town Walk (Example)]]"'));
+    const draft = variant('decided-draft', t => t.replace('decided_option:', 'decided_option: "[[Route - Option B]]"'));
+    const empty = variant('decided-empty', t => t.replace('status: draft', 'status: decided'));
+    const good = variant('decided-ok', t => t.replace('status: draft\ndecided_option:', 'status: decided\ndecided_option: "[[Route - Option B]]"'));
+    return notOne.code === 1 && errorsOf(notOne.out).includes('decided_option [[Old Town Walk (Example)]] is not one of the options')
+      && draft.code === 0 && warnLine(draft.out, 'Comparison - Agency', 'decided_option is set but status is "draft"')
+      && empty.code === 0 && warnLine(empty.out, 'Comparison - Agency', 'status is decided but decided_option is empty')
+      && good.code === 0 && !mine(good.out).length ? '' : [notOne.out, draft.out, empty.out, good.out].join('\n');
+  });
+  test('compare: recommended must be one of the options', () => {
+    const r = variant('rec', t => t.replace('recommended: "[[Route - Option B]]"', 'recommended: "[[Old Town Walk (Example)]]"'));
+    return warnLine(r.out, 'Comparison - Agency', 'recommended [[Old Town Walk (Example)]] is not one of the options') ? '' : r.out;
+  });
+  test('compare: tags must include comparison, and a template placeholder left in is an error', () => {
+    const a = variant('tag', t => t.replace('  - comparison', '  - option')), b = variant('placeholder', t => t.replace('# Comparison - Agency quote vs Own draft', '# {{title}}'));
+    return errorsOf(a.out).includes('tags must include "comparison"') && errorsOf(b.out).includes('{{title}}') ? '' : a.out + b.out;
+  });
+
+  test('compare: the made-up comparison\'s driving figures and prices match the travel script and the quote', () => {
+    const text = fs.readFileSync(path.join(REF, 'comparison-example.md'), 'utf8');
+    const a = JSON.parse(run(TRAVEL, ['check', '--input', path.join(REF, 'comparison-example-input.json'), '--vault', portugal]).out);
+    const b = JSON.parse(run(TRAVEL, ['check', '--input', path.join(CHECKED, 'checked-example-input.json'), '--vault', portugal]).out);
+    const quote = fs.readFileSync(path.join(REF, 'example-context/Example Agency - Coast and Plains quote.md'), 'utf8');
+    const total = Number(quote.match(/^- Total (\d+) EUR/m)[1]), units = Number(fs.readFileSync(path.join(portugal, 'trip.md'), 'utf8').match(/^cost_split_units: (\d+)/m)[1]);
+    const perUnit = total / units, draft = 1550;
+    const darkMin = Math.round(a.legs.reduce((n, l) => n + l.dark_driving_min, 0) / 10) * 10;
+    const bad = [];
+    if (!(a.day.verdict === 'too much' && a.day.over_max_drive && a.day.ends_min_after_sunset > 0)) bad.push('the agency day should be too much, over the driving limit, and end after sunset');
+    if (!(b.day.verdict === 'ok' && !b.day.over_max_drive)) bad.push('our draft\'s busiest day should be ok and under the driving limit');
+    if (!text.includes(`Busiest day about ${Math.round(a.day.drive_hrs)} hrs (est.)`)) bad.push(`agency driving should say about ${Math.round(a.day.drive_hrs)} hrs`);
+    if (!text.includes(`Busiest day about ${Math.round(b.day.drive_hrs)} hrs (est.)`)) bad.push(`draft driving should say about ${Math.round(b.day.drive_hrs)} hrs`);
+    if (!text.includes(`about ${darkMin} minutes of hill road after sunset`)) bad.push(`dark driving should say about ${darkMin} minutes`);
+    if (!text.includes(`€${perUnit.toLocaleString('en-US')} (quoted)`)) bad.push(`cost per couple should be €${perUnit.toLocaleString('en-US')}`);
+    if (!text.includes(`about €${perUnit - draft} cheaper per couple`)) bad.push(`the gap should be €${perUnit - draft}`);
+    return bad.join('; ');
+  });
+  test('compare: skills that have a SKILL.md are named after their folder', () => {
+    const dirs = fs.readdirSync(path.join(ROOT, 'skills')).filter(d => fs.existsSync(path.join(ROOT, 'skills', d, 'SKILL.md')));
+    const bad = dirs.filter(d => !new RegExp(`^---\\nname: ${d}\\n`).test(fs.readFileSync(path.join(ROOT, 'skills', d, 'SKILL.md'), 'utf8')));
+    return dirs.includes('compare-itineraries') && !bad.length ? '' : `wrong or missing name in: ${bad.join(', ')}`;
+  });
+}
+test('plugin: both manifests have the same version, and it is 0.8.0', () => {
   const a = JSON.parse(fs.readFileSync(path.join(ROOT, '.claude-plugin/plugin.json'), 'utf8')).version;
   const b = JSON.parse(fs.readFileSync(path.join(ROOT, '.claude-plugin/marketplace.json'), 'utf8')).plugins[0].version;
-  return a === b && a === '0.7.0' ? '' : `plugin.json ${a}, marketplace.json ${b}`;
+  return a === b && a === '0.8.0' ? '' : `plugin.json ${a}, marketplace.json ${b}`;
 });
 test('vaults: the Day Plan template, trip.md notes and Home pointer agree between vault-template and example-vault', () => {
   const rd = (v, f) => fs.readFileSync(path.join(ROOT, v, f), 'utf8');
   // the three per-trip lines (slots S1 to S3) may differ; everything else in the template must be identical
   const mask = t => t.replace(/^daylight_hrs:.*$/m, 'daylight_hrs: X').replace(/^\| \d{2}:\d{2} \| Breakfast.*$/m, 'START').replace(/^\| \d{2}:\d{2} \| Sunset.*$/m, 'SUNSET');
   const bullet = t => t.split('\n').find(l => l.startsWith('- Optional, for the `review-travel-times` skill')) || '';
+  const limitsBullet = t => t.split('\n').find(l => l.startsWith('- `planning_limits` are')) || '';
   const bad = [];
   if (mask(rd('vault-template', 'Templates/Day Plan.md')) !== mask(rd('example-vault', 'Templates/Day Plan.md'))) bad.push('Day Plan template');
   if (!bullet(rd('vault-template', 'trip.md')) || bullet(rd('vault-template', 'trip.md')) !== bullet(rd('example-vault', 'trip.md'))) bad.push('trip.md travel bullet');
+  if (!limitsBullet(rd('vault-template', 'trip.md')) || limitsBullet(rd('vault-template', 'trip.md')) !== limitsBullet(rd('example-vault', 'trip.md'))) bad.push('trip.md planning_limits bullet');
+  const limitsLine = t => t.split('\n').find(l => l.startsWith('planning_limits:')) || '';
+  if (!limitsLine(rd('vault-template', 'trip.md')) || limitsLine(rd('vault-template', 'trip.md')) !== limitsLine(rd('example-vault', 'trip.md'))) bad.push('trip.md planning_limits line');
+  if (rd('vault-template', 'Templates/Comparison.md') !== rd('example-vault', 'Templates/Comparison.md')) bad.push('Comparison template');
   for (const v of ['vault-template', 'example-vault']) if (!rd(v, '00 Home.md').includes('review-travel-times')) bad.push(`${v} Home pointer`);
+  for (const v of ['vault-template', 'example-vault']) if (!rd(v, '00 Home.md').includes('compare-itineraries')) bad.push(`${v} Home pointer to compare-itineraries`);
   return bad.length ? `differs or missing: ${bad.join(', ')}` : '';
 });
 

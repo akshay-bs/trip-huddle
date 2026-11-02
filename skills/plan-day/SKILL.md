@@ -13,8 +13,8 @@ The vault root is the current working directory.
 **Pipeline:** read the trip → pick the days and their places → sun times → legs → schedule → slack and verdict → write the Day note → set `scheduled_day` → validate → report.
 
 ## 1. Read the trip
-- Read `trip.md`: `group_vehicle`, `travellers`, `traveller_notes`, `pace`, `season`, `bases`, `evening_bases` (the bases where evenings out are easy; may be empty), `start_date`, `end_date`, and the fallback `daylight_hrs`, `day_start` and `sunset`. Read **Trip facts** in `00 Home.md`. Everything about the group, the vehicle and the season comes from here. Never assume it.
-- Read `Itinerary/Route.md` (base towns and nights, in order) and `Logistics/Transport.md` if they exist. Transport has the daily limits (`max_hrs_per_day`, `max_km_per_day`). **Flights, trains and transfers belong in the Logistics notes:** link to them from the Day note (arrival and departure days), and never copy flight numbers or booking details into it.
+- Read `trip.md`: `group_vehicle`, `travellers`, `traveller_notes`, `pace`, `season`, `bases`, `evening_bases` (the bases where evenings out are easy; may be empty), `start_date`, `end_date`, the fallback `daylight_hrs`, `day_start` and `sunset`, and `planning_limits` (`slack_ok_hrs` and `late_finish_min` are used below; the group changes these as it plans, so never use a fixed number instead). Read **Trip facts** in `00 Home.md`. Everything about the group, the vehicle and the season comes from here. Never assume it.
+- Read the Route note (base towns and nights, in order): the one in `Itinerary/` whose `status` is `agreed` or `booked` (a group with several options may have several Route notes; `compare-itineraries` marks the chosen one `agreed`), otherwise `Itinerary/Route.md`. Read `Logistics/Transport.md` if it exists. Transport has the daily limits (`max_hrs_per_day`, `max_km_per_day`). **Flights, trains and transfers belong in the Logistics notes:** link to them from the Day note (arrival and departure days), and never copy flight numbers or booking details into it.
 - Read `Memories/MEMORY.md` for anything about timing. Two defaults apply unless a memory says otherwise: **fixed dates are fixed**, and **the group decides** (this skill never sets `selected` or `dropped`).
 - Read `Templates/Day Plan.md`. **The template is the schema:** use its property list, property order and section names. If the template has changed, follow the template, not this skill.
 - Everything you create stays inside the vault. Scratch files go in `.claude/scratch/` and get deleted at the end.
@@ -50,7 +50,7 @@ node "${CLAUDE_PLUGIN_ROOT}/skills/plan-day/scripts/sun.mjs" times --date 2027-0
 ## 5. The schedule
 Fill the Schedule table (time, what, notes). Put `[[wikilinks]]` on places.
 - **Default rules for daylight and evenings.** These are guidelines. Groups bend them for things they love, and that is allowed as long as the plan says so (see *When a plan only works by breaking a rule*).
-  1. **A day trip out of an `evening_base` is back on an `ok` road by sunset.** The rest of the drive can run after dark only if every remaining leg is `ok`. A day that ends at a base outside `evening_bases` (a village, a forest stay) has no evening plans, and its last drive is over within an hour of sunset.
+  1. **A day trip out of an `evening_base` is back on an `ok` road by sunset.** The rest of the drive can run after dark only if every remaining leg is `ok`. A day that ends at a base outside `evening_bases` (a village, a forest stay) has no evening plans, and its last drive is over within `late_finish_min` minutes of sunset (60 by default).
   2. **A place with `after_dark: avoid` is left by sunset** (30 minutes before is better; never later than `last_light`). Outdoor stops and viewpoints with a blank `after_dark` follow the same rule, because blank means unknown.
   3. **Evenings go to `evening_bases`.** Places with `after_dark: good` or `best_time_of_day: [evening]` or `[night]` are planned after sunset, marked "after dark", and **left out of `activity_hrs`**. Dinner out and an evening walk in an evening base need no bend.
   4. **A place with `best_time_of_day: [sunrise]` sets an `early_start`** (see section 3).
@@ -68,17 +68,17 @@ Fill the Schedule table (time, what, notes). Put `[[wikilinks]]` on places.
 - The first row is the day start and the last row is sunset (the template has both). Change them to this day's real times.
 
 ## 6. Slack and verdict
-Slack is the daylight left over: **daylight − (drive + activity − predawn)**, in hours. Get the number and the verdict from the script, so the thresholds live in one place:
+Slack is the daylight left over: **daylight − (drive + activity − predawn)**, in hours. Get the number and the verdict from the script, so the thresholds live in one place (it reads `slack_ok_hrs` from `planning_limits` in `trip.md`, in the current folder; 1.5 if the note has none):
 ```bash
 node "${CLAUDE_PLUGIN_ROOT}/skills/plan-day/scripts/sun.mjs" slack --daylight 14.7 --drive 2.3 --activity 10 --predawn 1.3
 ```
 | Slack | Verdict | Meaning |
 |---|---|---|
-| 1.5 hrs or more | **ok** | Room for a late start, a slow lunch or a closed road |
-| 0 to under 1.5 hrs | **tight** | It works only if nothing slips. Say what to drop first |
+| `slack_ok_hrs` or more (1.5 hrs by default) | **ok** | Room for a late start, a slow lunch or a closed road |
+| 0 to under `slack_ok_hrs` | **tight** | It works only if nothing slips. Say what to drop first |
 | below 0 | **too much** | More than the daylight allows. Don't leave it as is |
 
-The Itinerary base shows the same slack and verdict (its formula uses the same 1.5 and 0). Also say **tight** if the day only works by driving an `avoid` leg after dark, even when the numbers look fine. The Itinerary base adds the number of bends to the verdict (for example "tight (1 rule bend)").
+The Itinerary base shows the same slack and verdict. A base cannot read `trip.md`, so `trip-init` writes `slack_ok_hrs` into the base's formula (the 0 never changes); if the group changes `slack_ok_hrs`, ask for "re-run trip-init settings" so the base follows. Also say **tight** if the day only works by driving an `avoid` leg after dark, even when the numbers look fine. The Itinerary base adds the number of bends to the verdict (for example "tight (1 rule bend)").
 
 **When it is tight or too much, say what to cut or move.** Offer fixes in this order, with the saving for each:
 1. Move a `maybe` or `should` place to a lighter nearby day, or to the departure day.

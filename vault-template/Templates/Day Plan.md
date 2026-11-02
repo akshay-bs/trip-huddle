@@ -34,7 +34,7 @@ rule_bends: how many choices are listed under "Choices that bend the rules" (0 i
 travel_checked: date (YYYY-MM-DD) the review-travel-times skill last checked the drive times; empty if never
 travel_verdict: ok | tight | too much   (that skill's verdict on the drive times, empty if not checked; the checker warns when it is better than the slack verdict below)
 Legs table, After dark column: ok = lit highway or city streets; avoid = unlit, forest, hill or bad surface
-Slack = daylight_hrs − (drive_hrs + activity_hrs − predawn_hrs), computed in the Itinerary base. Verdict: ok = 1.5 hrs or more, tight = 0 to 1.5 hrs, too much = below 0
+Slack = daylight_hrs − (drive_hrs + activity_hrs − predawn_hrs), computed in the Itinerary base. Verdict: ok = slack_ok_hrs or more (planning_limits in trip.md, 1.5 hrs unless changed), tight = 0 to slack_ok_hrs, too much = below 0
 -->
 
 # {{title}}

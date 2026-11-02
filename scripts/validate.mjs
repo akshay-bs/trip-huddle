@@ -204,6 +204,9 @@ for (const f of targets) {
   const extra = fm.keys.filter(k => !t.keys.includes(k));
   if (missing.length) warn(f, `missing properties: ${missing.join(', ')}. Add them (empty is fine) so the note matches ${t.file}.`);
   if (extra.length) warn(f, `properties that are not in ${t.file}: ${extra.join(', ')}. Remove them, or add them to the template if you want to keep them.`);
+  const shared = fm.keys.filter(k => t.keys.includes(k));
+  const expected = t.keys.filter(k => shared.includes(k));
+  if (shared.join() !== expected.join()) warn(f, `properties are not in the same order as ${t.file}. Reorder them to match, so notes stay easy to compare.`);
   if (!/<!--[\s\S]*?FIELD GUIDE[\s\S]*?-->/.test(text) && t.hasGuide) {
     warn(f, 'the FIELD GUIDE comment block from the template is missing');
   }

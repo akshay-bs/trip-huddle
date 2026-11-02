@@ -4,7 +4,9 @@
 // and migration, the review-travel-times script (road-type time, stops buffer, trip.md settings, verdicts), its
 // made-up checked example, the travel_verdict warning, the planning_limits in trip.md (they change the verdicts, reach the
 // Itinerary base through trip-init, and are checked), Comparison notes and the made-up comparison, Food notes (the template, the Base, the folder, the example notes and the upgrade of an older vault),
-// the booking list (templates, the Bookings base, the example, the checker's booking warnings, trip-init --add-bookings and migrate-bookings), and a deliberately
+// the booking list (templates, the Bookings base, the example, the checker's booking warnings, trip-init --add-bookings and migrate-bookings),
+// build-itinerary (the route script's links, candidates and check on the made-up loops, road cutoffs, the Route Day by day checks, the
+// Trip itinerary and Operator brief, trip-init's road_cutoffs and --add-itinerary, migrate-itinerary), and a deliberately
 // broken vault where every problem must be reported. Works on temporary copies, so the repo is never modified. Exits 1 if anything fails.
 import fs from 'node:fs';
 import os from 'node:os';
@@ -561,9 +563,9 @@ const warnLine = (out, file, text) => out.split('\n').some(l => l.includes(file)
   const chk = (v, legs, extra = {}) => checkDay({ start: '08:00', sunset: '20:00', sunrise: '06:00', daylight_hrs: 14, activity_hrs: 0, legs, ...extra }, loadSettings(v)).day;
   const fine = withLimits('default', '');   // no planning_limits at all: the defaults
 
-  test('limits: the defaults are 1.5 hrs of slack, 30 min of dark driving, 60 min late, 6 hrs of driving a day', () => {
+  test('limits: the defaults are 1.5 hrs of slack, 30 min of dark driving, 60 min late, 6 hrs of driving a day, 20 min on the way', () => {
     const none = loadPlanningLimits(fine), starter = loadPlanningLimits(path.join(ROOT, 'vault-template'));
-    return JSON.stringify(PLANNING_LIMIT_DEFAULTS) === '{"slack_ok_hrs":1.5,"dark_drive_tight_min":30,"late_finish_min":60,"max_drive_hrs_day":6}'
+    return JSON.stringify(PLANNING_LIMIT_DEFAULTS) === '{"slack_ok_hrs":1.5,"dark_drive_tight_min":30,"late_finish_min":60,"max_drive_hrs_day":6,"on_the_way_min":20}'
       && JSON.stringify(none.limits) === JSON.stringify(PLANNING_LIMIT_DEFAULTS) && none.changed.length === 0 && !none.problems.length
       && JSON.stringify(starter.limits) === JSON.stringify(PLANNING_LIMIT_DEFAULTS) && !starter.problems.length ? '' : JSON.stringify([none, starter]);
   });
@@ -637,7 +639,7 @@ const warnLine = (out, file, text) => out.split('\n').some(l => l.includes(file)
   const rd = (v, f) => fs.readFileSync(path.join(v, f), 'utf8');
   test('trip-init: a new vault gets planning_limits in trip.md and the default threshold in the Itinerary base', () => {
     const t = rd(portugal, 'trip.md'), b = rd(portugal, 'Bases/Itinerary.base');
-    return t.includes('planning_limits: {slack_ok_hrs: 1.5, dark_drive_tight_min: 30, late_finish_min: 60, max_drive_hrs_day: 6}')
+    return t.includes('planning_limits: {slack_ok_hrs: 1.5, dark_drive_tight_min: 30, late_finish_min: 60, max_drive_hrs_day: 6, on_the_way_min: 20}') && t.includes('\nroad_cutoffs: []\n')
       && b === rd(path.join(ROOT, 'vault-template'), 'Bases/Itinerary.base') && b.includes('formula.slack_hrs < 1.5, "tight"') ? '' : t;
   });
   test('trip-init: a changed slack_ok_hrs is written to trip.md and into the Itinerary base, and changing it back restores the example exactly', () => {
@@ -651,10 +653,10 @@ const warnLine = (out, file, text) => out.split('\n').some(l => l.includes(file)
     const t3 = rd(v, 'trip.md');
     const r4 = reconf(v, x => { x.planning_limits = { slack_ok_hrs: 1.5, max_drive_hrs_day: 6 }; });
     const same = ['trip.md', 'Bases/Itinerary.base'].every(f => rd(v, f) === rd(path.join(ROOT, 'example-vault'), f));
-    return r1.code === 0 && t1.includes('planning_limits: {slack_ok_hrs: 2, dark_drive_tight_min: 30, late_finish_min: 60, max_drive_hrs_day: 6}')
+    return r1.code === 0 && t1.includes('planning_limits: {slack_ok_hrs: 2, dark_drive_tight_min: 30, late_finish_min: 60, max_drive_hrs_day: 6, on_the_way_min: 20}')
       && b1.includes('if(formula.slack_hrs < 0, "too much", if(formula.slack_hrs < 2, "tight", "ok"))') && /Bases\/Itinerary\.base/.test(r1.out)
       && t2.includes('slack_ok_hrs: 2,') && r2.out.includes('Nothing changed')
-      && t3.includes('planning_limits: {slack_ok_hrs: 2, dark_drive_tight_min: 30, late_finish_min: 60, max_drive_hrs_day: 8}') && r3.code === 0
+      && t3.includes('planning_limits: {slack_ok_hrs: 2, dark_drive_tight_min: 30, late_finish_min: 60, max_drive_hrs_day: 8, on_the_way_min: 20}') && r3.code === 0
       && r4.code === 0 && same ? '' : [r1.out, t1, b1, r2.out, t2, r3.out, t3, r4.out].join('\n');
   });
   test('trip-init: a limit that is not a number, or not a setting, is refused and the vault is left alone', () => {
@@ -969,10 +971,349 @@ const warnLine = (out, file, text) => out.split('\n').some(l => l.includes(file)
   });
 }
 
-test('plugin: both manifests have the same version, and it is 0.11.0', () => {
+// ---- build-itinerary (v0.12.0): the route script, the distance file, road cutoffs, Route Day by day, the Trip itinerary and
+// Operator brief, trip-init and the upgrade of an older vault
+{
+  const ROUTE = path.join(ROOT, 'skills/build-itinerary/scripts/route.mjs');
+  const BREF = path.join(ROOT, 'skills/build-itinerary/references');
+  const rd = (v, f) => fs.readFileSync(path.join(v, f), 'utf8');
+  const routeJson = (v, ...a) => { const r = run(ROUTE, [...a, '--vault', v]); if (r.code !== 0) throw new Error(r.out); return JSON.parse(r.out); };
+  // The made-up example: a copy of the example vault with the choices, the road cutoff and the files in example-setup.json.
+  const setup = JSON.parse(fs.readFileSync(path.join(BREF, 'example-setup.json'), 'utf8'));
+  const makeBv = name => {
+    const v = path.join(TMP, name);
+    fs.cpSync(path.join(ROOT, 'example-vault'), v, { recursive: true });
+    let t = rd(v, 'trip.md');
+    for (const [k, line] of Object.entries(setup.trip_md)) t = t.replace(new RegExp(`^${k}:.*$`, 'm'), line);
+    fs.writeFileSync(path.join(v, 'trip.md'), t);
+    for (const [n, pr] of Object.entries(setup.select)) {
+      const f = path.join(v, 'Locations', n + '.md');
+      fs.writeFileSync(f, rd(v, `Locations/${n}.md`).replace('decision: considering', 'decision: selected').replace(/^priority:.*$/m, `priority: ${pr}`));
+    }
+    for (const [from, to] of Object.entries(setup.files)) { fs.mkdirSync(path.dirname(path.join(v, to)), { recursive: true }); fs.copyFileSync(path.join(BREF, from), path.join(v, to)); }
+    return v;
+  };
+  const bv = makeBv('build');
+  const A = routeJson(bv, 'check', '--route', 'Itinerary/Route - Option A.md');
+  const B = routeJson(bv, 'check', '--route', 'Itinerary/Route - Option B.md');
+
+  test('build-itinerary: the example (two Route options and legs.json) passes the checker with no warnings about them', () => {
+    const r = check(bv);
+    return r.code === 0 && !r.out.split('\n').some(l => /Route - Option|legs\.json|trip\.md/.test(l)) ? '' : r.out;
+  });
+  test('build-itinerary: the check finds the cutoff break and the doubling back in the standard loop, and neither in the reverse', () => {
+    const bad = [];
+    const cutA = A.trip.cutoff_breaks;
+    if (!(cutA.length && cutA.every(c => c.day === 6 && c.area === 'Jowai' && c.minutes > 0))) bad.push(`A cutoff breaks: ${JSON.stringify(cutA)}`);
+    if (!(A.trip.doubling_back.km === 64 && A.trip.doubling_back.roads.some(r => /Jowai/.test(r.road) && /Shillong/.test(r.road)))) bad.push(`A doubling back: ${JSON.stringify(A.trip.doubling_back)}`);
+    if (A.days[5].verdict !== 'too much' || !A.days[5].over_max_drive || A.days[5].backtrack_km !== 64) bad.push('A Day 6 should be too much, over the drive limit, with 64 km driven twice');
+    if (B.trip.cutoff_breaks.length || B.trip.doubling_back.km !== 0 || B.trip.after_dark.length) bad.push(`B: ${JSON.stringify([B.trip.cutoff_breaks, B.trip.doubling_back, B.trip.after_dark])}`);
+    if (B.days.some(d => d.verdict === 'too much') || B.trip.days_over_drive_limit.length) bad.push('B should have no too-much day');
+    for (const [n, x] of [['A', A], ['B', B]]) {
+      if (x.trip.must_places.missed.length || x.trip.must_places.covered.length !== 4) bad.push(`${n} must places: ${JSON.stringify(x.trip.must_places)}`);
+      if (x.trip.days !== 7 || x.trip.nights !== 6) bad.push(`${n}: 7 days and 6 nights`);
+      if (x.trip.unknown_points.length || x.trip.links_to_research.length) bad.push(`${n}: every point and link is known`);
+    }
+    if (!(B.trip.km < A.trip.km)) bad.push('the reverse should be shorter');
+    if (!B.trip.nights_without_stay.some(n => n.town === 'Jowai') || !A.trip.stays.some(n => n.town === 'Sohra' && n.candidates.includes('Sohra Plaza'))) bad.push('nights and stays');
+    return bad.join('\n');
+  });
+  test('build-itinerary: the Route notes\' lists say what the check found', () => {
+    const a = fs.readFileSync(path.join(BREF, 'example-context/Route - Option A.md'), 'utf8'), b = fs.readFileSync(path.join(BREF, 'example-context/Route - Option B.md'), 'utf8');
+    const bad = [];
+    const km = x => `about ${Math.round(x.trip.km / 10) * 10} km`;
+    if (!a.includes(`same ${A.trip.doubling_back.km} km between Shillong and Jowai twice`)) bad.push('A should name the 64 km driven twice');
+    if (!/\*\*Day 6 does not work\.\*\*/.test(a) || !/4 pm cutoff/.test(a)) bad.push('A should flag Day 6 and the cutoff');
+    if (!a.includes(`About ${Math.round(A.trip.km / 10) * 10} km`) || !b.includes(km(B))) bad.push(`total km: A ${A.trip.km}, B ${B.trip.km}`);
+    if (!/No road is driven twice/.test(b) || !/no driving near Jowai after 4 pm/.test(b)) bad.push('B should say no road twice and no driving after the cutoff');
+    for (const t of [a, b]) for (const h of ['## Day by day', '## What it makes possible', '## Red flags', '## What it costs']) if (!t.includes(h)) bad.push(`missing ${h}`);
+    if (/\b\d{4}-\d{2}-\d{2}\b/.test(a + b)) bad.push('the Meghalaya example must hold no dates');
+    return bad.join('\n');
+  });
+  test('build-itinerary: candidates finds Krang Suri on the way for a Jowai to Dawki day, with no fixed reach', () => {
+    const c = routeJson(bv, 'candidates', '--from', 'Jowai', '--to', 'Dawki');
+    const ks = c.candidates.find(x => x.place === 'Krang Suri Falls');
+    const short = routeJson(bv, 'candidates', '--from', 'Jowai', '--to', 'Dawki', '--daylight', '6');      // a shorter day reaches less far
+    const trip = routeJson(bv, 'candidates', '--from', 'Jowai', '--to', 'Jowai', '--all');                 // a day trip from Jowai, season daylight
+    const longer = routeJson(bv, 'candidates', '--from', 'Jowai', '--to', 'Jowai', '--daylight', '10.5');  // the real daylight of a date
+    const all = routeJson(bv, 'candidates', '--from', 'Jowai', '--to', 'Dawki', '--all');
+    const kc = all.left_out.find(x => x.place === 'Krem Chympe Falls');
+    const bad = [];
+    if (!(ks && ks.kind === 'on the way' && ks.adds_min <= c.limits.on_the_way_min && ks.links_to_research.join() === 'Jowai – Dawki')) bad.push(`Krang Suri: ${JSON.stringify(ks)}`);
+    if (short.candidates.some(x => x.place === 'Krang Suri Falls')) bad.push('with 6 hrs of daylight Krang Suri should not fit');
+    if (c.candidates.some(x => x.place === 'Krem Chympe Falls') || !kc || !/daylight/.test(kc.why_not)) bad.push('Krem Chympe (5 hrs there) does not fit a Jowai to Dawki day');
+    // 5 hrs at the falls makes a day trip from Jowai tight on the season's 9.5 hrs (Option B's Day 3), and fine on a 10.5-hr day
+    if (!trip.left_out.some(x => x.place === 'Krem Chympe Falls' && /daylight/.test(x.why_not)) || !longer.candidates.some(x => x.place === 'Krem Chympe Falls' && x.kind === 'day trip')) bad.push('Krem Chympe as a day trip from Jowai: tight on 9.5 hrs, fits on 10.5');
+    if (B.days[2].verdict !== 'tight') bad.push('Option B Day 3 (Krem Chympe from Jowai) should be tight');
+    if (/reach/.test(JSON.stringify(c.limits)) || c.limits.usable_hrs !== 8 || c.limits.drive_limit_hrs !== 6) bad.push(`limits: ${JSON.stringify(c.limits)}`);
+    return bad.join('\n');
+  });
+  test('build-itinerary: on_the_way_min and the selected Transport note\'s limit change the candidates', () => {
+    const v = makeBv('build-limits');
+    fs.writeFileSync(path.join(v, 'trip.md'), rd(v, 'trip.md').replace('on_the_way_min: 20', 'on_the_way_min: 5'));
+    const narrow = routeJson(v, 'candidates', '--from', 'Jowai', '--to', 'Dawki').candidates.find(x => x.place === 'Krang Suri Falls');
+    fs.writeFileSync(path.join(v, 'Logistics/Transport.md'), rd(v, 'Templates/Transport.md').replace('{{title}}', 'Transport').replace('decision: considering', 'decision: selected').replace('max_hrs_per_day:', 'max_hrs_per_day: 2'));
+    const c = routeJson(v, 'candidates', '--from', 'Jowai', '--to', 'Dawki');
+    return narrow?.kind === 'detour' && c.limits.drive_limit_hrs === 2 && /Transport/.test(c.limits.drive_limit_from) && !c.candidates.some(x => x.place === 'Krang Suri Falls') ? '' : JSON.stringify([narrow, c.limits]);
+  });
+  const linkKeys = l => Object.keys(l).join();
+  test('build-itinerary: links adds rough links for every pair, never overwrites a researched one, and a second run changes nothing', () => {
+    const v = makeBv('build-links');
+    const before = JSON.parse(rd(v, 'Logistics/legs.json')).links;
+    const one = routeJson(v, 'links');
+    const after = JSON.parse(rd(v, 'Logistics/legs.json'));
+    const again = routeJson(v, 'links');
+    const researched = after.links.filter(l => l.status === 'researched');
+    const rough = after.links.filter(l => l.status === 'rough');
+    // move a place: its rough links change, its researched links do not
+    const f = path.join(v, 'Locations/Krang Suri Falls.md');
+    fs.writeFileSync(f, rd(v, 'Locations/Krang Suri Falls.md').replace(/^location:\n {2}- .*\n {2}- .*\n/m, 'location:\n  - 25.30\n  - 92.13\n'));
+    const moved = routeJson(v, 'links'), last = JSON.parse(rd(v, 'Logistics/legs.json'));
+    const bad = [];
+    if (JSON.stringify(researched) !== JSON.stringify(before)) bad.push('a researched link changed');
+    if (!(one.added > 0 && one.researched_kept === before.length && rough.length === one.added)) bad.push(`first run: ${JSON.stringify(one)}`);
+    if (again.added || again.updated) bad.push(`second run: ${JSON.stringify(again)}`);
+    if (!(moved.updated > 0 && JSON.stringify(last.links.filter(l => l.status === 'researched')) === JSON.stringify(before))) bad.push(`after a move: ${JSON.stringify(moved)}`);
+    const kc = rough.find(l => [l.from, l.to].includes('Krem Chympe Falls') && [l.from, l.to].includes('Krang Suri Falls'));
+    if (!(kc && kc.cutoff_area === 'Jowai' && kc.road === 'hill' && kc.after_dark === 'avoid' && /straight line/.test(kc.source))) bad.push(`a rough link in the cutoff area: ${JSON.stringify(kc)}`);
+    if (rough.some(l => linkKeys(l) !== 'from,to,km,drive_hrs,road,after_dark,cutoff_area,status,source,checked')) bad.push('rough link fields');
+    return bad.join('\n');
+  });
+  test('build-itinerary: link writes a researched link and replaces a rough one; town saves a town; bad input is refused', () => {
+    const v = makeBv('build-link');
+    routeJson(v, 'links');
+    const r = routeJson(v, 'link', '--from', 'Krem Chympe Falls', '--to', 'Krang Suri Falls', '--km', '70', '--hrs', '2-2.5', '--road', 'hill', '--after-dark', 'avoid', '--cutoff-area', 'Jowai', '--source', 'test');
+    const t = routeJson(v, 'town', '--name', 'Amlarem', '--lat', '25.29', '--lng', '92.10');
+    const j = JSON.parse(rd(v, 'Logistics/legs.json'));
+    const l = j.links.filter(x => [x.from, x.to].includes('Krem Chympe Falls') && [x.from, x.to].includes('Krang Suri Falls'));
+    const badRoad = run(ROUTE, ['link', '--from', 'A', '--to', 'B', '--km', '3', '--hrs', '1', '--road', 'goat', '--after-dark', 'ok', '--source', 'x', '--vault', v]);
+    const noSource = run(ROUTE, ['link', '--from', 'A', '--to', 'B', '--km', '3', '--hrs', '1', '--road', 'hill', '--after-dark', 'ok', '--vault', v]);
+    return r.replaced === 'rough' && l.length === 1 && l[0].status === 'researched' && l[0].drive_hrs.join() === '2,2.5' && t.town === 'Amlarem' && j.towns.Amlarem.join() === '25.29,92.1'
+      && badRoad.code === 2 && /road must be/.test(badRoad.out) && noSource.code === 2 && /source/.test(noSource.out) && check(v).code === 0 ? '' : JSON.stringify([r, l]) + badRoad.out + noSource.out;
+  });
+  test('checker: legs.json that cannot be read, a bad link and a repeated road are warned about', () => {
+    const v = makeBv('build-legs-bad');
+    const f = path.join(v, 'Logistics/legs.json'), j = JSON.parse(rd(v, 'Logistics/legs.json'));
+    j.links.push({ ...j.links[0], status: 'guessed', road: 'goat' }, { ...j.links[1], from: j.links[1].to, to: j.links[1].from });
+    fs.writeFileSync(f, JSON.stringify(j));
+    const a = check(v).out;
+    fs.writeFileSync(f, '{ not json');
+    const b = check(v).out;
+    return warnLine(a, 'legs.json', 'status must be rough or researched') && warnLine(a, 'legs.json', 'road must be one of') && warnLine(a, 'legs.json', 'the same road is listed twice')
+      && warnLine(b, 'legs.json', "can't be read") ? '' : a + b;
+  });
+  test('checker: a Route Day by day table must have nights + 1 rows and the same nights per town as bases', () => {
+    const v = makeBv('build-route-bad');
+    const f = path.join(v, 'Itinerary/Route - Option B.md');
+    const orig = rd(v, 'Itinerary/Route - Option B.md');
+    fs.writeFileSync(f, orig.replace(/^\| 6 \| 08:00, Sohra .*\n/m, ''));
+    const rows = check(v).out;
+    fs.writeFileSync(f, orig.replace('nights_per_base: [1, 2, 1, 1, 1]', 'nights_per_base: [2, 1, 1, 1, 1]'));
+    const nights = check(v).out;
+    const starter = check(portugal).out;   // its Route.md is the empty starter
+    return warnLine(rows, 'Route - Option B', 'Day by day has 6 row(s), but 6 nights need 7') && warnLine(rows, 'Route - Option B', 'do not match bases and nights_per_base')
+      && warnLine(nights, 'Route - Option B', 'the nights in Day by day (Pobitora 1, Jowai 2, Dawki 1, Sohra 1, Shillong 1) do not match bases and nights_per_base (Pobitora 2, Jowai 1')
+      && !warnLine(starter, 'Route.md', 'Day by day') ? '' : rows + nights;
+  });
+  test('checker: road_cutoffs entries must have an area and a time; good ones pass', () => {
+    const v = makeBv('build-cutoffs-bad');
+    fs.writeFileSync(path.join(v, 'trip.md'), rd(v, 'trip.md').replace(/^road_cutoffs:.*$/m, 'road_cutoffs: [{area: Jowai, no_drive_after: 4pm}, {no_drive_after: "16:00", when: dusk}]'));
+    const o = check(v).out;
+    return warnLine(o, 'trip.md', 'no_drive_after must be a time like "16:00"') && warnLine(o, 'trip.md', 'needs an area') && warnLine(o, 'trip.md', '"when" is not a setting')
+      && !warnLine(check(bv).out, 'trip.md', 'road_cutoffs') ? '' : o;
+  });
+  {
+    // A Day note with a leg in the Jowai area. The Schedule's drive back is before or after the 16:00 cutoff.
+    const dayNote = (v, time, bends = 0) => {
+      const tpl = rd(v, 'Templates/Day Plan.md').replace('{{title}}', 'Day 03').replace('locations: []', 'locations:\n  - "[[Krem Chympe Falls]]"')
+        .replace('rule_bends: 0', `rule_bends: ${bends}`)
+        .replace('|      |    |    |                       |            |            |', '| Jowai | [[Krem Chympe Falls]] | ~48 | 1.25–1.5 hrs | avoid | Rough last 7 km |\n| [[Krem Chympe Falls]] | Jowai | ~48 | 1.25–1.5 hrs | avoid | |')
+        .replace('|  |  |  |\n| 16:30 | Sunset |  |', `| 08:45 | **[[Krem Chympe Falls]]** | |\n| ${time} | Drive back to Jowai | |\n| 16:30 | Sunset |  |`);
+      const text = bends ? tpl.replace('## Choices that bend the rules\n<!--', '## Choices that bend the rules\n- **Driving back from the falls after 4 pm.** Why: the group wants the full day. Cost: 30 min on the border road after the cutoff.\n<!--').replace(/\n- None\.\n/, '\n') : tpl;
+      fs.writeFileSync(path.join(v, 'Itinerary/Day 03.md'), text);
+      return check(v).out;
+    };
+    const v = makeBv('build-day-cutoff');
+    const late = dayNote(v, '16:30'), early = dayNote(v, '14:00'), bent = dayNote(v, '16:30', 1);
+    const noCut = makeBv('build-day-nocut');
+    fs.writeFileSync(path.join(noCut, 'trip.md'), rd(noCut, 'trip.md').replace(/^road_cutoffs:.*$/m, 'road_cutoffs: []'));
+    const none = dayNote(noCut, '16:30');
+    const msg = 'the leg Krem Chympe Falls to Jowai is in the Jowai area, where nobody drives after 16:00';
+    test('checker: a Day note leg in a cutoff area driven after its time warns when rule_bends is 0', () => warnLine(late, 'Day 03.md', msg) && warnLine(late, 'Day 03.md', 'rule_bends is 0') ? '' : late);
+    test('checker: the same leg before the cutoff, or with the bend written down, or with no cutoffs in trip.md, does not warn', () =>
+      [early, bent, none].some(o => warnLine(o, 'Day 03.md', 'nobody drives after')) || warnLine(bent, 'Day 03.md', 'rule_bends is 1 but') ? early + bent + none : '');
+  }
+  test('travel: a leg in a cutoff area after its time is tight, then too much; an agreed bend covers it; leave_earlier gets out of it', () => {
+    const s = loadSettings(bv);
+    const leg = extra => ({ from: 'Krem Chympe Falls', to: 'Jowai', km: 48, road: 'rural', after_dark: 'ok', cutoff_area: 'Jowai', ...extra });
+    const day = (start, extra = {}) => checkDay({ start, sunset: '18:00', sunrise: '06:00', daylight_hrs: 12, activity_hrs: 0, legs: [leg(extra)] }, s);
+    const fine = day('13:00'), tight = day('14:30'), much = day('15:30'), agreed = day('15:30', { bent: true, agreed_cutoff_min: 120 }), other = checkDay({ start: '15:30', sunset: '18:00', daylight_hrs: 12, activity_hrs: 0, legs: [leg({ cutoff_area: 'Elsewhere' })] }, s);
+    const ok = s.road_cutoffs.length === 1 && s.road_cutoffs[0].no_drive_after === '16:00'
+      && fine.day.verdict === 'ok' && fine.legs[0].after_cutoff_min === 0
+      && tight.legs[0].after_cutoff_min > 0 && tight.legs[0].after_cutoff_min <= 30 && tight.day.verdict === 'tight' && /nobody drives after 16:00/.test(tight.day.reasons[0].text)
+      && much.day.verdict === 'too much' && much.day.leave_earlier && agreed.day.verdict === 'ok' && other.day.verdict === 'ok';
+    return ok ? '' : JSON.stringify([fine.legs[0], tight.day, much.day, agreed.day]);
+  });
+
+  // The Trip itinerary and the Operator brief (Portugal, Day 04 and Day 05 of the plan-day and review-travel-times examples)
+  const iv = path.join(TMP, 'build-itin');
+  fs.cpSync(dayVault, iv, { recursive: true });
+  fs.writeFileSync(path.join(iv, 'Itinerary/Route.md'), rd(iv, 'Itinerary/Route.md').replace('status: draft', 'status: agreed'));
+  fs.copyFileSync(path.join(BREF, 'trip-itinerary-example.md'), path.join(iv, 'Itinerary/Trip itinerary.md'));
+  fs.copyFileSync(path.join(BREF, 'operator-brief-example.md'), path.join(iv, 'Itinerary/Operator brief.md'));
+  const mineI = out => out.split('\n').filter(l => /Trip itinerary|Operator brief|Trip Itinerary|Operator Brief/.test(l));
+  test('build-itinerary: the Trip itinerary and Operator brief examples pass the checker with no warnings about them', () => {
+    const r = check(iv); return r.code === 0 && !mineI(r.out).length ? '' : r.out;
+  });
+  test('checker: the Trip itinerary and the brief must link every Day note of the chosen route, and no dropped place', () => {
+    const v = path.join(TMP, 'build-itin-bad');
+    fs.cpSync(iv, v, { recursive: true });
+    fs.writeFileSync(path.join(v, 'Itinerary/Day 06.md'), rd(v, 'Templates/Day Plan.md').replace('{{title}}', 'Day 06'));
+    const f = path.join(v, 'Locations/Mountain Fort (Example).md');
+    fs.writeFileSync(f, rd(v, 'Locations/Mountain Fort (Example).md').replace('decision: considering', 'decision: dropped').replace('decision_reason:', 'decision_reason: too far'));
+    const a = check(v).out;
+    fs.writeFileSync(path.join(v, 'Itinerary/Route.md'), rd(v, 'Itinerary/Route.md').replace('status: agreed', 'status: draft'));
+    const b = check(v).out;   // a brief for an option not chosen yet need not link the Day notes
+    return warnLine(a, 'Trip itinerary.md', 'does not link 1 Day note(s): [[Day 06]]') && warnLine(a, 'Operator brief.md', 'does not link 1 Day note(s)')
+      && warnLine(a, 'Trip itinerary.md', 'links [[Mountain Fort (Example)]], which the group dropped') && !warnLine(b, 'Operator brief.md', 'does not link') ? '' : a + b;
+  });
+  test('checker: an Operator brief with a food spot, a booking or a confirmation is flagged', () => {
+    const v = path.join(TMP, 'build-brief-bad');
+    fs.cpSync(iv, v, { recursive: true });
+    fs.mkdirSync(path.join(v, 'Food'), { recursive: true });
+    fs.writeFileSync(path.join(v, 'Food/Harbour Grill.md'), rd(v, 'Templates/Food Spot.md').replace('{{title}}', 'Harbour Grill').replace('recommended_by: []', 'recommended_by:\n  - "[[Src]]"'));
+    fs.appendFileSync(path.join(v, 'Sources/Src.md'), '[[Harbour Grill]]\n');
+    fs.appendFileSync(path.join(v, 'Itinerary/Operator brief.md'), '\nLunch at [[Harbour Grill]]. Our confirmation is below.\n');
+    const o = check(v).out;
+    return warnLine(o, 'Operator brief.md', 'links [[Harbour Grill]]. An operator brief holds no food choices') && warnLine(o, 'Operator brief.md', 'mentions a booking reference or confirmation') ? '' : o;
+  });
+  test('build-itinerary: the Operator brief example holds no reasons, budget, food, names or booking references', () => {
+    const t = fs.readFileSync(path.join(BREF, 'operator-brief-example.md'), 'utf8').replace(/<!--[\s\S]*?-->/g, '').replace(/> \[!info\][\s\S]*?\n\n/, '');
+    const bad = ['because', 'budget', '€', 'booking_ref', 'confirmation', 'vegetarian', 'restaurant', 'Why'].filter(w => t.includes(w));
+    return bad.length ? `found: ${bad.join(', ')}` : '';
+  });
+
+  // trip-init: road_cutoffs and on_the_way_min
+  const exA = JSON.parse(fs.readFileSync(path.join(ANSWERS, 'example-vault-answers.json'), 'utf8'));
+  const reconf = (v, name, extra) => { const f = path.join(TMP, name + '.json'); fs.writeFileSync(f, JSON.stringify({ ...exA, ...extra })); return run(INIT, ['--answers', f, '--vault', v, '--reconfigure']); };
+  test('trip-init: road_cutoffs are written from the answers, kept when left out, replaced or cleared when given, and bad ones are refused', () => {
+    const v = path.join(TMP, 'build-init');
+    fs.cpSync(path.join(ROOT, 'example-vault'), v, { recursive: true });
+    const cut = [{ area: 'Jowai', no_drive_after: '16:00', reason: 'single-track, border roads' }];
+    const a = reconf(v, 'bi-a', { road_cutoffs: cut });
+    const t1 = rd(v, 'trip.md'), read1 = loadPlanningLimits(v) && JSON.stringify(loadSettings(v).road_cutoffs);
+    const b = reconf(v, 'bi-b', {});
+    const t2 = rd(v, 'trip.md');
+    const before = t2;
+    const bad = reconf(v, 'bi-bad', { road_cutoffs: [{ area: '', no_drive_after: '4pm' }] });
+    const refused = rd(v, 'trip.md') === before;
+    const c = reconf(v, 'bi-c', { road_cutoffs: [] });
+    const same = rd(v, 'trip.md') === rd(path.join(ROOT, 'example-vault'), 'trip.md');
+    return a.code === 0 && t1.includes('road_cutoffs: [{area: Jowai, no_drive_after: "16:00", reason: "single-track, border roads"}]') && read1 === JSON.stringify(cut)
+      && b.out.includes('Nothing changed') && t2 === t1 && bad.code === 1 && /needs an area/.test(bad.out) && /no_drive_after must be a time/.test(bad.out) && refused
+      && c.code === 0 && same ? '' : [a.out, t1, read1, b.out, bad.out, c.out].join('\n');
+  });
+  test('trip-init: a new vault gets road_cutoffs, on_the_way_min, the new templates and the Itinerary base columns', () => {
+    const t = rd(portugal, 'trip.md'), bad = [];
+    if (!/\nroad_cutoffs: \[\]\n/.test(t) || !/on_the_way_min: 20\}/.test(t)) bad.push('trip.md');
+    for (const f of ['Templates/Trip Itinerary.md', 'Templates/Operator Brief.md']) if (!fs.existsSync(path.join(portugal, f))) bad.push(f);
+    if (!/^## Day by day$/m.test(rd(portugal, 'Templates/Route.md')) || !/^## Day by day$/m.test(rd(portugal, 'Itinerary/Route.md'))) bad.push('Route template and starter Route note');
+    if (!/- start_time\n/.test(rd(portugal, 'Bases/Itinerary.base')) || !/backtrack_km: Sum/.test(rd(portugal, 'Bases/Itinerary.base'))) bad.push('Itinerary base');
+    return bad.join(', ');
+  });
+
+  // An older vault (before 0.12.0), brought up to date by trip-init --add-itinerary and migrate-itinerary.mjs
+  const old = path.join(TMP, 'pre-0.12');
+  fs.cpSync(path.join(ROOT, 'example-vault'), old, { recursive: true });
+  const ow = (rel, fn) => { const p = path.join(old, rel); fs.writeFileSync(p, fn(fs.readFileSync(p, 'utf8'))); };
+  for (const f of ['Templates/Trip Itinerary.md', 'Templates/Operator Brief.md']) fs.rmSync(path.join(old, f));
+  ow('Templates/Route.md', s => s.replace(/^Day by day: .*\n/m, '').replace(/## Day by day\n[\s\S]*?\n\n(?=## Why this route)/, '').replace(/## What it makes possible\n[\s\S]*?(?=## Open questions)/, ''));
+  ow('Templates/Day Plan.md', s => s.replace(/^(start_time|backtrack_km):.*\n/gm, '').replace(/## Along the way\n[\s\S]*?\n\n(?=## Meals)/, '')
+    .replace(/^rule_bends: how many.*$/m, 'rule_bends: how many choices are listed under "Choices that bend the rules" (0 if none)'));
+  ow('Templates/Location.md', s => s.replace(/^needs_night_nearby:.*\n/gm, ''));
+  ow('.obsidian/types.json', s => s.replace(/\n\s*"(needs_night_nearby|start_time|backtrack_km|route|built_on|seats)": "\w+",/g, ''));
+  ow('Bases/Itinerary.base', s => s.replace(/  start_time:\n    displayName: Start\n  backtrack_km:\n    displayName: Doubles back km\n/, '').replace(/      - (start_time|backtrack_km)\n/g, '').replace('      backtrack_km: Sum\n', ''));
+  ow('Bases/Locations.base', s => s.replace('  needs_night_nearby:\n    displayName: Night nearby\n', '').replace('      - needs_night_nearby\n', ''));
+  ow('00 Home.md', s => s.replace(/^6\. \*\*Plan the route\.\*\*.*$/m, '6. **Plan the route.** Fix the base towns and nights in `Itinerary/Route.md`.').replace(/(It never scores them, and the group decides\.) Once the group picks[^\n]*/, '$1'));
+  ow('trip.md', s => s.replace(', on_the_way_min: 20}', '}').replace('road_cutoffs: []\n', ''));
+  for (const f of fs.readdirSync(path.join(old, 'Locations'))) ow(`Locations/${f}`, s => s.replace(/^needs_night_nearby:.*\n/m, ''));
+  fs.mkdirSync(path.join(old, 'Itinerary'), { recursive: true });
+  fs.writeFileSync(path.join(old, 'Itinerary/Day 01.md'), rd(old, 'Templates/Day Plan.md').replace('{{title}}', 'Day 01'));
+  const exAnswers = path.join(ANSWERS, 'example-vault-answers.json');
+  const TOOL = ['Templates/Route.md', 'Templates/Day Plan.md', 'Templates/Location.md', 'Templates/Trip Itinerary.md', 'Templates/Operator Brief.md', '.obsidian/types.json', 'Bases/Itinerary.base', 'Bases/Locations.base', '00 Home.md', 'trip.md'];
+  test('build-itinerary: the made-up older vault really is old (setup check)', () => {
+    const notOld = TOOL.filter(f => fs.existsSync(path.join(old, f)) && rd(old, f) === rd(path.join(ROOT, 'example-vault'), f));
+    return notOld.length ? `not changed by setup: ${notOld.join(', ')}` : '';
+  });
+  const up = run(INIT, ['--answers', exAnswers, '--vault', old, '--reconfigure', '--add-itinerary']);
+  test('trip-init --reconfigure --add-itinerary brings an older vault to what the example has (templates, types, Bases, Home, trip.md)', () => {
+    const diff = TOOL.filter(f => !fs.existsSync(path.join(old, f)) || rd(old, f) !== rd(path.join(ROOT, 'example-vault'), f));
+    return up.code === 0 && !diff.length ? '' : `${up.out}\ndiffers: ${diff.join(', ')}`;
+  });
+  test('trip-init --add-itinerary: a second run changes nothing, and without --reconfigure it is refused', () => {
+    const again = run(INIT, ['--answers', exAnswers, '--vault', old, '--reconfigure', '--add-itinerary']);
+    const no = run(INIT, ['--answers', exAnswers, '--vault', path.join(TMP, 'never-i'), '--add-itinerary']);
+    return again.code === 0 && again.out.includes('Nothing changed') && no.code === 1 && /--add-itinerary only works with --reconfigure/.test(no.out) ? '' : again.out + no.out;
+  });
+  const MIGI = path.join(ROOT, 'skills/build-itinerary/scripts/migrate-itinerary.mjs');
+  const snapI = () => JSON.stringify(['Locations', 'Itinerary'].flatMap(d => fs.readdirSync(path.join(old, d)).map(f => fs.readFileSync(path.join(old, d, f), 'utf8'))));
+  const beforeI = snapI(), dryI = run(MIGI, ['--dry-run'], old);
+  test('migrate-itinerary: --dry-run changes nothing', () => dryI.code === 0 && /would change/.test(dryI.out) && snapI() === beforeI ? '' : dryI.out);
+  const migI = run(MIGI, [], old);
+  test('migrate-itinerary: notes get the new fields in template order, and a second run changes nothing', () => {
+    const bad = [];
+    for (const f of fs.readdirSync(path.join(old, 'Locations'))) {
+      const want = rd(path.join(ROOT, 'example-vault'), `Locations/${f}`).replace('needs_night_nearby: true', 'needs_night_nearby:');
+      if (rd(old, `Locations/${f}`) !== want) bad.push(f);
+    }
+    const keys = t => t.match(/^---\n([\s\S]*?)\n---/)[1].match(/^[a-z_]+(?=:)/gm).join();
+    if (keys(rd(old, 'Itinerary/Day 01.md')) !== keys(rd(old, 'Templates/Day Plan.md'))) bad.push('Day 01 property order');
+    const again = run(MIGI, [], old), r = check(old);
+    const extra = r.out.split('\n').filter(l => /missing properties|not in the same order/.test(l));
+    return migI.code === 0 && !bad.length && /Nothing to do/.test(again.out) && r.code === 0 && !extra.length ? '' : migI.out + bad.slice(0, 5).join('\n') + again.out + extra.join('\n');
+  });
+
+  // the templates, the skills, the roadmap and the plan
+  test('build-itinerary: the new templates, types and Bases are the same in both vaults (Location and Day Plan but their slots)', () => {
+    const same = f => rd(path.join(ROOT, 'vault-template'), f) === rd(path.join(ROOT, 'example-vault'), f);
+    const bad = ['Templates/Route.md', 'Templates/Trip Itinerary.md', 'Templates/Operator Brief.md', '.obsidian/types.json', 'Bases/Itinerary.base', 'Bases/Locations.base'].filter(f => !same(f));
+    const mask = t => t.replace(/^(state|nearest_base|category): .*$/gm, '$1: X');
+    if (mask(rd(path.join(ROOT, 'vault-template'), 'Templates/Location.md')) !== mask(rd(path.join(ROOT, 'example-vault'), 'Templates/Location.md'))) bad.push('Templates/Location.md');
+    const types = JSON.parse(rd(path.join(ROOT, 'vault-template'), '.obsidian/types.json')).types;
+    for (const [k, t] of [['start_time', 'text'], ['backtrack_km', 'number'], ['needs_night_nearby', 'checkbox'], ['route', 'text'], ['built_on', 'date'], ['seats', 'number']]) if (types[k] !== t) bad.push(`types.json ${k}`);
+    const loc = rd(path.join(ROOT, 'vault-template'), 'Templates/Location.md'), day = rd(path.join(ROOT, 'vault-template'), 'Templates/Day Plan.md');
+    if (!/^last_mile:\nneeds_night_nearby:\npermits:/m.test(loc)) bad.push('Location: needs_night_nearby after last_mile');
+    if (!/^locations: \[\]\nstart_time:\nearly_start:/m.test(day) || !/^total_walk_km:\nbacktrack_km:\nrule_bends: 0/m.test(day) || !/^## Along the way$/m.test(day)) bad.push('Day Plan: start_time, backtrack_km, Along the way');
+    const ex = fs.readdirSync(path.join(ROOT, 'example-vault/Locations')).filter(f => !/^needs_night_nearby:/m.test(rd(path.join(ROOT, 'example-vault'), `Locations/${f}`)));
+    if (ex.length) bad.push(`example places without needs_night_nearby: ${ex.slice(0, 3).join(', ')}`);
+    return bad.join('; ');
+  });
+  test('build-itinerary: the skill and the skills it works with describe the new pieces', () => {
+    const sk = n => fs.readFileSync(path.join(ROOT, 'skills', n, 'SKILL.md'), 'utf8'), bad = [];
+    const b = sk('build-itinerary');
+    for (const w of ['route.mjs', 'candidates', 'links', 'check --route', 'legs.json', 'compare-itineraries', 'plan-day', 'Trip itinerary', 'Operator brief', 'not in your list yet', 'Decisions/', 'status: locked', 'never', 'reverse', 'big day', 'What it makes possible', 'Red flags', 'What it costs', 'migrate-itinerary.mjs', '--add-itinerary', 'researched', 'rough'])
+      if (!b.includes(w)) bad.push(`build-itinerary: ${w}`);
+    for (const n of ['plan-day', 'review-travel-times']) for (const w of ['road_cutoffs', 'legs.json']) if (!sk(n).includes(w)) bad.push(`${n}: ${w}`);
+    for (const w of ['start_time', 'backtrack_km', 'Along the way', 'on_the_way_min']) if (!sk('plan-day').includes(w)) bad.push(`plan-day: ${w}`);
+    if (!/needs_night_nearby/.test(sk('add-place'))) bad.push('add-place: needs_night_nearby');
+    if (!/--add-itinerary/.test(sk('trip-init')) || !/road_cutoffs/.test(sk('trip-init'))) bad.push('trip-init');
+    if (!/Day by day/.test(sk('compare-itineraries'))) bad.push('compare-itineraries: Day by day');
+    const ref = fs.readFileSync(path.join(ROOT, 'skills/plan-day/references/day-example.md'), 'utf8');
+    if (!/^start_time: "05:00"$/m.test(ref) || !/^## Along the way$/m.test(ref)) bad.push('plan-day example');
+    return bad.join('; ');
+  });
+  test('build-itinerary: the roadmap marks it done; the plan says built', () => {
+    const bad = [];
+    if (!/\[x\] \(v0\.12\.0\) \*\*`build-itinerary`\*\*/.test(rd(ROOT, 'docs/ROADMAP.md'))) bad.push('roadmap not marked done');
+    if (!/^Status: built \(v0\.12\.0\)/m.test(rd(ROOT, 'docs/PLAN-build-itinerary.md'))) bad.push('plan status line');
+    return bad.join('; ');
+  });
+}
+
+test('plugin: both manifests have the same version, and it is 0.12.0', () => {
   const a = JSON.parse(fs.readFileSync(path.join(ROOT, '.claude-plugin/plugin.json'), 'utf8')).version;
   const b = JSON.parse(fs.readFileSync(path.join(ROOT, '.claude-plugin/marketplace.json'), 'utf8')).plugins[0].version;
-  return a === b && a === '0.11.0' ? '' : `plugin.json ${a}, marketplace.json ${b}`;
+  return a === b && a === '0.12.0' ? '' : `plugin.json ${a}, marketplace.json ${b}`;
 });
 // ---- Food spots (restaurants and cafes): the template, the Base, the folder, the example notes and the old-vault upgrade
 {
@@ -1132,7 +1473,7 @@ test('plugin: both manifests have the same version, and it is 0.11.0', () => {
       const home = rd(v, '00 Home.md');
       for (const e of [...home.matchAll(/!\[\[Bookings\.base#([^\]]+)\]\]/g)].map(m => m[1])) if (!views.includes(e)) bad.push(`${v}: Home embeds a missing view ${e}`);
       for (const w of ['## Bookings', '![[Bookings.base#To book]]', '![[Bookings.base#No confirmation yet]]', '![[Stays.base#Booking tracker]]', '- **Paid so far / still owed:**', '`Confirmations/`']) if (!home.includes(w)) bad.push(`${v}: Home lacks ${w}`);
-      if (!/booking: Bookings\}/.test(rd(v, 'trip.md'))) bad.push(`${v}: trip.md folders line`);
+      if (!/booking: Bookings[,}]/.test(rd(v, 'trip.md'))) bad.push(`${v}: trip.md folders line`);
     }
     if (!/## Bookings live on the item's own note/.test(rd('vault-template', '.claude/CLAUDE.md'))) bad.push('vault CLAUDE.md rule');
     return bad.join('\n');
@@ -1434,6 +1775,12 @@ edit('Stays/Sohra Plaza.md', 'decision: considering', 'decision: selected');
 edit('Stays/Sohra Plaza.md', 'booking_status: not-contacted', 'booking_status: booked');
 edit('Bookings/Book - Travel to and from the trip.md', 'booking_status: not-contacted', 'booking_status: done');
 
+// A bad road cutoff in trip.md, and a Route note whose Day by day table is a row short.
+edit('trip.md', 'road_cutoffs: []', 'road_cutoffs: [{area: Jowai, no_drive_after: 4pm}]');
+fs.writeFileSync(path.join(broken, 'Itinerary/Route - Option A.md'), fs.readFileSync(path.join(broken, 'Templates/Route.md'), 'utf8')
+  .replace('{{title}}', 'Route - Option A').replace('bases: []', 'bases: [A]').replace('nights_per_base: []', 'nights_per_base: [2]').replace('total_nights:', 'total_nights: 2')
+  .replace('| 1 |  |  |  |  |\n| 2 |  |  |  |  |', '| 1 | 08:00, A |  | A | A |\n| 2 | 08:00, A |  | A | A |'));
+
 const brokenRun = check(broken);
 const expectIn = (name, file, text, level) => test(`checker finds: ${name}`, () => {
   const section = brokenRun.out.split('WARNINGS (')[level === 'error' ? 0 : 1];
@@ -1455,6 +1802,8 @@ expectIn('locked Decision note with no locked_by', 'Decisions/Decision - Van.md'
 expectIn('Route nights that do not match the bases', 'Itinerary/Route.md', 'nights_per_base', 'warning');
 expectIn('a booked stay with no confirmation', 'Stays/Sohra Plaza.md', 'booked, no confirmation yet', 'warning');
 expectIn('a booked stay whose decision is not locked', 'Stays/Sohra Plaza.md', 'is not locked', 'warning');
+expectIn('a road cutoff with a bad time', 'trip.md', 'no_drive_after must be a time', 'warning');
+expectIn('a Route Day by day table a row short', 'Itinerary/Route - Option A.md', 'Day by day has 2 row(s), but 2 nights need 3', 'warning');
 expectIn('a booking_status outside the list', 'Bookings/Book - Travel to and from the trip.md', 'booking_status "done" is not one of', 'warning');
 
 fs.rmSync(TMP, { recursive: true, force: true });

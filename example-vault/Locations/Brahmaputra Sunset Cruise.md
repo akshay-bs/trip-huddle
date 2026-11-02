@@ -34,6 +34,7 @@ after_dark_note:
 opening_hours: Daily sailings. The Alfresco Grand sunset cruise leaves around 4:00 PM in winter (60 min). Evening and dinner cruises run later
 closed_days: May be cancelled in bad weather or high water (mainly in the monsoon)
 last_mile: City road to the riverfront on MG Road (Panbazar/Fancy Bazar). City traffic is heavy in the evening, so allow 45–60 min. The tempo traveller drops at the terminal or ghat
+needs_night_nearby:
 permits: None
 needs_booking: false
 entry_fee: 700

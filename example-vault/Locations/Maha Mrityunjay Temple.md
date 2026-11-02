@@ -35,6 +35,7 @@ after_dark_note:
 opening_hours:
 closed_days:
 last_mile: Just off the Guwahati–Kaziranga highway; any vehicle OK
+needs_night_nearby:
 permits: None
 needs_booking: false
 entry_fee: 0

@@ -35,6 +35,7 @@ after_dark_note:
 opening_hours:
 closed_days:
 last_mile: Trailhead in Rangthylliang village, on the Pynursla–Dawki road, close to [[Conara Resort]] (whose address is listed as Rangthylliang)
+needs_night_nearby:
 permits: None known. A local guide is recommended
 needs_booking: false
 entry_fee:

@@ -33,6 +33,7 @@ after_dark_note:
 opening_hours: Activities about 8–10 AM to 4–6 PM, depending on operator and light
 closed_days:
 last_mile: About 8 km upstream of Dawki by a narrow, winding village road off the Shillong–Dawki highway. Tempo traveller OK with care. Parking near the top of the village is limited on peak days
+needs_night_nearby:
 permits: None for Indian citizens (border area, carry photo ID)
 needs_booking: false
 entry_fee:

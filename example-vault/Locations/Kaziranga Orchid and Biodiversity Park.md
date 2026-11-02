@@ -36,6 +36,7 @@ after_dark_note:
 opening_hours: Until about 5 pm (confirm the show time)
 closed_days:
 last_mile: On the main road at Kohora; any vehicle
+needs_night_nearby:
 permits: None
 needs_booking: false
 entry_fee: 100

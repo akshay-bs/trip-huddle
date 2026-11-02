@@ -36,6 +36,7 @@ after_dark_note:
 opening_hours: No fixed hours; go with a guide in daylight
 closed_days: Closed in the monsoon (about Jun–Sep) because of flash floods
 last_mile: NH-6 to Lumshnong, then about 7 km on a rough dirt road to Brichyrnot (Brishyrnot) village. A tempo traveller is unlikely to manage this; use local 4x4s or pickups (about ₹1,500–5,000 round trip). Not on Google Maps; a guide is needed
+needs_night_nearby: true
 permits: Registration at a checkpoint on the trail (no Inner Line Permit needed for Indian citizens)
 needs_booking: false
 entry_fee: 50

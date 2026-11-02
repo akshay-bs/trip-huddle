@@ -35,6 +35,7 @@ after_dark_note:
 opening_hours: Daylight hours (roadside); eco-park gate roughly 8 am – 5 pm
 closed_days:
 last_mile: On the paved Sohra–Mawsmai road; tempo traveller can pull over at the roadside parking
+needs_night_nearby:
 permits: None
 needs_booking: false
 entry_fee: 0

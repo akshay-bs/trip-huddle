@@ -35,6 +35,7 @@ after_dark_note:
 opening_hours: About 8:00 AM – 5:00 PM
 closed_days:
 last_mile: On the Sohra–Mawsmai road near the top of Seven Sisters Falls; parking at the gate. Tempo traveller OK
+needs_night_nearby:
 permits: None
 needs_booking: false
 entry_fee: 20

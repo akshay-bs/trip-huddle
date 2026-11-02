@@ -35,6 +35,7 @@ after_dark_note:
 opening_hours: Temple about 5:30 AM – 6:00 PM. Government ferries from Umananda/Kachari Ghat about 9:00 AM – 2:00 PM (returns until about 2:40 PM), roughly every 1 hr 15 min; private boats about 8:30 AM – 5:00 PM
 closed_days:
 last_mile: Ferry from Umananda Ghat / Kachari Ghat on MG Road (opposite the Kamrup DC office), about 8–10 min crossing. Tempo traveller drops at the ghat
+needs_night_nearby:
 permits: None
 needs_booking: false
 entry_fee: 0

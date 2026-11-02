@@ -18,6 +18,8 @@ properties:
     displayName: Season verdict
   time_needed_hrs:
     displayName: Hrs
+  needs_night_nearby:
+    displayName: Night nearby
 views:
   - type: table
     name: All
@@ -29,6 +31,7 @@ views:
       - difficulty
       - group_fit
       - time_needed_hrs
+      - needs_night_nearby
       - decision
       - formula.sources
       - decision_reason

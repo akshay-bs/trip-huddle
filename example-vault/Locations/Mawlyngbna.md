@@ -36,6 +36,7 @@ after_dark_note:
 opening_hours: Activities by prior booking, daylight only
 closed_days:
 last_mile: Shillong → Mawsynram → Mawlyngbna (about 75–80 km, 2–2.5 hrs from Shillong). The last stretch is narrow but motorable; tempo traveller should manage (confirm)
+needs_night_nearby:
 permits: None for Indian citizens (carry photo ID)
 needs_booking: false
 entry_fee: 10

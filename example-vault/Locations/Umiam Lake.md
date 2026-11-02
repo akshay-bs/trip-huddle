@@ -36,6 +36,7 @@ after_dark_note:
 opening_hours: The viewpoint is roadside and open anytime. Water sports run about 9:00 AM – 5:00 PM
 closed_days:
 last_mile: Directly on NH-6 (Guwahati–Shillong highway) at Barapani, about 15–17 km north of Shillong. Tempo traveller OK, with roadside and complex parking
+needs_night_nearby:
 permits: None
 needs_booking: false
 entry_fee: 50

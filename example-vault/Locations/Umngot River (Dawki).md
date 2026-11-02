@@ -35,6 +35,7 @@ after_dark_note:
 opening_hours: Boats run about 7–8 AM to 4–5 PM (daylight, weather permitting)
 closed_days:
 last_mile: On the Shillong–Dawki highway (NH-206, old NH-40), about 80–90 km from Shillong. Tempo traveller can reach the riverside parking below the bridge, but the approach road and bridge jam badly in peak season
+needs_night_nearby:
 permits: None for Indian citizens. It is a border area, so carry photo ID. Foreigners need a passport
 needs_booking: false
 entry_fee:

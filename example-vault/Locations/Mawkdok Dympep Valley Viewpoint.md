@@ -36,6 +36,7 @@ after_dark_note:
 opening_hours: About 6 AM – 6 PM
 closed_days:
 last_mile: Directly on the Shillong–Sohra road; roadside parking. Tempo traveller OK
+needs_night_nearby:
 permits: None
 needs_booking: false
 entry_fee:

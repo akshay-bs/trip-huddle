@@ -34,6 +34,7 @@ after_dark_note:
 opening_hours: 07:00–18:00 (Google shows 9:30 am opening; verify)
 closed_days:
 last_mile: Road to the entrance; confirm big-vehicle parking
+needs_night_nearby:
 permits: None
 needs_booking: false
 entry_fee: 50

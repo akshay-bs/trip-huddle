@@ -32,6 +32,7 @@ after_dark_note:
 opening_hours:
 closed_days:
 last_mile: Exact spot not confirmed (map pin is Mayong village, approximate). Described as about 1 km from Mayong village, at a river confluence near Pobitora
+needs_night_nearby:
 permits:
 needs_booking: false
 entry_fee:

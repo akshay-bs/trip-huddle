@@ -33,6 +33,7 @@ after_dark_note:
 opening_hours:
 closed_days:
 last_mile: On the Sohra–Laitkynsew road; any vehicle
+needs_night_nearby:
 permits: None
 needs_booking: false
 entry_fee: 20

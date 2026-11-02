@@ -36,6 +36,7 @@ after_dark_note:
 opening_hours: 06:00–18:00
 closed_days:
 last_mile: Village road near Jowai; any vehicle
+needs_night_nearby:
 permits: None
 needs_booking: false
 entry_fee: 20

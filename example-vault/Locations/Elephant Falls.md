@@ -33,6 +33,7 @@ after_dark_note:
 opening_hours: About 9:00/10:00–17:00 (varies by source)
 closed_days:
 last_mile: Paved road via Upper Shillong (Shillong–Sohra road side); parking at the gate; tempo traveller OK
+needs_night_nearby:
 permits: None
 needs_booking: false
 entry_fee: 100

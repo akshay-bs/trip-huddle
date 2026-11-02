@@ -35,6 +35,7 @@ after_dark_note:
 opening_hours:
 closed_days:
 last_mile: Paved road from Sohra (same road as the Wei Sawdong turn-off)
+needs_night_nearby:
 permits: None
 needs_booking: false
 entry_fee: 0

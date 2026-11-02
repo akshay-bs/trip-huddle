@@ -35,6 +35,7 @@ after_dark_note:
 opening_hours: About 6 AM – 5 PM
 closed_days:
 last_mile: Via Smit; paved but narrow hill road to the parking at the canyon top. Tempo traveller OK
+needs_night_nearby:
 permits: None
 needs_booking: false
 entry_fee: 0

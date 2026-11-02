@@ -34,6 +34,7 @@ after_dark_note:
 opening_hours:
 closed_days:
 last_mile: Local road near Sohra; confirm big-vehicle parking
+needs_night_nearby:
 permits: None
 needs_booking: false
 entry_fee:

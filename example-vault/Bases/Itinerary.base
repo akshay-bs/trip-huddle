@@ -20,6 +20,10 @@ properties:
     displayName: Rule bends
   travel_verdict:
     displayName: Travel check
+  start_time:
+    displayName: Start
+  backtrack_km:
+    displayName: Doubles back km
 views:
   - type: table
     name: Days
@@ -30,6 +34,7 @@ views:
       - end_base
       - stay
       - locations
+      - start_time
       - early_start
       - sunrise
       - sunset
@@ -41,6 +46,7 @@ views:
       - formula.verdict
       - travel_verdict
       - total_walk_km
+      - backtrack_km
       - rule_bends
     sort:
       - property: day
@@ -49,3 +55,4 @@ views:
       drive_hrs: Sum
       activity_hrs: Sum
       total_walk_km: Sum
+      backtrack_km: Sum

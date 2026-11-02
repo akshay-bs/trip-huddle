@@ -1,6 +1,6 @@
 ---
 name: add-place
-description: Add new locations (places to visit) or stays (hotels, homestays, Airbnbs, resorts) to a trip-huddle Obsidian trip vault, consistently. Use whenever the user asks to add, include or put a place, waterfall, viewpoint, activity, hotel or stay "to the list", shares a new itinerary, quote or hotel list, or sends a friend's suggestions. Also use when the user mentions a place that might already exist (it adds the new source to the existing note instead of duplicating it).
+description: Add new locations (places to visit) or stays (hotels, homestays, Airbnbs, resorts) to a trip-huddle Obsidian trip vault, consistently. Use whenever the user asks to add, include or put a named place, waterfall, viewpoint, activity, hotel or stay "to the list". Also use when the user mentions a place that might already exist (it adds the new source to the existing note instead of duplicating it). A pasted itinerary, quote, hotel list, link or friend's suggestions goes to the add-source skill first, which then hands the items to this one.
 ---
 
 # Add a location or stay to the trip vault
@@ -19,11 +19,9 @@ Never skip the dedupe or validate steps.
 
 ## 1. Identify the source
 Every addition must be traceable to a note in `Sources/`.
-- **Existing source:** if the request belongs to one (the same person, the same itinerary, a same-day follow-up), reuse it.
-- **New source:** otherwise create `Sources/<Who> - <Label>.md` from `Templates/Source Itinerary.md`, e.g. `Alex - Additions 2Oct`, `Agency quote - 8N9D`.
-  - Fill in `source_from`, `source_kind`, `received_on` and the route/day sections.
-  - Paste the user's original wording under "Original text / attachment".
-- **Source tag:** each source has a short CamelCase tag with no spaces, e.g. `#Alex2Oct`, `#AgencyQuote`. Reuse the tag the source note already has.
+- **A new itinerary, quote, hotel list, link or set of suggestions:** run the `add-source` skill first. It writes the Source note and calls this skill with it. When you are called that way, the Source note and its tag are given: use them and skip the rest of this step.
+- **Existing source:** if the request belongs to one (the same person, the same itinerary, a same-day follow-up), reuse it and its tag.
+- **Just a named place or stay, no source yet:** create a minimal `Sources/<Who> - <Label>.md` from `Templates/Source Itinerary.md`, e.g. `Alex - Additions 2Oct`. Fill in `source_from`, `source_kind` and `received_on`, and paste the user's original wording under "Original text / attachment". Give it a short CamelCase tag with no spaces, e.g. `#Alex2Oct`.
 
 ## 2. Dedupe (always)
 Before creating anything, search for the place or stay. The user's spelling is often off: "laboon" means Labon, "double root bridge" means Double Decker Living Root Bridge.

@@ -285,6 +285,8 @@ for (const f of targets) {
   }
   if (type === 'source' && String(fm.data.processed) === 'true') {
     for (const l of new Set(wikilinks(fm.body))) if (!resolves(l)) warn(f, `marked processed, but [[${l}]] has no note yet`);
+    const open = fm.body.replace(/<!--[\s\S]*?-->/g, '').split('\n').filter(l => /^\s*- \[ \]\s*\S/.test(l) && !/^\s*- \[ \]\s*(\[\[\s*\]\])\s*$/.test(l));
+    if (open.length) warn(f, `marked processed, but ${open.length} checklist line(s) are not ticked, e.g. "${open[0].trim().slice(0, 60)}". Tick them, or set processed: false`);
   }
 
   // links and headings

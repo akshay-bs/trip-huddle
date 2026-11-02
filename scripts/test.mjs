@@ -91,6 +91,34 @@ test('trip.md: folders and decision_values are honoured, and survive trip-init r
   return re.code === 0 && after.includes('folders: {location: Places}') && after.includes('booked]') ? '' : re.out + after;
 });
 
+// ---- Source notes (what the add-source skill writes), made-up content
+const sourceVault = path.join(TMP, 'source-notes');
+fs.cpSync(path.join(ROOT, 'example-vault'), sourceVault, { recursive: true });
+const sourceTpl = fs.readFileSync(path.join(sourceVault, 'Templates/Source Itinerary.md'), 'utf8');
+const locTpl = fs.readFileSync(path.join(sourceVault, 'Templates/Location.md'), 'utf8');
+const makeSource = (title, processed, tick) => sourceTpl.replace('{{title}}', title).replace('{{date}}', '2026-01-02')
+  .replace('source_from:', 'source_from: Test Agency').replace('source_kind:', 'source_kind: agency')
+  .replace('processed: false', `processed: ${processed}`).replace('  - source\n', '  - source\n  - TestAgency\n')
+  .replace('## Route summary\n<!--', '## Route summary\nTown A (2N) → Town B (3N)\n<!--')
+  .replace('- [ ] [[ ]]', `- [${tick}] [[Test Spot]]`);   // the first placeholder is the places list
+fs.writeFileSync(path.join(sourceVault, 'Locations/Test Spot.md'), locTpl.replace('{{title}}', 'Test Spot')
+  .replace('location: []', 'location: [25.5, 91.9]').replace('recommended_by: []', 'recommended_by:\n  - "[[Test Agency - Quote]]"'));
+fs.writeFileSync(path.join(sourceVault, 'Sources/Test Agency - Quote.md'), makeSource('Test Agency - Quote', 'true', 'x'));
+test('checker: a filled, ticked, processed Source note passes', () => {
+  const r = check(sourceVault), mine = r.out.split('\n').filter(l => l.includes('Test Agency - Quote') || l.includes('Test Spot'));
+  return r.code === 0 && !mine.length ? '' : r.out;
+});
+test('checker: a processed Source note with an unticked checklist line is flagged', () => {
+  fs.writeFileSync(path.join(sourceVault, 'Sources/Test Agency - Quote.md'), makeSource('Test Agency - Quote', 'true', ' '));
+  const r = check(sourceVault);
+  return r.out.split('\n').some(l => l.includes('Test Agency - Quote.md') && l.includes('not ticked')) ? '' : r.out;
+});
+test('checker: an unprocessed Source note with an unticked line is fine', () => {
+  fs.writeFileSync(path.join(sourceVault, 'Sources/Test Agency - Quote.md'), makeSource('Test Agency - Quote', 'false', ' '));
+  const r = check(sourceVault);
+  return !r.out.includes('not ticked') && r.code === 0 ? '' : r.out;
+});
+
 // ---- (d) a broken vault: every problem must be reported
 const broken = path.join(TMP, 'broken');
 fs.cpSync(path.join(ROOT, 'example-vault'), broken, { recursive: true });

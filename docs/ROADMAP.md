@@ -36,7 +36,7 @@ These are still specific to the original trip:
 
 ## Phase 3: more skills from the original trip
 These were done by hand on the original trip and could each become a skill:
-- **`add-source`**: take in an itinerary, agency quote or hotel list, create the Source note, then hand each item to `add-place`.
+- [x] (v0.4.0) **`add-source`**: take in an itinerary, agency quote or hotel list, create the Source note, then hand each item to `add-place`. The checker also warns when a Source note is `processed` with unticked checklist lines.
 - **`compare-itineraries`**: a side-by-side note with nights by base, day by day, places, pace and effort, cost, a bottom line, and what to confirm.
 - **`review-travel-times`**: check each leg of a route against maps and local reports, and give a verdict on whether each day is realistic before sunset.
 - **`plan-day`**: build Day notes (legs, schedule, meals, backup plan) and work out the slack between daylight, driving and activity time.

@@ -7,11 +7,13 @@ import os from 'node:os';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
+import { sunTimes, slack, tzOffsetMinutes, TIGHT_BELOW_HRS, TOO_MUCH_BELOW_HRS } from '../skills/plan-day/scripts/sun.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const CHECKER = path.join(ROOT, 'scripts/validate.mjs');
 const INIT = path.join(ROOT, 'skills/trip-init/scripts/init.mjs');
 const ANSWERS = path.join(ROOT, 'skills/trip-init/tests');
+const SUN = path.join(ROOT, 'skills/plan-day/scripts/sun.mjs');
 const TMP = fs.mkdtempSync(path.join(os.tmpdir(), 'trip-huddle-test-'));
 
 const run = (file, args, cwd = ROOT) => {
@@ -118,6 +120,111 @@ test('checker: an unprocessed Source note with an unticked line is fine', () => 
   const r = check(sourceVault);
   return !r.out.includes('not ticked') && r.code === 0 ? '' : r.out;
 });
+
+// ---- plan-day: the sun script (known values from published sunrise tables)
+const mins = t => Number(t.slice(0, 2)) * 60 + Number(t.slice(3));
+const near = (name, got, want, tol = 2) => test(`sun: ${name}`, () => Math.abs(mins(got) - mins(want)) <= tol ? '' : `got ${got}, want ${want} (within ${tol} min)`);
+{
+  const london = sunTimes('2024-06-21', 51.4779, -0.0015, tzOffsetMinutes('Europe/London', 2024, 6, 21));
+  near('London, June solstice, sunrise 04:43', london.sunrise, '04:43');
+  near('London, June solstice, sunset 21:21', london.sunset, '21:21');
+  const sydney = sunTimes('2024-12-21', -33.87, 151.21, tzOffsetMinutes('Australia/Sydney', 2024, 12, 21));
+  near('Sydney, December solstice, sunrise 05:41', sydney.sunrise, '05:41');
+  near('Sydney, December solstice, sunset 20:05', sydney.sunset, '20:05');
+  const lisbon = sunTimes('2027-06-21', 38.72, -9.14, tzOffsetMinutes('Europe/Lisbon', 2027, 6, 21));
+  near('Lisbon, June solstice, sunrise 06:12', lisbon.sunrise, '06:12');
+  near('Lisbon, June solstice, sunset 21:05', lisbon.sunset, '21:05');
+  const quito = sunTimes('2024-03-20', -0.18, -78.47, -300);
+  test('sun: near the equator at the equinox the day is about 12 hours', () => Math.abs(quito.daylight_hrs - 12.1) <= 0.2 ? '' : `got ${quito.daylight_hrs}`);
+  const wellington = sunTimes('2024-06-21', -41.29, 174.78, tzOffsetMinutes('Pacific/Auckland', 2024, 6, 21));
+  test('sun: far east of Greenwich (Wellington, June) gives a short winter day', () =>
+    Math.abs(wellington.daylight_hrs - 9.2) <= 0.2 && mins(wellington.sunrise) < mins(wellington.sunset) ? '' : JSON.stringify(wellington));
+  test('sun: daylight_hrs matches sunset minus sunrise', () => Math.abs((mins(london.sunset) - mins(london.sunrise)) / 60 - london.daylight_hrs) <= 0.1 ? '' : JSON.stringify(london));
+  test('sun: midnight sun and polar night come back as polar, with no times', () => {
+    const day = sunTimes('2024-06-21', 69.65, 18.96, 120), night = sunTimes('2024-12-21', 69.65, 18.96, 60);
+    return day.polar === 'day' && day.sunrise === null && day.daylight_hrs === 24 && night.polar === 'night' && night.daylight_hrs === 0 ? '' : JSON.stringify([day, night]);
+  });
+  test('sun: the time zone offset follows daylight saving and half-hour zones', () => {
+    const got = [tzOffsetMinutes('Europe/Lisbon', 2027, 6, 9), tzOffsetMinutes('Europe/Lisbon', 2027, 1, 9), tzOffsetMinutes('Asia/Kolkata', 2027, 1, 9)];
+    return got.join() === '60,0,330' ? '' : got.join();
+  });
+  test('sun: bad dates are refused', () => { try { sunTimes('9 June', 1, 1, 0); return 'no error'; } catch { return ''; } });
+}
+test('sun: the command line prints the weekday, and asks for a time zone instead of guessing', () => {
+  const ok = run(SUN, ['times', '--date', '2027-06-09', '--lat', '37.10', '--lng', '-8.67', '--tz', 'Europe/Lisbon']);
+  const j = JSON.parse(ok.out);
+  const noTz = run(SUN, ['times', '--date', '2027-06-09', '--lat', '37.10', '--lng', '-8.67']);
+  return ok.code === 0 && j.weekday === 'Wed' && j.source === 'computed' && noTz.code === 2 && /time zone/.test(noTz.out) ? '' : ok.out + noTz.out;
+});
+test('sun: with no coordinates it falls back to trip.md and says so', () => {
+  const j = JSON.parse(run(SUN, ['times', '--date', '2027-06-09', '--vault', path.join(ROOT, 'example-vault')]).out);
+  return j.sunrise === '07:00' && j.sunset === '16:30' && j.daylight_hrs === 9.5 && /trip\.md/.test(j.source) ? '' : JSON.stringify(j);
+});
+test('slack: verdict thresholds (ok from 1.5, tight from 0, otherwise too much)', () => {
+  const v = (drive, activity, predawn = 0) => slack({ daylight: 10, drive, activity, predawn }).verdict;
+  const got = [v(4, 4.5), v(4, 5), v(4, 6), v(5, 5), v(5, 5.1), v(5, 5, 3)];
+  return got.join() === 'ok,tight,tight,tight,too much,ok' && TIGHT_BELOW_HRS === 1.5 && TOO_MUCH_BELOW_HRS === 0 ? '' : got.join();
+});
+test('slack: pre-dawn hours are counted separately and do not use up daylight', () => {
+  const s = slack({ daylight: 9.5, drive: 4.5, activity: 5.5, predawn: 2 });
+  return s.slack_hrs === 1.5 && s.verdict === 'ok' && slack({ daylight: 9.5, drive: 4.5, activity: 5.5 }).verdict === 'too much' ? '' : JSON.stringify(s);
+});
+test('slack: the Itinerary base uses the same thresholds as the script', () => {
+  const base = fs.readFileSync(path.join(ROOT, 'vault-template/Bases/Itinerary.base'), 'utf8');
+  return base.includes(`formula.slack_hrs < ${TOO_MUCH_BELOW_HRS}`) && base.includes(`formula.slack_hrs < ${TIGHT_BELOW_HRS}`)
+    && base.includes('predawn_hrs') ? '' : 'Itinerary.base verdict formula does not match sun.mjs';
+});
+test('plan-day: the Day Plan template and Itinerary base are the same in both vaults', () => {
+  const same = f => fs.readFileSync(path.join(ROOT, 'vault-template', f), 'utf8') === fs.readFileSync(path.join(ROOT, 'example-vault', f), 'utf8');
+  return same('Bases/Itinerary.base') && same('.obsidian/types.json') ? '' : 'Itinerary.base or types.json differ between vault-template and example-vault';
+});
+
+// ---- plan-day: the reference example is a valid Day note in a vault made by trip-init (made-up places, stubs below)
+const dayVault = path.join(TMP, 'portugal-days');
+fs.cpSync(portugal, dayVault, { recursive: true });
+{
+  const tpl = n => fs.readFileSync(path.join(dayVault, 'Templates', n), 'utf8');
+  const put = (rel, text) => { fs.mkdirSync(path.dirname(path.join(dayVault, rel)), { recursive: true }); fs.writeFileSync(path.join(dayVault, rel), text); };
+  put('Sources/Src.md', '---\ntype: source\ntags:\n  - source\n---\n# Src\n[[Cliff Viewpoint (Example)]] [[Fishing Harbour (Example)]] [[Old Town Walk (Example)]] [[Mountain Fort (Example)]]\n');
+  for (const n of ['Cliff Viewpoint (Example)', 'Fishing Harbour (Example)', 'Old Town Walk (Example)', 'Mountain Fort (Example)']) {
+    put(`Locations/${n}.md`, tpl('Location.md').replace('{{title}}', n).replace('location: []', 'location: [37.1, -8.7]')
+      .replace('recommended_by: []', 'recommended_by:\n  - "[[Src]]"').replace(/scheduled_day:.*/, n.startsWith('Mountain') ? 'scheduled_day:' : 'scheduled_day: "[[Day 04]]"'));
+  }
+  put('Stays/Example Guesthouse Lagos.md', tpl('Stay.md').replace('{{title}}', 'Example Guesthouse Lagos').replace('location: []', 'location: [37.1, -8.67]')
+    .replace('recommended_by: []', 'recommended_by:\n  - "[[Src]]"'));
+  fs.appendFileSync(path.join(dayVault, 'Sources/Src.md'), '[[Example Guesthouse Lagos]]\n');
+  fs.copyFileSync(path.join(ROOT, 'skills/plan-day/references/day-example.md'), path.join(dayVault, 'Itinerary/Day 04.md'));
+}
+test('plan-day: the reference example Day note passes the checker with no errors or warnings about it', () => {
+  const r = check(dayVault), mine = r.out.split('\n').filter(l => /Day 04|Day Plan/.test(l));
+  return r.code === 0 && !mine.length ? '' : r.out;
+});
+test('plan-day: the numbers in the reference example match the sun script and the slack rule', () => {
+  const text = fs.readFileSync(path.join(ROOT, 'skills/plan-day/references/day-example.md'), 'utf8');
+  const get = k => text.match(new RegExp(`^${k}: "?([^"\\n]*)"?$`, 'm'))[1];
+  const sun = sunTimes(get('date'), 37.10, -8.67, tzOffsetMinutes('Europe/Lisbon', 2027, 6, 9));
+  const s = slack({ daylight: Number(get('daylight_hrs')), drive: Number(get('drive_hrs')), activity: Number(get('activity_hrs')), predawn: Number(get('predawn_hrs')) });
+  const bad = [];
+  if (sun.sunrise !== get('sunrise') || sun.sunset !== get('sunset') || sun.daylight_hrs !== Number(get('daylight_hrs'))) bad.push(`sun: ${JSON.stringify(sun)}`);
+  if (!text.includes(`Slack ${s.slack_hrs} hrs: **${s.verdict}**`)) bad.push(`slack line should say ${s.slack_hrs} hrs ${s.verdict}`);
+  return bad.join('; ');
+});
+{
+  const v = path.join(TMP, 'portugal-days-bad');
+  fs.cpSync(dayVault, v, { recursive: true });
+  const f = path.join(v, 'Itinerary/Day 04.md');
+  fs.writeFileSync(f, fs.readFileSync(f, 'utf8').replace('early_start: "05:00"', 'early_start: "07:00"').replace('daylight_hrs: 14.7', 'daylight_hrs: 12.5')
+    .replace('drive_hrs: 2.3', 'drive_hrs: 6').replace('sunset: "20:54"', 'sunset: 8pm'));
+  const out = check(v).out;
+  const has = text => out.split('\n').some(l => l.includes('Day 04.md') && l.includes(text));
+  test('checker finds: Day note with a start after sunrise, a bad time, and a day longer than the daylight', () =>
+    has('early_start 07:00 is not before sunrise') && has('sunset "8pm" should be a local time') && has('more than the daylight') ? '' : out);
+  fs.writeFileSync(f, fs.readFileSync(f, 'utf8').replace('sunset: 8pm', 'sunset: "20:54"').replace('early_start: "07:00"', 'early_start: "05:00"').replace('drive_hrs: 6', 'drive_hrs: 2.3'));
+  test('checker finds: daylight_hrs that does not match sunrise and sunset', () => {
+    const o = check(v).out;
+    return o.split('\n').some(l => l.includes('Day 04.md') && l.includes('daylight_hrs 12.5 does not match')) ? '' : o;
+  });
+}
 
 // ---- (d) a broken vault: every problem must be reported
 const broken = path.join(TMP, 'broken');

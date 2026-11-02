@@ -282,6 +282,7 @@ for (const f of targets) {
     if (Number.isFinite(maxHrs) && maxHrs > 0 && Number(fm.data.drive_hrs) > maxHrs) {
       warn(f, `drive_hrs ${fm.data.drive_hrs} is over the daily limit of ${maxHrs} hours in the Transport note`);
     }
+    dayChecks(f, fm.data);
   }
   if (type === 'source' && String(fm.data.processed) === 'true') {
     for (const l of new Set(wikilinks(fm.body))) if (!resolves(l)) warn(f, `marked processed, but [[${l}]] has no note yet`);
@@ -296,6 +297,30 @@ for (const f of targets) {
   if (!/^# .+/m.test(fm.body)) warn(f, 'no H1 heading (a line starting with "# ")');
   else if (!fm.body.match(/^# (.+)$/m)[1].includes(name.replace(/\s*\(.*\)$/, ''))) warn(f, 'the H1 heading does not match the file name');
   if (/\{\{(title|date|time)\}\}/.test(text)) err(f, 'a template placeholder like {{title}} was not replaced with real text');
+}
+
+// Day notes: sun times and the daylight arithmetic must agree with each other.
+function dayChecks(f, d) {
+  const clock = v => /^\d{1,2}:\d{2}$/.test(String(v)) ? Number(String(v).split(':')[0]) * 60 + Number(String(v).split(':')[1]) : null;
+  const times = {};
+  for (const k of ['early_start', 'sunrise', 'sunset']) {
+    if (d[k] == null || d[k] === '') continue;
+    times[k] = clock(d[k]);
+    if (times[k] === null) warn(f, `${k} "${d[k]}" should be a local time like "06:30" (in quotes)`);
+  }
+  if (times.early_start != null && times.sunrise != null && times.early_start >= times.sunrise) {
+    warn(f, `early_start ${d.early_start} is not before sunrise ${d.sunrise}. Leave early_start empty on a day that starts after sunrise`);
+  }
+  if (Number(d.predawn_hrs) > 0 && !d.early_start) warn(f, 'predawn_hrs is set but early_start is empty. Say when the day starts');
+  if (times.sunrise != null && times.sunset != null && d.daylight_hrs && times.sunset > times.sunrise
+      && Math.abs((times.sunset - times.sunrise) / 60 - Number(d.daylight_hrs)) > 0.3) {
+    warn(f, `daylight_hrs ${d.daylight_hrs} does not match sunrise ${d.sunrise} to sunset ${d.sunset}. daylight_hrs is real daylight, not the length of the day`);
+  }
+  const num = v => (v === null || v === undefined || v === '' ? 0 : Number(v));
+  if (d.daylight_hrs && Number.isFinite(num(d.drive_hrs) + num(d.activity_hrs) + num(d.predawn_hrs))) {
+    const slack = Number(d.daylight_hrs) - (num(d.drive_hrs) + num(d.activity_hrs) - num(d.predawn_hrs));
+    if (slack < -0.05) warn(f, `drive_hrs + activity_hrs are ${(-slack).toFixed(1)} hrs more than the daylight. Cut or move something, or split the day (verdict: too much)`);
+  }
 }
 
 function transportLimit(key) {

@@ -35,6 +35,7 @@ opening_hours: Early morning to evening (reported as about 4–5 AM to 8–9 PM)
 closed_days:
 last_mile: Up Navagraha Road on Chitrachal Hill, about 2 km east of Pan Bazar. The road to the top is narrow; a tempo traveller may have to stop lower down (unconfirmed)
 permits: None
+needs_booking: false
 entry_fee: 0
 other_fees: Puja charges if you book a special puja; shoe deposit
 toilets: Basic

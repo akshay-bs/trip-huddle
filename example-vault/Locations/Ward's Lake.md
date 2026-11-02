@@ -35,6 +35,7 @@ opening_hours: About 8:30–17:30 in winter (Nov–Feb); about 8:30–19:00 in s
 closed_days: Tuesday
 last_mile: In central Shillong near Raj Bhavan, a short walk from Police Bazaar; city traffic; drop-off at the gate
 permits: None
+needs_booking: false
 entry_fee: 10
 other_fees: Paddle boat charged separately (rate not verified); camera fee may apply; fish feed (puffed rice) sold at the gate
 toilets: Yes

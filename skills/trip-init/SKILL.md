@@ -13,6 +13,7 @@ A short interview, then a script does the file work. You never hand-edit templat
 - **New vault:** the working directory has no `trip.md`. Ask where the vault should go if the user hasn't said. The folder must be empty or not exist yet. Never set up a vault inside another vault, or on top of existing files.
 - **Change settings:** the working directory has a `trip.md`. Read it, show the current values as defaults, and only ask about what the user wants to change. Notes are never touched in this mode; only `trip.md`, the templates, the Bases and the Trip facts in `00 Home.md`.
   - **A vault made before 0.9.0 has no restaurants-and-cafes category** (no `Bases/Food.base`, and the Food Spot template has no `kind` or `meal`). If `Bases/Food.base` is missing, tell the user what is new (a `Food/` folder, a Food Base with a "To decide" view and a map, a "Food to decide" section on the home page, and `kind`, `meal` and `scheduled_day` on the Food Spot template) and **ask before adding it**. On a yes, add `--add-food` to the script in step 4. It only adds files and sections; it touches no notes. On a no, change nothing and don't ask again in this session.
+  - **A vault made before 0.11.0 has no booking list** (no `Bases/Bookings.base`, no `Templates/Booking.md`). If they are missing, tell the user what is new (a *Bookings* list on the home page made from what the group selected, booking fields on stays, the vehicle and places that need tickets or permits, a `Bookings/` folder for flights, trains and insurance, and a `Confirmations/` folder for vouchers) and **ask before adding it**. On a yes, add `--add-bookings` to the script in step 4, then run the note migration from the vault folder: `node "${CLAUDE_PLUGIN_ROOT}/skills/group-decisions/scripts/migrate-bookings.mjs"` (it only adds empty fields to existing notes, and is safe to run twice). On a no, change nothing and don't ask again in this session.
 
 ## 1. Interview
 Ask in small groups, one group per message. Offer a sensible default for every question so the user can just say "fine". Accept "don't know yet": leave that value empty, and add it to the open questions.
@@ -45,13 +46,14 @@ From the target folder:
 ```bash
 node "${CLAUDE_PLUGIN_ROOT}/skills/trip-init/scripts/init.mjs" --answers .claude/scratch/trip-answers.json
 ```
-Add `--reconfigure` in the change-settings mode (and `--add-food` as well, if the user said yes to the Food category above). The script:
+Add `--reconfigure` in the change-settings mode (and `--add-food` or `--add-bookings` as well, if the user said yes to the Food category or the booking list above). The script:
 - copies the empty vault (including the hidden `.obsidian/` and `.claude/` folders, and the `Food/` folder and Food Base) when the folder is new,
 - writes `trip.md`,
 - fills the per-trip values into the templates and Bases (cost split, currency symbol, value lists, day defaults, and `slack_ok_hrs` into the Itinerary base, which cannot read `trip.md`),
 - adds or removes the chosen field packs in the templates and `.obsidian/types.json`,
 - fills in **Trip facts** in `00 Home.md`,
 - with `--add-food`: adds the `Food/` folder, `Bases/Food.base`, the new Food Spot template (with the price band set again), the food checklist in the Source template, the `kind` and `meal` types and the "Food to decide" section on the home page, and leaves anything already there as it is,
+- with `--add-bookings`: adds the `Bookings/` and `Confirmations/` folders, `Bases/Bookings.base` (with the cost split filled in), the Booking template, the booking fields in the Stay, Transport and Location templates, their types, the *Bookings* section and budget line on the home page and the bookings rule in `.claude/CLAUDE.md`, and leaves anything already there as it is,
 - and prints every file it changed.
 
 If it stops with an error, show the user the error in plain words and fix the answers file. Don't edit the vault by hand to work around it.

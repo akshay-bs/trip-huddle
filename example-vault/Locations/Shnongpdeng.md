@@ -34,6 +34,7 @@ opening_hours: Activities about 8–10 AM to 4–6 PM, depending on operator and
 closed_days:
 last_mile: About 8 km upstream of Dawki by a narrow, winding village road off the Shillong–Dawki highway. Tempo traveller OK with care. Parking near the top of the village is limited on peak days
 permits: None for Indian citizens (border area, carry photo ID)
+needs_booking: false
 entry_fee:
 other_fees: Everything is paid per activity (see Activities). Parking and village fees are small and collected locally. The suspension bridge walk is described as free
 toilets: At campsites and homestays (basic)

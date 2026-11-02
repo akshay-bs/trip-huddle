@@ -36,6 +36,7 @@ opening_hours: About 7:00 AM – 5:00 PM daily
 closed_days:
 last_mile: On Laitumkhrah Main Road in central Shillong; drop-off at the gate, limited parking. About 1 km from Valmere Chery Blossom Suites
 permits: None
+needs_booking: false
 entry_fee: 0
 other_fees:
 toilets: Limited; use cafés in Laitumkhrah

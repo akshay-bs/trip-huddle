@@ -34,6 +34,7 @@ opening_hours:
 closed_days:
 last_mile: On the Sohra–Laitkynsew road; any vehicle
 permits: None
+needs_booking: false
 entry_fee: 20
 other_fees:
 toilets:

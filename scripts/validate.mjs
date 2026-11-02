@@ -137,8 +137,12 @@ const eveningBases = Array.isArray(trip.evening_bases) ? trip.evening_bases.map(
 const regions = Array.isArray(trip.regions) && trip.regions.length ? trip.regions.map(String) : null;
 const decisionValues = Array.isArray(trip.decision_values) && trip.decision_values.length
   ? trip.decision_values.map(String) : ['considering', 'selected', 'backup', 'dropped'];
-const FOLDERS = { location: 'Locations', stay: 'Stays', day: 'Itinerary', source: 'Sources', comparison: 'Sources', decision: 'Decisions', food: 'Food', route: 'Itinerary', transport: 'Logistics' };
+const FOLDERS = { location: 'Locations', stay: 'Stays', day: 'Itinerary', source: 'Sources', comparison: 'Sources', decision: 'Decisions', food: 'Food', route: 'Itinerary', transport: 'Logistics', booking: 'Bookings' };
 const DECISION_STATUSES = ['open', 'decided', 'locked'];   // see decisionChecks
+// The booking list (see bookingChecks): the fields every bookable note has, the folder for vouchers, and what counts as booked.
+const BOOKING_FIELDS = ['booking_status', 'cost_agreed', 'advance_paid', 'balance_pending', 'confirmation'];
+const CONFIRMATIONS = 'Confirmations';   // vouchers, tickets and pasted emails; not checked as notes
+const BOOKED = ['booked', 'paid'];
 const planning = loadPlanningLimits(VAULT);   // the defaults, changed by planning_limits in trip.md
 if (trip.folders && typeof trip.folders === 'object' && !Array.isArray(trip.folders)) {
   for (const [t, f] of Object.entries(trip.folders)) if (f) FOLDERS[t] = String(f).replace(/^\/+|\/+$/g, '');
@@ -211,7 +215,9 @@ for (const f of targets) {
 
   // properties: missing, unknown
   const missing = t.keys.filter(k => !fm.keys.includes(k));
-  const extra = fm.keys.filter(k => !t.keys.includes(k));
+  // A place carries the booking fields only when needs_booking is true (bookingChecks says when they are missing or stray).
+  const optional = type === 'location' ? BOOKING_FIELDS : [];
+  const extra = fm.keys.filter(k => !t.keys.includes(k) && !optional.includes(k));
   if (missing.length) warn(f, `missing properties: ${missing.join(', ')}. Add them (empty is fine) so the note matches ${t.file}.`);
   if (extra.length) warn(f, `properties that are not in ${t.file}: ${extra.join(', ')}. Remove them, or add them to the template if you want to keep them.`);
   const shared = fm.keys.filter(k => t.keys.includes(k));
@@ -300,6 +306,7 @@ for (const f of targets) {
   }
   if (type === 'comparison') comparisonChecks(f, fm.data);
   if (type === 'decision') decisionChecks(f, fm.data);
+  if (['stay', 'transport', 'location', 'booking'].includes(type)) bookingChecks(f, type, fm.data, name);
   if (type === 'source' && String(fm.data.processed) === 'true') {
     for (const l of new Set(wikilinks(fm.body))) if (!resolves(l)) warn(f, `marked processed, but [[${l}]] has no note yet`);
     const open = fm.body.replace(/<!--[\s\S]*?-->/g, '').split('\n').filter(l => /^\s*- \[ \]\s*\S/.test(l) && !/^\s*- \[ \]\s*(\[\[\s*\]\])\s*$/.test(l));
@@ -372,9 +379,59 @@ function decisionChecks(f, d) {
     const n = noteOf(a);
     if (n?.data.decision === 'dropped') warn(f, `affects [[${a}]], which the group dropped. A locked decision cannot rest on a dropped note: unlock it, or take the link out`);
   }
+  const by = linkTarget(d.locked_by);
+  if (by) {
+    const n = noteOf(by);
+    if (!n) warn(f, `locked_by links to [[${by}]], which does not exist. Link the booked note, or say in words what fixed it`);
+    else if (!BOOKED.includes(String(n.data.booking_status))) warn(f, `locked_by links to [[${by}]], but that is not booked or paid (booking_status "${n.data.booking_status ?? ''}"). Book it, or unlock this decision`);
+  }
   if (list(d.locks).includes('dates') && String(trip.dates_fixed) === 'false') {
     warn(f, 'locks the dates, but dates_fixed is false in trip.md. Set dates_fixed to true (run trip-init settings), or unlock this decision');
   }
+}
+
+// The booking list (group-decisions): a selected Stay or Transport note, a selected place with needs_booking: true, and every
+// note in Bookings/ carry the same booking fields. Warnings only: a booking with no confirmation linked, amounts that do not
+// add up, a booking on something the group no longer has selected, a booked item whose Decision is not locked, and a place
+// whose booking fields do not match needs_booking.
+function bookingChecks(f, type, d, name) {
+  const has = v => v !== null && v !== undefined && String(v).trim() !== '';
+  const num = v => (has(v) && /^-?\d+(\.\d+)?$/.test(String(v)) ? Number(v) : null);
+  if (type === 'location') {
+    const needs = String(d.needs_booking) === 'true';
+    const present = BOOKING_FIELDS.filter(k => k in d);
+    if (needs && present.length < BOOKING_FIELDS.length) warn(f, `needs_booking is true but the booking fields are missing: ${BOOKING_FIELDS.filter(k => !(k in d)).join(', ')}. Add them right after needs_booking`);
+    if (!needs && present.length) warn(f, `has booking fields (${present.join(', ')}) but needs_booking is not true. Set needs_booking: true, or take them out`);
+    if (!needs) return;
+  }
+  const status = String(d.booking_status ?? '');
+  const booked = BOOKED.includes(status);
+  if (booked && !has(d.confirmation)) warn(f, `booked, no confirmation yet. Link the voucher, slip or email in confirmation (keep the file in ${CONFIRMATIONS}/)`);
+  const cost = num(d.cost_agreed), adv = num(d.advance_paid), bal = num(d.balance_pending);
+  if (status === 'paid' && bal > 0) warn(f, `paid, but balance_pending is ${bal}. Set it to 0 once the balance is settled, or set booking_status: booked`);
+  if (cost !== null && adv !== null && bal !== null && Math.abs(adv + bal - cost) > 0.005) warn(f, `advance_paid (${adv}) + balance_pending (${bal}) is not cost_agreed (${cost}). Check the amounts`);
+  const conf = String(d.confirmation ?? '').trim().match(/^\[\[([^\]]*)\]\]$/)?.[1].split('|')[0].trim();
+  if (conf && resolves(conf)) {
+    const inFolder = conf.startsWith(CONFIRMATIONS + '/') || (byBase.get(conf) || byBase.get(conf + '.md') || []).some(p => rel(p).startsWith(CONFIRMATIONS + '/'));
+    if (!inFolder) warn(f, `confirmation [[${conf}]] is not in ${CONFIRMATIONS}/. Keep vouchers and emails there`);
+  }
+  if (!booked) return;
+  if (type !== 'booking' && d.decision !== 'selected') warn(f, `${status}, but the group has it as "${d.decision ?? ''}", not selected. Select it again, or cancel the booking (booking_status: cancelled)`);
+  const mine = decisionsFor(name);
+  if (mine.length && !mine.some(x => x.status === 'locked')) warn(f, `${status}, but its decision ${mine.map(x => `[[${x.name}]]`).join(', ')} is not locked. Booking it locks the decision: lock it (group-decisions)`);
+}
+// The Decision notes an item belongs to: the decided_option links to it, or (when the chosen option is plain words, or
+// nothing is chosen yet) affects lists it.
+function decisionsFor(name) {
+  if (!decisionsFor.all) {
+    const lt = v => String(v ?? '').trim().match(/^\[\[([^\]]*)\]\]$/)?.[1].split('|')[0].split('#')[0].trim() ?? null;
+    decisionsFor.all = mdFiles.filter(p => !rel(p).startsWith('Templates/')).map(p => ({ p, fm: parseFrontmatter(read(p)) }))
+      .filter(x => x.fm?.data.type === 'decision').map(({ p, fm }) => ({
+        name: path.basename(p, '.md'), status: String(fm.data.status ?? ''), chosen: lt(fm.data.decided_option),
+        chosenText: fm.data.decided_option, affects: (Array.isArray(fm.data.affects) ? fm.data.affects : []).map(lt).filter(Boolean),
+      }));
+  }
+  return decisionsFor.all.filter(x => x.chosen === name || (!x.chosen && x.affects.includes(name)));
 }
 
 // Day notes: sun times and the daylight arithmetic must agree with each other.
@@ -490,10 +547,10 @@ function locationNote(name) {
 function transportLimit(key) {
   if (transportLimit.cache === undefined) {
     transportLimit.cache = {};
-    for (const p of mdFiles.filter(p => path.dirname(rel(p)) === (FOLDERS.transport || ''))) {
-      const fm = parseFrontmatter(read(p));
-      if (fm?.data.type === 'transport') Object.assign(transportLimit.cache, Object.fromEntries(Object.entries(fm.data).filter(([, v]) => v)));
-    }
+    // The selected vehicle's limits; with none selected, every Transport note's (an older vault has one, with no decision).
+    const notes = mdFiles.filter(p => path.dirname(rel(p)) === (FOLDERS.transport || '')).map(p => parseFrontmatter(read(p))?.data).filter(d => d?.type === 'transport');
+    const selected = notes.filter(d => d.decision === 'selected');
+    for (const d of selected.length ? selected : notes) Object.assign(transportLimit.cache, Object.fromEntries(Object.entries(d).filter(([, v]) => v)));
   }
   return transportLimit.cache[key];
 }

@@ -38,6 +38,7 @@ opening_hours: Google lists 8 am opening (no gate reported)
 closed_days:
 last_mile: NH-6 via Khliehriat to Saipung and Sakhain (Plus Code 7FP5+3F, Tangsko), about 140 km / 4–5 hrs from Shillong. The last stretch is a bad road; a 4x4 can get closer, otherwise it adds walking. A tempo traveller is unlikely to manage; confirm with the driver
 permits: None
+needs_booking: false
 entry_fee:
 other_fees: Local guide needed (no trail markings); fee not published. Tours sell Labon + Moopun from Saipung at about ₹2,200 per person
 toilets: None

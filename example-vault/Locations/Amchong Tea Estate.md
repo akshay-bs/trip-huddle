@@ -36,6 +36,7 @@ opening_hours: Amchong Leaf about 9 AM – 6 PM (the website also says 10 AM –
 closed_days:
 last_mile: About 48 km from Guwahati airport (about 1.5 hrs through city traffic). Take NH-27 east to Sonapur, then the Sonapur–Digaru road into the estate. Tempo traveller OK (paved estate road; confirm parking)
 permits:
+needs_booking: false
 entry_fee:
 other_fees: "Not free. Visits are booked packages (Silver, Gold, Platinum, Black Diamond tiers) through amchongtea.com. OTA listings show about $11 (₹900) per adult for a 2 hr walk-through, $16 (₹1,350) with the factory visit and hi-tea, and $29 (₹2,400) with lunch. Under-6s free."
 toilets: Yes (experience centre and restaurant)

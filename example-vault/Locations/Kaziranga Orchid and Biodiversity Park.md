@@ -37,6 +37,7 @@ opening_hours: Until about 5 pm (confirm the show time)
 closed_days:
 last_mile: On the main road at Kohora; any vehicle
 permits: None
+needs_booking: false
 entry_fee: 100
 other_fees:
 toilets: Yes

@@ -30,6 +30,7 @@ opening_hours: Not verified (government showroom; usually about 10 AM – 7 PM).
 closed_days: "Not verified; may be closed on Sundays"
 last_mile: GNB Road, Ambari, by the Assam Textile Institute, about 1 km from Kachari / Umananda Ghat and next to Panbazar. Tempo traveller drop-off on GNB Road; parking is tight
 permits:
+needs_booking: false
 entry_fee: 0
 other_fees: Fixed government prices
 toilets:

@@ -36,6 +36,7 @@ opening_hours: Village; no fixed hours (daylight for day visitors)
 closed_days:
 last_mile: About 25 km of narrow, partly rough/rocky road via the Khatarshnong road off the Shillong–Sohra side (turn near Mawjrong). Tempo traveller probably possible but slow; confirm with the driver
 permits: None for Indian citizens
+needs_booking: false
 entry_fee:
 other_fees: No fixed entry fee found in sources; a local guide or a tip/donation to the host family is customary
 toilets: Basic, at the homestay only

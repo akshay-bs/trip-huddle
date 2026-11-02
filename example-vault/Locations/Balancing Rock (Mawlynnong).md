@@ -36,6 +36,7 @@ opening_hours: About 6 AM – 5 PM
 closed_days:
 last_mile: Village road between Mawlynnong and Riwai/Nohwet. Tempo traveller OK, with roadside or small-lot parking
 permits: None
+needs_booking: false
 entry_fee: 20
 other_fees: Reported ₹10–20 per person (one listing says free)
 toilets: None reliable on site. Use Mawlynnong or the Riwai car park

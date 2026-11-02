@@ -36,6 +36,7 @@ opening_hours: Daylight hours (roadside); eco-park gate roughly 8 am – 5 pm
 closed_days:
 last_mile: On the paved Sohra–Mawsmai road; tempo traveller can pull over at the roadside parking
 permits: None
+needs_booking: false
 entry_fee: 0
 other_fees: Roadside viewpoint free; small parking charge possible. The nearby Mawsmai Nongthymmai Eco Park charges a small entry fee (amount unverified)
 toilets: None at the roadside viewpoint; basic ones at the eco park / Mawsmai Cave area

@@ -37,6 +37,7 @@ opening_hours: About 6 AM – 6 PM
 closed_days:
 last_mile: Directly on the Shillong–Sohra road; roadside parking. Tempo traveller OK
 permits: None
+needs_booking: false
 entry_fee:
 other_fees: Zipline (Pioneer Adventure Tours) ₹1,000 small line / ₹1,500 big line per person (operator site); Khasi costume photo rental; parking
 toilets: Basic (at the café / stalls)

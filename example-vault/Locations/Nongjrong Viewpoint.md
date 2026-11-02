@@ -33,6 +33,7 @@ opening_hours: Open access; visited pre-dawn
 closed_days:
 last_mile: Village roads beyond Mawkynrew; narrow in places, final stretch reported as rough. Tempo traveller is used by groups, but confirm with the driver
 permits: None
+needs_booking: false
 entry_fee: 30
 other_fees: Parking (reported ₹50 per car, about ₹100 per tempo traveller); guides/village committee may ask a small contribution
 toilets: None at the viewpoint; use a homestay in the village

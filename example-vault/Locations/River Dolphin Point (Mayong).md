@@ -33,6 +33,7 @@ opening_hours:
 closed_days:
 last_mile: Exact spot not confirmed (map pin is Mayong village, approximate). Described as about 1 km from Mayong village, at a river confluence near Pobitora
 permits:
+needs_booking: false
 entry_fee:
 other_fees: Country-boat hire possible; not confirmed
 toilets: None expected

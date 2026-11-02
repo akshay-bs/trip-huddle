@@ -36,6 +36,7 @@ opening_hours: Boats run about 7–8 AM to 4–5 PM (daylight, weather permittin
 closed_days:
 last_mile: On the Shillong–Dawki highway (NH-206, old NH-40), about 80–90 km from Shillong. Tempo traveller can reach the riverside parking below the bridge, but the approach road and bridge jam badly in peak season
 permits: None for Indian citizens. It is a border area, so carry photo ID. Foreigners need a passport
+needs_booking: false
 entry_fee:
 other_fees: "Boat ride per boat, not per person. The official cooperative counter rate is widely quoted at ₹800 per boat for about 30–50 min (other reports range from ₹400–1,200). Each boat takes 3–4 passengers. Parking fee extra. Life jackets included"
 toilets: Basic paid toilets near the ghat and in Dawki market

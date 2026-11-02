@@ -35,6 +35,7 @@ opening_hours: 07:00–18:00 (Google shows 9:30 am opening; verify)
 closed_days:
 last_mile: Road to the entrance; confirm big-vehicle parking
 permits: None
+needs_booking: false
 entry_fee: 50
 other_fees: Life jacket hire for swimming
 toilets: Yes, at the entrance

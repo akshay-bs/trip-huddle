@@ -35,6 +35,7 @@ opening_hours: Village open in daylight. Sky View about 8 AM – 5 PM
 closed_days:
 last_mile: Paved road from the Shillong–Dawki road via Pynursla, then the Mawlynnong turn-off. Tempo traveller reaches the village car park at the entrance
 permits: None
+needs_booking: false
 entry_fee: 50
 other_fees: Reported entry is ₹50–100 per person, and one 2025 review quotes ₹200 (possibly per vehicle), so treat it as unconfirmed. Vehicle parking is extra (small fee). Sky View platform about ₹10–30 per person. Paid toilets about ₹10
 toilets: Yes, paid public toilets near the parking and at homestays

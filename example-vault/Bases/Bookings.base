@@ -1,0 +1,93 @@
+filters:
+  and:
+    - '!file.inFolder("Templates")'
+    - or:
+        - type == "booking"
+        - and:
+            - type == "stay"
+            - decision == "selected"
+        - and:
+            - type == "transport"
+            - decision == "selected"
+        - and:
+            - type == "location"
+            - decision == "selected"
+            - needs_booking == true
+formulas:
+  cost_per_split: if(cost_agreed, cost_agreed / 4, "")
+properties:
+  formula.cost_per_split:
+    displayName: Per family ₹
+  cost_agreed:
+    displayName: Cost agreed
+  advance_paid:
+    displayName: Advance paid
+  balance_pending:
+    displayName: Balance pending
+  booking_status:
+    displayName: Status
+views:
+  - type: table
+    name: To book
+    filters:
+      and:
+        - booking_status != "booked"
+        - booking_status != "paid"
+    groupBy:
+      property: type
+      direction: ASC
+    order:
+      - file.name
+      - booking_status
+      - cost_agreed
+      - advance_paid
+      - balance_pending
+  - type: table
+    name: No confirmation yet
+    filters:
+      and:
+        - or:
+            - booking_status == "booked"
+            - booking_status == "paid"
+        - confirmation.isEmpty()
+    order:
+      - file.name
+      - type
+      - booking_status
+      - cost_agreed
+      - advance_paid
+      - balance_pending
+  - type: table
+    name: Balance pending
+    filters:
+      and:
+        - balance_pending > 0
+    order:
+      - file.name
+      - type
+      - booking_status
+      - cost_agreed
+      - advance_paid
+      - balance_pending
+      - confirmation
+    summaries:
+      balance_pending: Sum
+  - type: table
+    name: All bookings
+    order:
+      - file.name
+      - type
+      - booking_status
+      - cost_agreed
+      - advance_paid
+      - balance_pending
+      - formula.cost_per_split
+      - confirmation
+    sort:
+      - property: booking_status
+        direction: ASC
+    summaries:
+      cost_agreed: Sum
+      advance_paid: Sum
+      balance_pending: Sum
+      formula.cost_per_split: Sum

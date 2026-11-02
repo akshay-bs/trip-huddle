@@ -35,6 +35,7 @@ opening_hours: 8 am – 2 pm (boating)
 closed_days: Closed Apr–Oct (monsoon water levels)
 last_mile: Emangre village is 36 km from Baghmara and 7–9 hrs by road from Guwahati (about 231 km) or Shillong (about 272 km, via Nongstoin). From Emangre, about 15 km of very bad off-road track (45–55 min) to the trailhead needs local 4x4s; the tempo traveller cannot do it
 permits:
+needs_booking: false
 entry_fee:
 other_fees: A local guide is required (the trail isn't marked). Boat, guide and 4x4 fees aren't published; tour packages bundle them (e.g. about ₹9,450 per person for a 3D/2N trip from Guwahati for 8+ people)
 toilets: None reported at the river

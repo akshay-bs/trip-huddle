@@ -19,8 +19,11 @@ decision_reason:
 decided_on:
 booking_status: not-contacted
 booking_ref:
+confirmation:
 nights_booked:
+cost_agreed:
 advance_paid:
+balance_pending:
 cancellation_policy:
 check_in:
 check_out:

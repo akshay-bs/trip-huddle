@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // trip-init: set up a trip-huddle vault from an answers file, or update an existing vault's settings.
 //
-//   node init.mjs --answers <file.json> [--vault <folder>] [--reconfigure [--add-food]]
+//   node init.mjs --answers <file.json> [--vault <folder>] [--reconfigure [--add-food] [--add-bookings]]
 //
 // New vault (default): copies vault-template into the folder (empty or missing), then fills it in.
 // --reconfigure: the folder already has trip.md. Rewrites trip.md, the per-trip values in Templates
@@ -9,6 +9,10 @@
 // --add-food (with --reconfigure, for a vault made before 0.9.0): adds the restaurants and cafes category: the Food/ folder,
 // Bases/Food.base, the new Food Spot template, the Source template's food checklist, the types, and a "Food to decide"
 // section on 00 Home.md. It only adds; notes are never touched. The skill asks the user before using it.
+// --add-bookings (with --reconfigure, for a vault made before 0.11.0): adds the booking list: the Bookings/ and Confirmations/
+// folders, Bases/Bookings.base, the Booking template, the booking fields in the Stay, Transport and Location templates, the
+// types, the Bookings section of 00 Home.md and the bookings rule in .claude/CLAUDE.md. Notes are never touched: the
+// group-decisions skill's scripts/migrate-bookings.mjs adds the new fields to existing notes.
 // The per-trip values ("slots") are listed in ../slots.md.
 
 import fs from 'node:fs';
@@ -27,11 +31,13 @@ const args = process.argv.slice(2);
 const opt = n => { const i = args.indexOf(n); return i >= 0 ? args[i + 1] : undefined; };
 const RECONF = args.includes('--reconfigure');
 const ADD_FOOD = args.includes('--add-food');
+const ADD_BOOKINGS = args.includes('--add-bookings');
 const VAULT = path.resolve(opt('--vault') || process.cwd());
 const ANSWERS = opt('--answers');
 const die = m => { console.error(`trip-init: ${m}`); process.exit(1); };
 if (!ANSWERS) die('missing --answers <file.json>');
 if (ADD_FOOD && !RECONF) die('--add-food only works with --reconfigure (a new vault already has the Food category)');
+if (ADD_BOOKINGS && !RECONF) die('--add-bookings only works with --reconfigure (a new vault already has the booking list)');
 
 // ---------- the answers ----------
 // Property order and defaults, the same as vault-template/trip.md.
@@ -155,8 +161,46 @@ if (ADD_FOOD) {
     }
     return JSON.stringify({ ...j, types }, null, 2) + '\n';
   });
-  edit('00 Home.md', t => /Food\.base#To decide/.test(t) || !/^## Stays to book$/m.test(t) ? t
-    : t.replace(/^## Stays to book$/m, '## Food to decide\n![[Food.base#To decide]]\n\n## Stays to book'));
+  edit('00 Home.md', t => /Food\.base#To decide/.test(t) || !/^## (Bookings|Stays to book)$/m.test(t) ? t
+    : t.replace(/^## (Bookings|Stays to book)$/m, '## Food to decide\n![[Food.base#To decide]]\n\n## $1'));
+}
+
+// ---------- --add-bookings: bring a vault made before 0.11.0 up to the booking list ----------
+if (ADD_BOOKINGS) {
+  const fromStarter = rel => fs.readFileSync(path.join(TEMPLATE_VAULT, rel), 'utf8');
+  for (const d of ['Bookings', 'Confirmations']) fs.mkdirSync(path.join(VAULT, d), { recursive: true });
+  for (const f of ['Bases/Bookings.base', 'Templates/Booking.md']) if (!fs.existsSync(path.join(VAULT, f))) write(f, fromStarter(f));
+  // Transport has no per-trip lines: an old one (no booking fields) is replaced by the starter's.
+  if (fs.existsSync(path.join(VAULT, 'Templates/Transport.md')) && !/^cost_agreed:/m.test(read('Templates/Transport.md'))) write('Templates/Transport.md', fromStarter('Templates/Transport.md'));
+  // Stay and Location have per-trip lines and field packs, so the new lines are put in place, as in the starter vault.
+  const starterGuide = (rel, key) => fromStarter(rel).match(/<!--[\s\S]*?-->/)[0].split('\n').filter(l => l.startsWith(key)).join('\n');   // a FIELD GUIDE line
+  edit('Templates/Stay.md', t => {
+    if (/^cost_agreed:/m.test(t)) return t;
+    t = sub(t, /^booking_ref:\nnights_booked:\nadvance_paid:\n/m, 'booking_ref:\nconfirmation:\nnights_booked:\ncost_agreed:\nadvance_paid:\nbalance_pending:\n', 'booking_ref, nights_booked and advance_paid in the Stay template');
+    return sub(t, /^price_per_night \/ extra_bed \/ advance_paid: .*$/m, [starterGuide('Templates/Stay.md', 'price_per_night / '), starterGuide('Templates/Stay.md', 'cost_agreed: '), starterGuide('Templates/Stay.md', 'confirmation: ')].join('\n'),
+      'the price_per_night line in the Stay FIELD GUIDE');
+  });
+  edit('Templates/Location.md', t => {
+    if (/^needs_booking:/m.test(t)) return t;
+    t = sub(t, /^permits:\n/m, 'permits:\nneeds_booking: false\n', 'permits in the Location template');
+    return sub(t, /^(entry_fee: .*)$/m, ['$1', starterGuide('Templates/Location.md', 'needs_booking: '), starterGuide('Templates/Location.md', 'booking_status: ')].join('\n'),
+      'the entry_fee line in the Location FIELD GUIDE');
+  });
+  edit('.obsidian/types.json', t => {
+    const j = JSON.parse(t), add = { needs_booking: 'checkbox', cost_agreed: 'number', balance_pending: 'number', confirmation: 'text' };
+    for (const [k, v] of Object.entries(add)) if (!(k in j.types)) j.types[k] = v;
+    return JSON.stringify(j, null, 2) + '\n';
+  });
+  edit('00 Home.md', t => {
+    const home = fromStarter('00 Home.md');
+    const section = home.match(/^## Bookings\n[\s\S]*?(?=\n## )/m)[0];
+    if (!/Bookings\.base#To book/.test(t)) t = sub(t, /^## Stays to book\n!\[\[Stays\.base#Booking tracker\]\]\n/m, section, 'the "Stays to book" section of 00 Home.md');
+    if (!/`Confirmations\/`/.test(t)) t = sub(t, /^8\. \*\*Book\.\*\*.*$/m, home.match(/^8\. \*\*Book\.\*\*.*$/m)[0], 'step 8 (Book) of "How this vault works" in 00 Home.md');
+    if (!/^- \*\*Paid so far \/ still owed:\*\*/m.test(t)) t = sub(t, /^(- \*\*Activities \/ entry fees:\*\*.*)$/m, '$1\n- **Paid so far / still owed:** ', 'the Activities line of the Budget snapshot in 00 Home.md');
+    return t;
+  });
+  if (fs.existsSync(path.join(VAULT, '.claude/CLAUDE.md'))) edit('.claude/CLAUDE.md', t => /## Bookings live on/.test(t) ? t
+    : t.replace(/\n*$/, '\n') + fromStarter('.claude/CLAUDE.md').match(/\n## Bookings live on[\s\S]*$/)[0]);
 }
 
 // ---------- slots (see ../slots.md) ----------
@@ -205,6 +249,11 @@ edit('Bases/Stays.base', t => {
   label('est_total', `Total${sym ? ' ' + sym : ''}`, 'S11');
   label('price_per_night', sym ? `${sym} / night` : 'Per night', 'S12');
   return t;
+});
+// The Bookings base (S14, S15). A vault made before 0.11.0 has none until --add-bookings adds it.
+if (fs.existsSync(path.join(VAULT, 'Bases/Bookings.base'))) edit('Bases/Bookings.base', t => {
+  t = sub(t, /cost_agreed \/ [\d.]+/, `cost_agreed / ${A.cost_split_units}`, 'the cost split formula (S14)');
+  return sub(t, /(^\s*formula\.cost_per_split:\s*\n\s*displayName: ).*$/m, `$1Per ${A.cost_split_label}${sym ? ' ' + sym : ''}`, 'the formula.cost_per_split column name (S15)');
 });
 
 // ---------- field packs ----------

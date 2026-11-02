@@ -36,6 +36,7 @@ opening_hours: Temple about 5:30 AM – 6:00 PM. Government ferries from Umanand
 closed_days:
 last_mile: Ferry from Umananda Ghat / Kachari Ghat on MG Road (opposite the Kamrup DC office), about 8–10 min crossing. Tempo traveller drops at the ghat
 permits: None
+needs_booking: false
 entry_fee: 0
 other_fees: Government ferry about ₹30–40 per person each way; private boat about ₹100–250 per person return. Shoe deposit at the temple
 toilets: Basic, near the ghats

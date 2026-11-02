@@ -36,6 +36,7 @@ opening_hours: Daylight only
 closed_days:
 last_mile: "Starts near Mawphlang (about 25 km / 1 hr from Shillong)."
 permits: Local guide recommended (required by most operators)
+needs_booking: false
 entry_fee: 150
 other_fees: Entry fee reports vary (about ₹150 per person; another source says ₹560 for 2). Guide fee separate, ask locally. Packed lunch and water must be carried
 toilets: None along the trail

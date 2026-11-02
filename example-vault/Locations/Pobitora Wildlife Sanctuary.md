@@ -34,6 +34,7 @@ opening_hours: About 7:00 AM – 4:00 PM. Jeep slots run about 7:00 AM – 3:00 
 closed_days: Closed for the monsoon (roughly May/June to October). Open daily in season
 last_mile: About 45–50 km east of Guwahati (1.5 hrs) via Jagiroad/Mayong roads. The rural road is fine for a tempo traveller
 permits: Entry ticket and safari permit bought at the range office or through online agents. Carry photo ID
+needs_booking: false
 entry_fee: 50
 other_fees: Jeep about ₹2,000 per jeep (older blogs) to ₹3,200–3,400 per jeep through online agents incl. permits, max 6 per jeep. Elephant ride about ₹800–1,700 per seat. Guide about ₹300. Camera fee possible
 toilets: Basic, at the range office or entry area

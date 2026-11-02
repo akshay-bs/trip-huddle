@@ -117,6 +117,10 @@
     "locks": "multitext",
     "locked_by": "text",
     "affects": "multitext",
-    "deadline": "date"
+    "deadline": "date",
+    "needs_booking": "checkbox",
+    "cost_agreed": "number",
+    "balance_pending": "number",
+    "confirmation": "text"
   }
 }

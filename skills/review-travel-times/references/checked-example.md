@@ -8,6 +8,7 @@ stay: "[[Example Guesthouse Lagos]]"
 locations:
   - "[[Mountain Fort (Example)]]"
   - "[[Cork Oak Farm (Example)]]"
+start_time: "08:30"
 early_start:
 sunrise: "06:14"
 sunset: "20:54"
@@ -16,6 +17,7 @@ drive_hrs: 4.8
 activity_hrs: 4.5
 predawn_hrs:
 total_walk_km: 3
+backtrack_km: 0
 rule_bends: 0
 travel_checked: 2026-11-02
 travel_verdict: ok
@@ -27,12 +29,14 @@ FIELD GUIDE
 Name the note "Day 01", "Day 02", …
 stay: "[[Stay note]]" for tonight
 locations: list of "[[Location note]]" visited today (also set scheduled_day on each Location)
+start_time: "HH:MM", when the day starts: the first drive, or the first activity at the stay (the Schedule's first row)
 early_start: "HH:MM", only when the day starts before sunrise (leave empty otherwise)
 sunrise, sunset: local time "HH:MM" on this date at the day's base (the plan-day skill works them out with scripts/sun.mjs)
 daylight_hrs: real daylight, sunset − sunrise. It is not the length of your day. If the sun times are unknown, the default from trip.md is used
 drive_hrs: sum of the legs below, using the upper end of each range (after a travel-time check it also holds the stops buffer);  activity_hrs: time at the day's locations (time_needed_hrs) + meals and rests. Leave out after-dark activities
 predawn_hrs: the part of drive_hrs + activity_hrs that happens before sunrise (empty if none). It is counted separately and does not use up daylight
-rule_bends: how many choices are listed under "Choices that bend the rules" (0 if none)
+backtrack_km: km driven today on a road the trip already drove (earlier today or on an earlier day), from the build-itinerary route check; a stop and straight back is not counted. 0 if none, empty if not worked out
+rule_bends: how many choices are listed under "Choices that bend the rules" (0 if none). A leg in a road_cutoffs area (trip.md) driven after its time is a rule bend too
 travel_checked: date (YYYY-MM-DD) the review-travel-times skill last checked the drive times; empty if never
 travel_verdict: ok | tight | too much   (that skill's verdict on the drive times, empty if not checked; the checker warns when it is better than the slack verdict below)
 Legs table, After dark column: ok = lit highway or city streets; avoid = unlit, forest, hill or bad surface
@@ -74,6 +78,10 @@ A day inland from Lagos, on the quiet day after the early start: the fort in the
 | 16:30 | Leave the farm | |
 | 17:50 | Back at the guesthouse | |
 | 20:54 | Sunset | |
+
+## Along the way
+- **The old aqueduct** beside the road out of Lagos, seen from the van. Not worth a stop with the fort ahead.
+- **The last café before the hills**, at the turn-off for the fort. A short stop if anyone needs one: it adds under 5 minutes.
 
 ## Meals
 - **Breakfast:** guesthouse

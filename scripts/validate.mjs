@@ -12,11 +12,14 @@
 //                      contains "…" is open and not checked).
 //   .obsidian/types.json  property types (number, checkbox, date, multitext).
 //   trip.md (optional) map_box, regions, decision_values, folders (a map of note type to folder) and
-//                      planning_limits (slack_ok_hrs is the "ok" threshold of the travel_verdict check).
+//                      planning_limits (slack_ok_hrs is the "ok" threshold of the travel_verdict check) and road_cutoffs
+//                      (a Day note leg in a cutoff area driven after its time, with no rule bend written down, is warned about).
+//   Logistics/legs.json (optional) the shared distance file of the build-itinerary skill: its links are checked for shape.
 import fs from 'node:fs';
 import path from 'node:path';
 import { TOO_MUCH_BELOW_HRS } from '../skills/plan-day/scripts/sun.mjs';   // the slack verdict thresholds
-import { loadPlanningLimits, stageProblems } from './trip-settings.mjs';
+import { loadPlanningLimits, stageProblems, loadRoadCutoffs, cutoffFor } from './trip-settings.mjs';
+import { linkProblems, dayByDay } from '../skills/build-itinerary/scripts/route.mjs';
 
 // ---------- arguments ----------
 const argv = process.argv.slice(2);
@@ -137,13 +140,14 @@ const eveningBases = Array.isArray(trip.evening_bases) ? trip.evening_bases.map(
 const regions = Array.isArray(trip.regions) && trip.regions.length ? trip.regions.map(String) : null;
 const decisionValues = Array.isArray(trip.decision_values) && trip.decision_values.length
   ? trip.decision_values.map(String) : ['considering', 'selected', 'backup', 'dropped'];
-const FOLDERS = { location: 'Locations', stay: 'Stays', day: 'Itinerary', source: 'Sources', comparison: 'Sources', decision: 'Decisions', food: 'Food', route: 'Itinerary', transport: 'Logistics', booking: 'Bookings' };
+const FOLDERS = { location: 'Locations', stay: 'Stays', day: 'Itinerary', source: 'Sources', comparison: 'Sources', decision: 'Decisions', food: 'Food', route: 'Itinerary', transport: 'Logistics', booking: 'Bookings', itinerary: 'Itinerary', brief: 'Itinerary' };
 const DECISION_STATUSES = ['open', 'decided', 'locked'];   // see decisionChecks
 // The booking list (see bookingChecks): the fields every bookable note has, the folder for vouchers, and what counts as booked.
 const BOOKING_FIELDS = ['booking_status', 'cost_agreed', 'advance_paid', 'balance_pending', 'confirmation'];
 const CONFIRMATIONS = 'Confirmations';   // vouchers, tickets and pasted emails; not checked as notes
 const BOOKED = ['booked', 'paid'];
 const planning = loadPlanningLimits(VAULT);   // the defaults, changed by planning_limits in trip.md
+const roadCutoffs = loadRoadCutoffs(VAULT);   // areas where nobody drives after a set time (valid entries only)
 if (trip.folders && typeof trip.folders === 'object' && !Array.isArray(trip.folders)) {
   for (const [t, f] of Object.entries(trip.folders)) if (f) FOLDERS[t] = String(f).replace(/^\/+|\/+$/g, '');
 }
@@ -173,6 +177,7 @@ const err = (f, msg) => errors.push(`${rel(f)}: ${msg}`);
 const warn = (f, msg) => warnings.push(`${rel(f)}: ${msg}`);
 for (const p of planning.problems) warnings.push(`trip.md: ${p}. The default is used instead`);
 for (const p of stageProblems(trip.stage)) warnings.push(`trip.md: ${p}`);
+for (const p of roadCutoffs.problems) warnings.push(`trip.md: ${p}. That cutoff is not used until it is fixed`);
 const strayEvening = Array.isArray(trip.bases) ? eveningBases.filter(x => !trip.bases.map(String).includes(x)) : [];
 if (strayEvening.length) warnings.push(`trip.md: evening_bases has towns that are not in bases: ${strayEvening.join(', ')}. Use the same spelling as in bases`);
 
@@ -288,6 +293,7 @@ for (const f of targets) {
 
   // type-specific checks
   if (type === 'route') {
+    routeDayChecks(f, fm.data, text);
     const bases = fm.data.bases || [], nights = fm.data.nights_per_base || [];
     if (Array.isArray(bases) && Array.isArray(nights)) {
       if (bases.length !== nights.length) warn(f, `bases has ${bases.length} town(s) but nights_per_base has ${nights.length} number(s). They go in the same order, one number per town.`);
@@ -305,6 +311,7 @@ for (const f of targets) {
     dayChecks(f, fm.data, fm.body);
   }
   if (type === 'comparison') comparisonChecks(f, fm.data);
+  if (type === 'itinerary' || type === 'brief') itineraryChecks(f, type, fm.data, fm.body);
   if (type === 'decision') decisionChecks(f, fm.data);
   if (['stay', 'transport', 'location', 'booking'].includes(type)) bookingChecks(f, type, fm.data, name);
   if (type === 'source' && String(fm.data.processed) === 'true') {
@@ -438,7 +445,7 @@ function decisionsFor(name) {
 function dayChecks(f, d, body = '') {
   const clock = v => /^\d{1,2}:\d{2}$/.test(String(v)) ? Number(String(v).split(':')[0]) * 60 + Number(String(v).split(':')[1]) : null;
   const times = {};
-  for (const k of ['early_start', 'sunrise', 'sunset']) {
+  for (const k of ['start_time', 'early_start', 'sunrise', 'sunset']) {
     if (d[k] == null || d[k] === '') continue;
     times[k] = clock(d[k]);
     if (times[k] === null) warn(f, `${k} "${d[k]}" should be a local time like "06:30" (in quotes)`);
@@ -458,6 +465,7 @@ function dayChecks(f, d, body = '') {
   }
   travelChecks(f, d);
   afterDarkChecks(f, d, body, times.sunset);
+  cutoffChecks(f, d, body);
 }
 
 // The travel-time check (review-travel-times). Its verdict allows for stops, road types and local reports, so it should
@@ -535,6 +543,103 @@ function afterDarkChecks(f, d, body, sunset) {
   }
   for (const h of hits) warn(f, `${h}, and rule_bends is ${Number.isFinite(bends) ? bends : 0}. Move it before sunset, or if the group chooses it, write it under "Choices that bend the rules" and set rule_bends`);
 }
+// Road cutoffs (road_cutoffs in trip.md). A leg is in a cutoff area when its From or To is that area (a town), or a place or
+// stay whose nearest_base or base_town is that area, or when Logistics/legs.json puts the link in it. As with after dark,
+// only what can be read reliably is checked: a Schedule row that starts after the cutoff time, with a driving or arriving
+// word and the leg's From or To, counts as that leg ending after the cutoff.
+function cutoffChecks(f, d, body) {
+  const cuts = roadCutoffs.cutoffs;
+  const bends = Number(d.rule_bends);
+  if (!cuts.length || bends > 0) return;
+  const section = title => { const m = body.replace(/<!--[\s\S]*?-->/g, '').match(new RegExp(`^## ${title}[^\\n]*\\n([\\s\\S]*?)(?=^## |(?![\\s\\S]))`, 'm')); return m ? m[1] : null; };
+  const rows = text => (text || '').split(/\r?\n/).filter(l => /^\s*\|/.test(l))
+    .map(l => l.trim().replace(/^\||\|$/g, '').split(/(?<!\\)\|/).map(c => c.trim())).filter(r => !r.every(c => /^:?-+:?$/.test(c)));
+  const plain = s => s.replace(/\[\[([^\]|]*\|)?([^\]]*)\]\]/g, '$2').trim();
+  const legs = rows(section('Legs'));
+  const head = (legs[0] || []).map(c => c.toLowerCase());
+  const fromCol = head.indexOf('from'), toCol = head.indexOf('to');
+  if (fromCol < 0 || toCol < 0) return;
+  const hits = new Set();
+  for (const r of legs.slice(1)) {
+    const ends = [plain(r[fromCol] || ''), plain(r[toCol] || '')].filter(Boolean);
+    if (ends.length < 2) continue;
+    const link = legsFile().links.find(l => [l.from, l.to].map(x => String(x).toLowerCase()).sort().join('|') === ends.map(x => x.toLowerCase()).sort().join('|'));
+    const cut = cutoffFor(cuts, link?.cutoff_area) || ends.map(n => cutoffFor(cuts, n) || cutoffFor(cuts, noteArea(n))).find(Boolean);
+    if (!cut) continue;
+    for (const s of rows(section('Schedule')).slice(1)) {
+      const at = (String(s[0]).match(/^(\d{1,2}):(\d{2})/) || []).slice(1).map(Number);
+      if (at.length !== 2 || at[0] * 60 + at[1] <= cut.min) continue;
+      const text = plain(s.slice(1).join(' ')).toLowerCase();
+      if (/\b(driv\w*|leav\w*|depart\w*|return\w*|transfer\w*|arriv\w*)\b/.test(text) && ends.some(n => text.includes(n.toLowerCase()))) {
+        hits.add(`the leg ${ends[0]} to ${ends[1]} is in the ${cut.area} area, where nobody drives after ${cut.no_drive_after}${cut.reason ? ` (${cut.reason})` : ''}, and the Schedule has it at ${s[0]}`);
+      }
+    }
+  }
+  for (const h of hits) warn(f, `${h}, and rule_bends is ${Number.isFinite(bends) ? bends : 0}. Drive it before ${cutoffFor(cuts, h.match(/in the (.*?) area/)[1]).no_drive_after}, or if the group chooses it, write it under "Choices that bend the rules" and set rule_bends`);
+}
+// The base town of a place or stay note (nearest_base or base_town), or null.
+function noteArea(name) {
+  const p = (byBase.get(name) || []).find(x => x.endsWith('.md') && !rel(x).startsWith('Templates/'));
+  if (!p) return null;
+  const d = parseFrontmatter(read(p))?.data || {};
+  return d.nearest_base || d.base_town || null;
+}
+// Logistics/legs.json, the shared distance file (build-itinerary). An empty file when there is none or it can't be read.
+function legsFile() {
+  if (legsFile.cache) return legsFile.cache;
+  const p = path.join(VAULT, FOLDERS.transport || 'Logistics', 'legs.json');
+  legsFile.cache = { links: [], exists: fs.existsSync(p), path: p };
+  if (!legsFile.cache.exists) return legsFile.cache;
+  try { const j = JSON.parse(read(p)); legsFile.cache = { ...legsFile.cache, links: Array.isArray(j.links) ? j.links : [], json: j }; }
+  catch (e) { legsFile.cache.error = e.message; }
+  return legsFile.cache;
+}
+
+// Route notes (build-itinerary): the Day by day table has one row per night plus the last day, and its nights per town, in
+// order, match bases and nights_per_base. A Route with no filled Day by day table is not checked here.
+function routeDayChecks(f, d, text) {
+  const days = dayByDay(text);
+  if (!days || !days.length) return;
+  const nights = (Array.isArray(d.nights_per_base) ? d.nights_per_base : []).map(Number);
+  const total = Number.isFinite(Number(d.total_nights)) && d.total_nights !== null && d.total_nights !== '' ? Number(d.total_nights) : nights.reduce((a, b) => a + b, 0);
+  if (Number.isFinite(total) && total > 0 && days.length !== total + 1) warn(f, `Day by day has ${days.length} row(s), but ${total} nights need ${total + 1} (one per night, plus the last day)`);
+  const plain = s => s.replace(/\[\[([^\]|]*\|)?([^\]]*)\]\]/g, '$2').trim();
+  const runs = [];
+  for (const r of days) {
+    const n = plain(r.night);
+    if (!n || /^[-–—]+$/.test(n) || /^(none|fly home|home|departure)$/i.test(n)) continue;
+    const town = noteArea(n) && (byBase.get(n) || []).some(p => rel(p).startsWith(FOLDERS.stay + '/')) ? noteArea(n) : n;
+    const last = runs[runs.length - 1];
+    if (last && last.town.toLowerCase() === town.toLowerCase()) last.nights++; else runs.push({ town, nights: 1 });
+  }
+  const bases = (Array.isArray(d.bases) ? d.bases : []).map(String);
+  const want = bases.map((b, i) => `${b} ${nights[i] ?? '?'}`).join(', '), got = runs.map(r => `${r.town} ${r.nights}`).join(', ');
+  if (bases.length && want.toLowerCase() !== got.toLowerCase()) warn(f, `the nights in Day by day (${got || 'none'}) do not match bases and nights_per_base (${want}). Make them agree`);
+}
+
+// The Trip itinerary and the Operator brief (build-itinerary): for the chosen route they link every Day note; they never
+// link a place, stay or food spot the group dropped; a brief holds no food choices, bookings or confirmations.
+function itineraryChecks(f, type, d, body) {
+  const links = new Set(wikilinks(body));
+  const route = String(d.route ?? '').replace(/^\[\[|\]\]$/g, '').split('|')[0].trim();
+  const routeNote = route ? (byBase.get(route) || []).find(p => p.endsWith('.md')) : null;
+  const routeStatus = routeNote ? String(parseFrontmatter(read(routeNote))?.data.status ?? '') : '';
+  if (route && !routeNote) warn(f, `route links to [[${route}]], which does not exist`);
+  if (!route || ['agreed', 'booked'].includes(routeStatus)) {
+    const dayNotes = mdFiles.filter(p => path.dirname(rel(p)) === FOLDERS.day && parseFrontmatter(read(p))?.data.type === 'day').map(p => path.basename(p, '.md'));
+    const missing = dayNotes.filter(n => !links.has(n));
+    if (missing.length) warn(f, `does not link ${missing.length} Day note(s): ${missing.map(n => `[[${n}]]`).join(', ')}. ${type === 'brief' ? 'The brief' : 'The itinerary'} covers every day; rebuild it from the Day notes`);
+  }
+  for (const l of links) {
+    const p = (byBase.get(l) || []).find(x => x.endsWith('.md') && !rel(x).startsWith('Templates/'));
+    if (!p) continue;
+    const n = parseFrontmatter(read(p))?.data || {};
+    if (n.decision === 'dropped') warn(f, `links [[${l}]], which the group dropped. Rebuild it from the Day notes, or take the link out`);
+    if (type === 'brief' && (n.type === 'food' || n.type === 'booking' || rel(p).startsWith(CONFIRMATIONS + '/'))) warn(f, `links [[${l}]]. An operator brief holds no food choices, bookings or confirmations: take it out`);
+  }
+  if (type === 'brief' && /\b(booking_ref|confirmation)\b/i.test(body.replace(/<!--[\s\S]*?-->/g, ''))) warn(f, 'mentions a booking reference or confirmation. An operator brief never holds them: take it out');
+}
+
 function locationNote(name) {
   locationNote.cache ||= new Map();
   if (!locationNote.cache.has(name)) {
@@ -576,6 +681,18 @@ if (!explicit) {
   }
 }
 
+// The shared distance file: readable, and each link well formed (warnings; the scripts refuse a bad link anyway).
+if (!explicit && legsFile().exists) {
+  const lf = legsFile(), name = rel(lf.path);
+  if (lf.error) warnings.push(`${name}: can't be read (${lf.error}). Fix it, or delete it and run build-itinerary's route.mjs links again`);
+  else {
+    const bad = lf.links.flatMap(linkProblems);
+    if (bad.length) warnings.push(`${name}: ${bad.length} problem(s) in the links, e.g. ${bad.slice(0, 3).join('; ')}`);
+    const seen = new Set(), twice = [];
+    for (const l of lf.links) { const k = [l.from, l.to].map(x => String(x).toLowerCase()).sort().join('|'); if (seen.has(k)) twice.push(`${l.from} – ${l.to}`); seen.add(k); }
+    if (twice.length) warnings.push(`${name}: the same road is listed twice: ${twice.join(', ')}. Keep one link per pair (a link works both ways)`);
+  }
+}
 if (droppedNoReason.length) warnings.push(`dropped without a decision_reason (${droppedNoReason.length}): ${droppedNoReason.join(', ')}. Add a short reason to each`);
 console.log(`Checked ${targets.length} note(s) in ${VAULT}`);
 console.log(`\nERRORS (${errors.length})`); errors.forEach(e => console.log('  ✗ ' + e));

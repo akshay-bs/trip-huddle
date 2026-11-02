@@ -1,0 +1,18 @@
+{
+  "about": "How to try the build-itinerary example: copy example-vault/ to a new folder, then apply this file (scripts/test.mjs does exactly this). Made-up choices: the example vault itself keeps every decision at considering and road_cutoffs empty.",
+  "trip_md": {
+    "road_cutoffs": "road_cutoffs: [{area: Jowai, no_drive_after: \"16:00\", reason: single-track roads near the border}]"
+  },
+  "select": {
+    "Pobitora Wildlife Sanctuary": "must",
+    "Krem Chympe Falls": "must",
+    "Krang Suri Falls": "must",
+    "Umngot River (Dawki)": "must",
+    "Nohkalikai Falls": "should"
+  },
+  "files": {
+    "example-context/legs.json": "Logistics/legs.json",
+    "example-context/Route - Option A.md": "Itinerary/Route - Option A.md",
+    "example-context/Route - Option B.md": "Itinerary/Route - Option B.md"
+  }
+}

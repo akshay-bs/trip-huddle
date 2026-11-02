@@ -19,7 +19,7 @@ The vault root is the current working directory.
 **Pipeline:** read the trip → pick what to check → three estimates per leg → sun times and bends → run the script → verdict → fixes and one question → write → validate → report.
 
 ## 1. Read the trip
-- Read `trip.md`: `group_vehicle`, `bases`, `evening_bases`, `day_start`, the fallback `daylight_hrs` and `sunset`, and the optional `road_speeds` and `stop_buffer`. Also read `planning_limits`: `slack_ok_hrs`, `dark_drive_tight_min` and `late_finish_min` set the verdict in section 6, and `max_drive_hrs_day` is used by `compare-itineraries`. The group changes them in `trip.md` as it plans, and the script reads them itself. Read **Trip facts** in `00 Home.md` and `Memories/MEMORY.md`. Read the vehicle's Transport note in `Logistics/` if there is one: the one with `decision: selected`, or `Logistics/Transport.md` in an older vault (the vehicle, and the daily limits).
+- Read `trip.md`: `group_vehicle`, `bases`, `evening_bases`, `day_start`, the fallback `daylight_hrs` and `sunset`, and the optional `road_speeds` and `stop_buffer`. Also read `planning_limits`: `slack_ok_hrs`, `dark_drive_tight_min` and `late_finish_min` set the verdict in section 6, and `max_drive_hrs_day` is used by `compare-itineraries` and `build-itinerary`. Read `road_cutoffs` (areas where nobody drives after a set time; the script reads them itself and `config` prints them). The group changes them in `trip.md` as it plans, and the script reads them itself. Read **Trip facts** in `00 Home.md` and `Memories/MEMORY.md`. Read the vehicle's Transport note in `Logistics/` if there is one: the one with `decision: selected`, or `Logistics/Transport.md` in an older vault (the vehicle, and the daily limits).
 - Print the settings in force:
   ```bash
   node "${CLAUDE_PLUGIN_ROOT}/skills/review-travel-times/scripts/travel.mjs" config
@@ -48,6 +48,7 @@ The vault root is the current working directory.
 ## 3. Three estimates for each leg
 A leg is one drive: from a stay or place to the next. For each, get three estimates, in hours. Keep what you found out, with its source, for the basis line.
 
+0. **The shared distance file first.** If `Logistics/legs.json` has a `researched` link for the leg (checked within the last few months), its km, range, road type, after-dark value and cutoff area are a starting point: use its range as the map time, and still look for local reports. A `rough` link is only a straight-line guess: check the leg in full. After the check, save what you found as a researched link with `node "${CLAUDE_PLUGIN_ROOT}/skills/build-itinerary/scripts/route.mjs" link --from A --to B --km .. --hrs low-high --road .. --after-dark ok|avoid [--cutoff-area ..] --source ".."`, so every skill uses the same figure. Road facts only, never a choice.
 1. **Map time.** Web search for the route's distance and drive time between the two points (a routing site or a maps result). Take the distance (km) from there too. Use the time for a car; the road-type estimate covers the group vehicle. If a source gives a range, keep both ends. If you cannot reach any, leave it out and say "no map time" in the report. Never write a map time you did not find.
 2. **Road-type time.** Split the leg into stretches by kind of road and give each its km: `motorway`, `highway`, `rural`, `hill`, `city`, `track`. A leg that is half motorway and half hill road has two stretches (`segments`). Use the Road notes, the place notes' `last_mile` and `road_condition`, and what the map search showed (a motorway, a ghat road). When unsure between two types, take the slower and say so. The script divides km by the speed for the vehicle class.
 3. **Local reports.** Search for recent news and traveller reports about the road and the places, for the trip's dates: roadworks, landslides, a closed bridge, a one-lane stretch, a market-day or festival jam, a ferry that runs once a day. Use the last year or so, and say how recent. If a report gives a time ("takes 3 hrs now"), that is the third estimate. If a road is **closed**, put the reason in `blocked`. If you find nothing, say "nothing found in recent reports", not "clear".
@@ -66,6 +67,7 @@ A leg is one drive: from a stay or place to the next. For each, get three estima
 - **Agreed bends:** read *Choices that bend the rules*. For each `avoid` leg a bend covers, set `"bent": true`, and `"agreed_dark_min"` to the minutes of dark driving the bend states (45 minutes, "about an hour"). If it states none, leave `agreed_dark_min` out. A bent leg is not counted as a problem, except for time beyond what was agreed.
 - **Evenings:** set `"evening_base_end": false` when the day ends at a base that is not in `evening_bases`, otherwise `true` (leave it out if unknown).
 - **Extra stops:** a lunch stop or photo stop in the middle of a leg is `"extra_stops": 1` on that leg.
+- **Road cutoffs:** a leg in an area of `road_cutoffs` gets `"cutoff_area": "<area>"`: when its start or end is that town, or a place or stay whose `nearest_base` or `base_town` is that area, or `legs.json` puts the link in it. The script counts the minutes of that leg driven after the area's `no_drive_after`. A bend under *Choices that bend the rules* that covers it sets `"bent": true` and, if it says how long, `"agreed_cutoff_min"`.
 
 ## 5. Run the script
 Write one JSON file per day in `.claude/scratch/`, then run it from the vault root. A complete input is in `${CLAUDE_PLUGIN_ROOT}/skills/review-travel-times/references/checked-example-input.json`; the fields are:
@@ -75,7 +77,8 @@ Write one JSON file per day in `.claude/scratch/`, then run it from the vault ro
   "legs": [ { "from": "Lagos", "to": "Mountain Fort", "after_dark": "avoid", "stay_hrs": 2,
               "segments": [ { "km": 15, "road": "rural" }, { "km": 30, "road": "hill" } ],
               "map_hrs": 1.2, "reports_hrs": null, "extra_stops": 0,
-              "bent": false, "agreed_dark_min": null, "blocked": null, "keep": null, "keep_reason": null } ] }
+              "cutoff_area": null, "bent": false, "agreed_dark_min": null, "agreed_cutoff_min": null,
+              "blocked": null, "keep": null, "keep_reason": null } ] }
 ```
 `activity_hrs` and `predawn_hrs` are the Day note's own values. A leg with one road type can use `"km"` and `"road"` instead of `segments`. An estimate is a number of hours or `[low, high]`.
 ```bash
@@ -89,6 +92,7 @@ The day's verdict is the **worst** of these:
 |---|---|
 | Slack, from the drive hours (with stops), the activity hours and the daylight. Same thresholds as plan-day: `slack_ok_hrs` (1.5 hrs by default) or more is ok, 0 to under that is tight, below 0 is too much | ok / tight / too much |
 | An `avoid` leg driven after sunset (or before sunrise) beyond what the group agreed to: up to `dark_drive_tight_min` (30 by default) minutes is tight, more is too much | tight / too much |
+| A leg in a `road_cutoffs` area driven after its `no_drive_after` time, beyond what the group agreed to: up to `dark_drive_tight_min` minutes is tight, more is too much | tight / too much |
 | The day ends more than `late_finish_min` (60 by default) minutes after sunset at a base that is not in `evening_bases` | tight |
 | A road that is closed | too much |
 

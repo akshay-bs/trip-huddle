@@ -1,0 +1,287 @@
+{
+  "about": "Road facts between places (trip-huddle build-itinerary). Facts only, never decisions: which places, stays and food spots are chosen lives in the notes. rough = straight-line estimate; researched = checked against a map, the road type and local reports. Change with skills/build-itinerary/scripts/route.mjs.",
+  "rough_road": "hill",
+  "towns": {
+    "Guwahati": [
+      26.14,
+      91.74
+    ],
+    "Pobitora": [
+      26.23,
+      92.04
+    ],
+    "Shillong": [
+      25.57,
+      91.88
+    ],
+    "Sohra": [
+      25.28,
+      91.72
+    ],
+    "Dawki": [
+      25.18,
+      92.02
+    ],
+    "Jowai": [
+      25.45,
+      92.2
+    ]
+  },
+  "links": [
+    {
+      "from": "Guwahati",
+      "to": "Pobitora",
+      "km": 50,
+      "drive_hrs": [
+        1.25,
+        1.75
+      ],
+      "road": "rural",
+      "after_dark": "avoid",
+      "cutoff_area": null,
+      "status": "researched",
+      "source": "made-up figures for the build-itinerary example: not researched, not driven",
+      "checked": "2026-11-02"
+    },
+    {
+      "from": "Pobitora",
+      "to": "Pobitora Wildlife Sanctuary",
+      "km": 3,
+      "drive_hrs": [
+        0.1,
+        0.2
+      ],
+      "road": "rural",
+      "after_dark": "avoid",
+      "cutoff_area": null,
+      "status": "researched",
+      "source": "made-up figures for the build-itinerary example: not researched, not driven",
+      "checked": "2026-11-02"
+    },
+    {
+      "from": "Pobitora Wildlife Sanctuary",
+      "to": "Shillong",
+      "km": 135,
+      "drive_hrs": [
+        3.5,
+        4.5
+      ],
+      "road": "highway",
+      "after_dark": "ok",
+      "cutoff_area": null,
+      "status": "researched",
+      "source": "made-up figures for the build-itinerary example: not researched, not driven",
+      "checked": "2026-11-02"
+    },
+    {
+      "from": "Pobitora Wildlife Sanctuary",
+      "to": "Jowai",
+      "km": 165,
+      "drive_hrs": [
+        3.75,
+        4.5
+      ],
+      "road": "highway",
+      "after_dark": "avoid",
+      "cutoff_area": "Jowai",
+      "status": "researched",
+      "source": "made-up figures for the build-itinerary example: not researched, not driven",
+      "checked": "2026-11-02"
+    },
+    {
+      "from": "Shillong",
+      "to": "Nohkalikai Falls",
+      "km": 58,
+      "drive_hrs": [
+        1.75,
+        2.25
+      ],
+      "road": "hill",
+      "after_dark": "avoid",
+      "cutoff_area": null,
+      "status": "researched",
+      "source": "made-up figures for the build-itinerary example: not researched, not driven",
+      "checked": "2026-11-02"
+    },
+    {
+      "from": "Nohkalikai Falls",
+      "to": "Sohra",
+      "km": 6,
+      "drive_hrs": [
+        0.2,
+        0.3
+      ],
+      "road": "hill",
+      "after_dark": "avoid",
+      "cutoff_area": null,
+      "status": "researched",
+      "source": "made-up figures for the build-itinerary example: not researched, not driven",
+      "checked": "2026-11-02"
+    },
+    {
+      "from": "Sohra",
+      "to": "Umngot River (Dawki)",
+      "km": 95,
+      "drive_hrs": [
+        3,
+        3.5
+      ],
+      "road": "hill",
+      "after_dark": "avoid",
+      "cutoff_area": null,
+      "status": "researched",
+      "source": "made-up figures for the build-itinerary example: not researched, not driven",
+      "checked": "2026-11-02"
+    },
+    {
+      "from": "Umngot River (Dawki)",
+      "to": "Dawki",
+      "km": 2,
+      "drive_hrs": [
+        0.1,
+        0.1
+      ],
+      "road": "rural",
+      "after_dark": "avoid",
+      "cutoff_area": null,
+      "status": "researched",
+      "source": "made-up figures for the build-itinerary example: not researched, not driven",
+      "checked": "2026-11-02"
+    },
+    {
+      "from": "Dawki",
+      "to": "Krang Suri Falls",
+      "km": 28,
+      "drive_hrs": [
+        0.75,
+        1
+      ],
+      "road": "hill",
+      "after_dark": "avoid",
+      "cutoff_area": "Jowai",
+      "status": "researched",
+      "source": "made-up figures for the build-itinerary example: not researched, not driven",
+      "checked": "2026-11-02"
+    },
+    {
+      "from": "Krang Suri Falls",
+      "to": "Shillong",
+      "km": 80,
+      "drive_hrs": [
+        2.25,
+        2.75
+      ],
+      "road": "hill",
+      "after_dark": "avoid",
+      "cutoff_area": "Jowai",
+      "status": "researched",
+      "source": "made-up figures for the build-itinerary example: not researched, not driven",
+      "checked": "2026-11-02"
+    },
+    {
+      "from": "Shillong",
+      "to": "Jowai",
+      "km": 64,
+      "drive_hrs": [
+        1.75,
+        2.25
+      ],
+      "road": "highway",
+      "after_dark": "avoid",
+      "cutoff_area": "Jowai",
+      "status": "researched",
+      "source": "made-up figures for the build-itinerary example: not researched, not driven",
+      "checked": "2026-11-02"
+    },
+    {
+      "from": "Jowai",
+      "to": "Krem Chympe Falls",
+      "km": 48,
+      "drive_hrs": [
+        1.25,
+        1.5
+      ],
+      "road": "rural",
+      "after_dark": "avoid",
+      "cutoff_area": "Jowai",
+      "status": "researched",
+      "source": "made-up figures for the build-itinerary example: not researched, not driven",
+      "checked": "2026-11-02"
+    },
+    {
+      "from": "Jowai",
+      "to": "Krang Suri Falls",
+      "km": 30,
+      "drive_hrs": [
+        0.75,
+        1
+      ],
+      "road": "hill",
+      "after_dark": "avoid",
+      "cutoff_area": "Jowai",
+      "status": "researched",
+      "source": "made-up figures for the build-itinerary example: not researched, not driven",
+      "checked": "2026-11-02"
+    },
+    {
+      "from": "Krang Suri Falls",
+      "to": "Umngot River (Dawki)",
+      "km": 26,
+      "drive_hrs": [
+        0.75,
+        1
+      ],
+      "road": "hill",
+      "after_dark": "avoid",
+      "cutoff_area": "Jowai",
+      "status": "researched",
+      "source": "made-up figures for the build-itinerary example: not researched, not driven",
+      "checked": "2026-11-02"
+    },
+    {
+      "from": "Dawki",
+      "to": "Nohkalikai Falls",
+      "km": 100,
+      "drive_hrs": [
+        3,
+        3.75
+      ],
+      "road": "hill",
+      "after_dark": "avoid",
+      "cutoff_area": null,
+      "status": "researched",
+      "source": "made-up figures for the build-itinerary example: not researched, not driven",
+      "checked": "2026-11-02"
+    },
+    {
+      "from": "Sohra",
+      "to": "Shillong",
+      "km": 55,
+      "drive_hrs": [
+        1.5,
+        2
+      ],
+      "road": "hill",
+      "after_dark": "avoid",
+      "cutoff_area": null,
+      "status": "researched",
+      "source": "made-up figures for the build-itinerary example: not researched, not driven",
+      "checked": "2026-11-02"
+    },
+    {
+      "from": "Shillong",
+      "to": "Guwahati",
+      "km": 100,
+      "drive_hrs": [
+        2.75,
+        3.5
+      ],
+      "road": "highway",
+      "after_dark": "ok",
+      "cutoff_area": null,
+      "status": "researched",
+      "source": "made-up figures for the build-itinerary example: not researched, not driven",
+      "checked": "2026-11-02"
+    }
+  ]
+}

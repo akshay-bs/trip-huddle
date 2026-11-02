@@ -36,3 +36,4 @@ The trip's facts, in one place. Every trip-huddle skill reads this note, so keep
 - Run the `trip-init` skill to fill it in with an interview, or edit the properties above by hand.
 - After changing anything above, ask Claude to "re-run trip-init settings". That updates the templates and Bases to match. Your notes are not touched.
 - `map_box` is the rough area of the trip: `{lat_min, lat_max, lng_min, lng_max}`. The checker uses it to catch wrong coordinates. Leave it empty to skip that check.
+- Optional, add by hand if you need them: `decision_values` (a list, default `[considering, selected, backup, dropped]`) and `folders` (where each note type lives, default `{location: Locations, stay: Stays, day: Itinerary, source: Sources, food: Food, route: Itinerary, transport: Logistics}`). The checker reads both.

@@ -16,6 +16,7 @@ v0.1 is a seed: the setup from one real trip, with private details removed. The 
 - [ ] Add a square plugin icon at `.claude-plugin/icon.png`
 
 ## Phase 2: make it work for any trip
+- [x] (v0.3.0) One shared checker at `scripts/validate.mjs` (the old `skills/add-place/scripts/validate.mjs` still runs it). It learns the note types, properties and value lists from the vault's `Templates/` folder, and reads `map_box`, `regions`, `folders` and `decision_values` from `trip.md`. It checks Day, Food, Source, Route and Transport notes too. `node scripts/test.mjs` runs every check.
 These are still specific to the original trip:
 
 | Where | Hardcoded | Generalize to |

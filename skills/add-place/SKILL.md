@@ -93,9 +93,9 @@ After the notes are written:
 3. **Don't touch** `Itinerary/Route.md`, the Day notes or any `decision` fields unless the user asks.
 
 ## 6. Validate (required)
-Run the validator from the vault root. It checks property order against the templates, types, FIELD GUIDE values, coordinates (against `map_box` in `trip.md`, if set), link resolution, back-links, duplicates and stray files in the root:
+Run the validator from the vault root. It reads the vault's own `Templates/` folder, so it checks every note type and any fields added at setup: missing and unknown properties, property types, FIELD GUIDE values, coordinates (against `map_box` in `trip.md`, if set), link resolution, back-links, duplicates and stray files in the root:
 ```bash
-node "${CLAUDE_PLUGIN_ROOT}/skills/add-place/scripts/validate.mjs"
+node "${CLAUDE_PLUGIN_ROOT}/scripts/validate.mjs"
 ```
 - **Errors:** fix every error in the notes you created or edited. Errors in older notes you didn't touch: report them, don't silently rewrite them.
 - **Warnings** (non-enum values, a missing back-link, an alias clash): fix the ones in your notes, or explain them.

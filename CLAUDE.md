@@ -4,26 +4,20 @@ trip-huddle is a Claude plugin (Cowork and Claude Code) plus an Obsidian vault l
 
 ## Layout
 - `.claude-plugin/plugin.json` and `marketplace.json`: keep the version numbers in sync.
+- `scripts/`: shared Node scripts (`validate.mjs`, the checker; `test.mjs`). `skills/add-place/scripts/validate.mjs` is only a wrapper that runs the shared one.
 - `skills/<name>/SKILL.md`: plugin skills. Refer to bundled files as `${CLAUDE_PLUGIN_ROOT}/skills/<name>/...`. Skills run with the user's vault as the working directory.
 - `vault-template/`: the empty starter vault.
 - `example-vault/`: a filled example used to test the skills and validator.
 - `vault-template/Templates`, `vault-template/Bases` and `vault-template/.obsidian/*.json` are copied into `example-vault/`. Change them in both places, together.
 
 ## Checks
-Run the validator against the example vault after any change to templates, Bases, `types.json` or the validator:
+After any change to templates, Bases, `types.json`, `trip-init`, its field packs or the checker, run:
 ```bash
-cd example-vault && node ../skills/add-place/scripts/validate.mjs
+node scripts/test.mjs
 ```
-It must report 0 errors.
+It must end with "All tests passed". It checks that the example vault has 0 errors, that `trip-init --reconfigure` leaves the example vault unchanged ("Nothing changed"), that a new vault made from the Portugal answers passes the checker and gets `Route.md` and `Transport.md`, and that a deliberately broken copy of the example has every problem reported. It works on temporary copies and leaves the repo alone.
 
-After any change to templates, Bases, `trip-init` or its field packs, also run:
-```bash
-node skills/trip-init/scripts/init.mjs --answers skills/trip-init/tests/example-vault-answers.json --vault example-vault --reconfigure
-```
-It must print "Nothing changed": the example vault is exactly what `trip-init` makes from its answers. Then set up a made-up trip in a scratch folder and validate it:
-```bash
-node skills/trip-init/scripts/init.mjs --answers skills/trip-init/tests/portugal-answers.json --vault /tmp/th-test && (cd /tmp/th-test && node "$OLDPWD/skills/add-place/scripts/validate.mjs")
-```
+The shared checker is `scripts/validate.mjs` (it reads the vault's own `Templates/`, so a template change changes what is checked). Run it by hand with `cd example-vault && node ../scripts/validate.mjs`.
 
 ## Privacy rules for this repo
 - The example came from a real trip and its private details were removed. Never add trip dates, group size or makeup, people's names, booking references, flight details, quotes from friends or agencies, or private messages.

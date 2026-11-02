@@ -95,7 +95,13 @@ const yamlValue = v => Array.isArray(v) ? `[${v.map(scalar).join(', ')}]`
   : v && typeof v === 'object' ? `{${Object.entries(v).map(([k, x]) => `${k}: ${scalar(x)}`).join(', ')}}`
   : scalar(v);
 const keys = [...Object.keys(DEFAULTS), ...Object.keys(A).filter(k => !(k in DEFAULTS))];
-const front = keys.map(k => { const v = yamlValue(A[k]); return v === '' ? `${k}:` : `${k}: ${v}`; }).join('\n');
+let front = keys.map(k => { const v = yamlValue(A[k]); return v === '' ? `${k}:` : `${k}: ${v}`; }).join('\n');
+// Optional settings that people add by hand (read by scripts/validate.mjs): keep them when settings are rewritten.
+const oldFront = fs.existsSync(tripMd) ? (fs.readFileSync(tripMd, 'utf8').match(/^---\n([\s\S]*?)\n---/)?.[1] || '') : '';
+for (const k of ['decision_values', 'folders']) {
+  const m = k in A ? null : oldFront.match(new RegExp(`^${k}:.*(?:\\n[ \\t]+.*)*`, 'm'));
+  if (m) front += '\n' + m[0];
+}
 const oldTrip = fs.existsSync(tripMd) ? fs.readFileSync(tripMd, 'utf8') : read('trip.md');
 const body = oldTrip.replace(/^---\n[\s\S]*?\n---\n?/, '');
 write('trip.md', `---\n${front}\n---\n${body}`);
@@ -205,6 +211,18 @@ edit('00 Home.md', t => {
   }
   return t;
 });
+
+// ---------- starter notes (new vaults only; --reconfigure never touches notes) ----------
+if (!RECONF) {
+  const fromTemplate = (rel, title, fill = t => t) => {
+    if (fs.existsSync(path.join(VAULT, rel))) return;
+    fs.mkdirSync(path.dirname(path.join(VAULT, rel)), { recursive: true });
+    write(rel, fill(read(`Templates/${path.basename(rel)}`).replace(/\{\{title\}\}/g, title)));
+  };
+  fromTemplate('Itinerary/Route.md', 'Route');
+  fromTemplate('Logistics/Transport.md', 'Transport',
+    t => A.group_vehicle ? t.replace(/^vehicle:.*$/m, `vehicle: ${scalar(A.group_vehicle)}`) : t);
+}
 
 // ---------- report ----------
 console.log(`${RECONF ? 'Updated' : 'Set up'} trip vault: ${VAULT}`);

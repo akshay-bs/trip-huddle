@@ -88,6 +88,15 @@
     "total_walk_km": "number",
     "cuisine": "text",
     "veg_options": "text",
-    "price_band": "text"
+    "price_band": "text",
+    "bases": "multitext",
+    "nights_per_base": "multitext",
+    "total_nights": "number",
+    "status": "text",
+    "vehicle": "text",
+    "driver": "text",
+    "quote": "number",
+    "max_km_per_day": "number",
+    "max_hrs_per_day": "number"
   }
 }

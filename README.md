@@ -16,8 +16,9 @@ Trip-Huddle is a Claude plugin (for Cowork and Claude Code) plus an Obsidian vau
 | Path | What it is |
 |---|---|
 | `.claude-plugin/` | Plugin manifest, plus a marketplace file so this repo can be added as a marketplace |
-| `skills/add-place/` | The skill that adds places and stays: the pipeline, a subagent prompt for researching many items in parallel, and `validate.mjs` (Node, no dependencies) |
+| `skills/add-place/` | The skill that adds places and stays: the pipeline and a subagent prompt for researching many items in parallel |
 | `skills/trip-init/` | The skill that sets up a vault for your trip: a short interview, then `init.mjs` (Node, no dependencies) writes `trip.md` and fills the templates and Bases. Optional field sets live in `field-packs/` |
+| `scripts/` | `validate.mjs`, the checker every skill calls (Node, no dependencies): it reads the vault's own `Templates/` folder, so fields added at setup are checked too. `test.mjs` runs all the repo's checks |
 | `vault-template/` | An empty starter vault: templates, Bases views, Obsidian property types, a home page with a **Trip facts** section, and vault rules for Claude |
 | `example-vault/` | A filled example: 60 places and 6 stays in Assam and Meghalaya, researched for a December trip |
 
@@ -35,8 +36,9 @@ Trip-Huddle is a Claude plugin (for Cowork and Claude Code) plus an Obsidian vau
 
 To try it without your own data, open `example-vault/` in Obsidian, and check it with:
 ```bash
-cd example-vault && node ../skills/add-place/scripts/validate.mjs
+cd example-vault && node ../scripts/validate.mjs
 ```
+The checker works on the current folder, or on `--vault <folder>`.
 
 ## Optional Obsidian plugins
 - **Maps** (official, for Bases) or **Map View** (community) to see places and stays on a map. Both read the `location: [lat, lng]` property.

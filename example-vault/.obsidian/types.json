@@ -95,6 +95,8 @@
     "rule_bends": "number",
     "travel_checked": "date",
     "travel_verdict": "text",
+    "kind": "text",
+    "meal": "multitext",
     "cuisine": "text",
     "veg_options": "text",
     "price_band": "text",

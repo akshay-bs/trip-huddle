@@ -3,7 +3,7 @@
 // trip-init making a new vault the checker accepts, the plan-day sun script and example, the after-dark checks
 // and migration, the review-travel-times script (road-type time, stops buffer, trip.md settings, verdicts), its
 // made-up checked example, the travel_verdict warning, the planning_limits in trip.md (they change the verdicts, reach the
-// Itinerary base through trip-init, and are checked), Comparison notes and the made-up comparison, and a deliberately
+// Itinerary base through trip-init, and are checked), Comparison notes and the made-up comparison, Food notes (the template, the Base, the folder, the example notes and the upgrade of an older vault), and a deliberately
 // broken vault where every problem must be reported. Works on temporary copies, so the repo is never modified. Exits 1 if anything fails.
 import fs from 'node:fs';
 import os from 'node:os';
@@ -753,11 +753,129 @@ const warnLine = (out, file, text) => out.split('\n').some(l => l.includes(file)
     return dirs.includes('compare-itineraries') && !bad.length ? '' : `wrong or missing name in: ${bad.join(', ')}`;
   });
 }
-test('plugin: both manifests have the same version, and it is 0.8.0', () => {
+test('plugin: both manifests have the same version, and it is 0.9.0', () => {
   const a = JSON.parse(fs.readFileSync(path.join(ROOT, '.claude-plugin/plugin.json'), 'utf8')).version;
   const b = JSON.parse(fs.readFileSync(path.join(ROOT, '.claude-plugin/marketplace.json'), 'utf8')).plugins[0].version;
-  return a === b && a === '0.8.0' ? '' : `plugin.json ${a}, marketplace.json ${b}`;
+  return a === b && a === '0.9.0' ? '' : `plugin.json ${a}, marketplace.json ${b}`;
 });
+// ---- Food spots (restaurants and cafes): the template, the Base, the folder, the example notes and the old-vault upgrade
+{
+  const rd = (v, f) => fs.readFileSync(path.join(ROOT, v, f), 'utf8');
+  test('food: Food.base, the Food Spot template (but its price band), types.json and the Source template agree between the vaults', () => {
+    const bad = [];
+    if (rd('vault-template', 'Bases/Food.base') !== rd('example-vault', 'Bases/Food.base')) bad.push('Bases/Food.base differs');
+    if (rd('vault-template', '.obsidian/types.json') !== rd('example-vault', '.obsidian/types.json')) bad.push('types.json differs');
+    if (rd('vault-template', 'Templates/Source Itinerary.md') !== rd('example-vault', 'Templates/Source Itinerary.md')) bad.push('Source Itinerary.md differs');
+    const band = s => s.replace(/^price_band: .*\|.*$/m, 'price_band: X');
+    if (band(rd('vault-template', 'Templates/Food Spot.md')) !== band(rd('example-vault', 'Templates/Food Spot.md'))) bad.push('Food Spot.md differs by more than the price band');
+    if (!fs.existsSync(path.join(ROOT, 'vault-template/Food/.gitkeep'))) bad.push('vault-template has no Food/ folder');
+    if (!fs.existsSync(path.join(ROOT, 'example-vault/Food'))) bad.push('example-vault has no Food/ folder');
+    return bad.join('\n');
+  });
+  test('food: the template has kind, meal and scheduled_day, with closed lists and the right property types', () => {
+    const tpl = rd('vault-template', 'Templates/Food Spot.md'), types = JSON.parse(rd('vault-template', '.obsidian/types.json')).types;
+    const bad = [];
+    for (const k of ['kind', 'meal', 'scheduled_day', 'nearest_base', 'priority']) if (!new RegExp(`^${k}:`, 'm').test(tpl)) bad.push(`no ${k} property`);
+    for (const g of ['kind: restaurant | cafe | street food | bakery | bar', 'meal: breakfast | lunch | dinner | snack', 'FIELD GUIDE']) if (!tpl.includes(g)) bad.push(`FIELD GUIDE lacks "${g}"`);
+    if (types.meal !== 'multitext' || types.kind !== 'text') bad.push('types.json: meal must be multitext and kind text');
+    return bad.join('\n');
+  });
+  test('food: the Food base filters on type food, every column is a Food Spot property, and its views exist', () => {
+    const base = rd('vault-template', 'Bases/Food.base'), tpl = rd('vault-template', 'Templates/Food Spot.md');
+    const props = new Set((tpl.match(/^---\n([\s\S]*?)\n---/)[1].match(/^[A-Za-z_]+(?=:)/gm)) || []);
+    const bad = [];
+    if (!base.includes('type == "food"')) bad.push('no type == "food" filter');
+    const views = [...base.matchAll(/^ {2}- type: (\w+)\n {4}name: (.+)$/gm)].map(m => `${m[1]}:${m[2]}`);
+    for (const v of ['table:To decide', 'table:Selected', 'table:Selected but unscheduled', 'table:By base town', 'cards:Cards', 'map:Map']) if (!views.includes(v)) bad.push(`no view ${v}`);
+    const formulas = new Set([...base.matchAll(/^ {2}(\w+): /gm)].map(m => 'formula.' + m[1]));
+    const cols = [...base.matchAll(/^ {6}- ([\w.]+)$/gm)].map(m => m[1]).filter(c => !c.startsWith('file.'));
+    for (const c of new Set(cols)) if (!props.has(c) && !formulas.has(c)) bad.push(`column ${c} is not a Food Spot property`);
+    if (!/coordinates: note\.location/.test(base)) bad.push('the map view does not use location');
+    return bad.join('\n');
+  });
+  test('food: 00 Home.md embeds a view that exists in Food.base, and the how-it-works steps mention Food/', () => {
+    const base = rd('vault-template', 'Bases/Food.base'), bad = [];
+    for (const v of ['vault-template', 'example-vault']) {
+      const home = rd(v, '00 Home.md'), embeds = [...home.matchAll(/!\[\[Food\.base#([^\]]+)\]\]/g)].map(m => m[1]);
+      if (!embeds.length) bad.push(`${v}: no Food.base embed on Home`);
+      for (const e of embeds) if (!base.includes(`name: ${e}\n`)) bad.push(`${v}: Home embeds Food.base view "${e}", which does not exist`);
+      if (!/`Food\/`/.test(home)) bad.push(`${v}: the how-it-works steps do not mention Food/`);
+    }
+    return bad.join('\n');
+  });
+  test('food: the example vault has Food notes, each pointing to the public research note only, in the right folder', () => {
+    const dir = path.join(ROOT, 'example-vault/Food'), files = fs.readdirSync(dir).filter(f => f.endsWith('.md'));
+    const bad = files.filter(f => {
+      const s = fs.readFileSync(path.join(dir, f), 'utf8');
+      return !s.includes('type: food') || !s.includes('"[[Example - Public research]]"') || (s.match(/^recommended_by:\n((?:  - .*\n)+)/m)?.[1].trim().split('\n').length !== 1)
+        || !fs.readFileSync(path.join(ROOT, 'example-vault/Sources/Example - Public research.md'), 'utf8').includes(`[[${f.replace(/\.md$/, '')}]]`);
+    });
+    return files.length >= 2 && !bad.length ? '' : `${files.length} Food note(s); problems in: ${bad.join(', ')}`;
+  });
+
+  // The checker on Food notes
+  const fv = path.join(TMP, 'food-notes');
+  fs.cpSync(path.join(ROOT, 'example-vault'), fv, { recursive: true });
+  const foodTpl = fs.readFileSync(path.join(fv, 'Templates/Food Spot.md'), 'utf8');
+  const mk = (name, fn = s => s) => fs.writeFileSync(path.join(fv, 'Food', name + '.md'), fn(foodTpl.replace('{{title}}', name)
+    .replace('recommended_by: []', 'recommended_by:\n  - "[[Example - Public research]]"').replace('location: []', 'location: [25.5, 91.9]')));
+  const srcFile = path.join(fv, 'Sources/Example - Public research.md');
+  fs.writeFileSync(srcFile, fs.readFileSync(srcFile, 'utf8').replace('## Notes / opinions', '- [x] [[Good Cafe]]\n- [x] [[Odd Cafe]]\n- [x] [[Far Cafe]]\n\n## Notes / opinions'));
+  mk('Good Cafe', s => s.replace('kind:', 'kind: cafe').replace('meal: []', 'meal: [breakfast, snack]').replace('veg_options:', 'veg_options: good')
+    .replace('decision: considering', 'decision: selected'));
+  mk('Odd Cafe', s => s.replace('kind:', 'kind: diner').replace('meal: []', 'meal: [brunch]').replace('veg_options:', 'veg_options: lots'));
+  mk('Far Cafe', s => s.replace('location: [25.5, 91.9]', 'location: [48.8584, 2.2945]'));
+  const fr = check(fv), lines = fr.out.split('\n');
+  test('checker: a well-filled Food note passes', () => lines.some(l => l.includes('Good Cafe')) ? fr.out : '');
+  test('checker: kind, meal and veg_options outside the closed lists are warned about', () => {
+    const w = x => lines.some(l => l.includes('Food/Odd Cafe.md') && l.includes(x));
+    return w('kind "diner" is not one of') && w('meal "brunch" is not one of') && w('veg_options "lots" is not one of') ? '' : fr.out;
+  });
+  test('checker: a Food note outside map_box is an error', () => lines.some(l => l.includes('Food/Far Cafe.md') && l.includes('outside the trip map_box')) ? '' : fr.out);
+  test('checker: a Food note with no source is an error, and one filed outside Food/ is flagged', () => {
+    mk('No Source', s => s.replace(/recommended_by:\n  - .*\n/, 'recommended_by: []\n'));
+    fs.writeFileSync(path.join(fv, 'Locations/Misfiled Cafe.md'), foodTpl.replace('{{title}}', 'Misfiled Cafe'));
+    const r = check(fv).out.split('\n');
+    return r.some(l => l.includes('Food/No Source.md') && l.includes('recommended_by is empty')) && r.some(l => l.includes('Locations/Misfiled Cafe.md') && l.includes('must live in Food/')) ? '' : r.join('\n');
+  });
+
+  // A new vault gets the category with no extra step
+  test('food: a new vault from trip-init has the Food/ folder, Food.base and the Food Spot template, and passes the checker', () => {
+    const missing = ['Food', 'Bases/Food.base', 'Templates/Food Spot.md'].filter(f => !fs.existsSync(path.join(portugal, f)));
+    return missing.length ? `not created: ${missing.join(', ')}` : '';
+  });
+
+  // An older vault (before 0.9.0): the Food Spot template had no kind or meal, and there was no Food folder or base
+  const oldFood = path.join(TMP, 'pre-0.9');
+  fs.cpSync(path.join(ROOT, 'example-vault'), oldFood, { recursive: true });
+  const ow = (rel, fn) => { const p = path.join(oldFood, rel); fs.writeFileSync(p, fn(fs.readFileSync(p, 'utf8'))); };
+  fs.rmSync(path.join(oldFood, 'Food'), { recursive: true }); fs.rmSync(path.join(oldFood, 'Bases/Food.base'));
+  ow('Sources/Example - Public research.md', s => s.replace(/## Restaurants and cafes mentioned\n(- .*\n)+\n/, ''));
+  ow('Templates/Food Spot.md', () => '---\ntype: food\nstate:\nnearest_base:\nlocation: []\nmaps_link:\ncuisine:\nveg_options:\nprice_band:\ngoogle_rating:\nopening_hours:\ndecision: considering\ndecision_reason:\nrecommended_by: []\ncover:\ntags:\n  - food\n---\n<!--\nveg_options: good | limited | none\nprice_band: ₹ | ₹₹ | ₹₹₹\ndecision: considering | selected | backup | dropped\n-->\n\n# {{title}}\n');
+  ow('Templates/Source Itinerary.md', s => s.replace(/\n## Restaurants and cafes mentioned\n- \[ \] \[\[ \]\]\n/, ''));
+  ow('.obsidian/types.json', s => s.replace(/\s*"(kind|meal)": "(text|multitext)",/g, ''));
+  ow('00 Home.md', s => s.replace('## Food to decide\n![[Food.base#To decide]]\n\n', ''));
+  const exAnswersFile = path.join(ANSWERS, 'example-vault-answers.json');
+  test('trip-init --reconfigure alone does not add the Food category to an older vault', () => {
+    const r = run(INIT, ['--answers', exAnswersFile, '--vault', oldFood, '--reconfigure']);
+    return r.code === 0 && r.out.includes('Nothing changed') && !fs.existsSync(path.join(oldFood, 'Food')) ? '' : r.out;
+  });
+  const up = run(INIT, ['--answers', exAnswersFile, '--vault', oldFood, '--reconfigure', '--add-food']);
+  test('trip-init --reconfigure --add-food brings an older vault to what the example has (folder, Base, templates, types, Home)', () => {
+    const same = ['Bases/Food.base', 'Templates/Food Spot.md', 'Templates/Source Itinerary.md', '.obsidian/types.json', '00 Home.md'];
+    const diff = same.filter(f => fs.readFileSync(path.join(oldFood, f), 'utf8') !== rd('example-vault', f));
+    return up.code === 0 && fs.existsSync(path.join(oldFood, 'Food')) && !diff.length ? '' : `${up.out}\ndiffers: ${diff.join(', ')}`;
+  });
+  test('trip-init --add-food: a second run changes nothing, and the result is accepted by the checker', () => {
+    const again = run(INIT, ['--answers', exAnswersFile, '--vault', oldFood, '--reconfigure', '--add-food']);
+    const r = check(oldFood);
+    return again.code === 0 && again.out.includes('Nothing changed') && r.code === 0 ? '' : again.out + r.out;
+  });
+  test('trip-init: --add-food without --reconfigure is refused', () => {
+    const r = run(INIT, ['--answers', exAnswersFile, '--vault', path.join(TMP, 'never'), '--add-food']);
+    return r.code === 1 && /--add-food only works with --reconfigure/.test(r.out) ? '' : r.out;
+  });
+}
 test('vaults: the Day Plan template, trip.md notes and Home pointer agree between vault-template and example-vault', () => {
   const rd = (v, f) => fs.readFileSync(path.join(ROOT, v, f), 'utf8');
   // the three per-trip lines (slots S1 to S3) may differ; everything else in the template must be identical
@@ -854,7 +972,7 @@ fs.writeFileSync(path.join(broken, 'Itinerary/Day 02.md'), dayTpl.replace('{{tit
 // A Food note with a decision value that is not allowed, and a Route note whose nights do not add up.
 fs.mkdirSync(path.join(broken, 'Food'), { recursive: true });
 fs.writeFileSync(path.join(broken, 'Food/Cafe.md'), fs.readFileSync(path.join(broken, 'Templates/Food Spot.md'), 'utf8')
-  .replace('{{title}}', 'Cafe').replace('decision: considering', 'decision: maybe'));
+  .replace('{{title}}', 'Cafe').replace('decision: considering', 'decision: maybe').replace('kind:', 'kind: diner'));
 fs.writeFileSync(path.join(broken, 'Itinerary/Route.md'), fs.readFileSync(path.join(broken, 'Templates/Route.md'), 'utf8')
   .replace('{{title}}', 'Route').replace('bases: []', 'bases: [A, B]').replace('nights_per_base: []', 'nights_per_base: [2]'));
 
@@ -874,6 +992,7 @@ expectIn('stray file in the root', 'Stray note.md', 'EMPTY note in the vault roo
 expectIn('Day note in the wrong folder', 'Locations/Day 01.md', 'must live in Itinerary/', 'error');
 expectIn('bad number in a Day note', 'Itinerary/Day 02.md', 'drive_hrs must be a plain number', 'error');
 expectIn('bad decision value in a Food note', 'Food/Cafe.md', 'decision "maybe" is not one of', 'error');
+expectIn('kind outside the list in a Food note', 'Food/Cafe.md', 'kind "diner" is not one of', 'warning');
 expectIn('Route nights that do not match the bases', 'Itinerary/Route.md', 'nights_per_base', 'warning');
 
 fs.rmSync(TMP, { recursive: true, force: true });

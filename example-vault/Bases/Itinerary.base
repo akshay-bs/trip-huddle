@@ -18,6 +18,8 @@ properties:
     displayName: Pre-dawn hrs
   rule_bends:
     displayName: Rule bends
+  travel_verdict:
+    displayName: Travel check
 views:
   - type: table
     name: Days
@@ -37,6 +39,7 @@ views:
       - predawn_hrs
       - formula.slack_hrs
       - formula.verdict
+      - travel_verdict
       - total_walk_km
       - rule_bends
     sort:

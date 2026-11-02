@@ -4,18 +4,22 @@
 //   node sun.mjs times --date 2027-06-08 --lat 37.1 --lng -8.67 --tz Europe/Lisbon
 //   node sun.mjs times --date 2027-06-08 --lat 37.1 --lng -8.67 --utc-offset 1
 //   node sun.mjs times --date 2027-06-08            (no coordinates: falls back to trip.md)
-//   node sun.mjs slack --daylight 14.9 --drive 3.5 --activity 5 [--predawn 0]
+//   node sun.mjs slack --daylight 14.9 --drive 3.5 --activity 5 [--predawn 0] [--vault <folder>]
 //
 // `times` uses the NOAA solar formulas (Meeus), good to about 1-2 minutes between 60 N and 60 S.
 // It prints one JSON object. Times are local, "HH:MM". Without coordinates it reads daylight_hrs and
 // sunset from trip.md (in --vault <folder>, or the current folder) and says so in "source".
-// `slack` applies the verdict thresholds below. The Itinerary base uses the same numbers.
+// `slack` applies the verdict thresholds below. The "ok" threshold is `slack_ok_hrs` from `planning_limits` in trip.md
+// (in --vault <folder>, or the current folder; 1.5 when trip.md has none). The Itinerary base cannot read trip.md, so
+// trip-init writes the same number into it.
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { PLANNING_LIMIT_DEFAULTS, strictPlanningLimits } from '../../../scripts/trip-settings.mjs';
 
 // ---- verdict thresholds (hours of slack). Keep in step with Bases/Itinerary.base and plan-day/SKILL.md.
-export const TIGHT_BELOW_HRS = 1.5;   // slack under this is "tight"
+// TIGHT_BELOW_HRS is the default of `slack_ok_hrs` in trip.md's planning_limits; `slack` takes the vault's own value.
+export const TIGHT_BELOW_HRS = PLANNING_LIMIT_DEFAULTS.slack_ok_hrs;   // slack under this is "tight"
 export const TOO_MUCH_BELOW_HRS = 0;  // slack under this is "too much"
 
 const rad = d => d * Math.PI / 180, deg = r => r * 180 / Math.PI;
@@ -96,14 +100,14 @@ export function sunTimes(date, lat, lng, offsetMin) {
 }
 
 // Slack = daylight - (drive + activity - predawn). Pre-dawn hours are counted separately, not against daylight.
-export function slack({ daylight, drive, activity, predawn = 0 }) {
-  const nums = { daylight, drive, activity, predawn };
+export function slack({ daylight, drive, activity, predawn = 0, okHrs = TIGHT_BELOW_HRS }) {
+  const nums = { daylight, drive, activity, predawn, okHrs };
   for (const [k, v] of Object.entries(nums)) if (!Number.isFinite(v) || v < 0) throw new Error(`${k} must be a number, 0 or more`);
   if (predawn > drive + activity) throw new Error('predawn hours cannot be more than drive + activity hours');
   const load = drive + activity - predawn;
   const s = Math.round((daylight - load) * 10) / 10;   // one decimal, as in the Itinerary base
-  const verdict = s < TOO_MUCH_BELOW_HRS ? 'too much' : s < TIGHT_BELOW_HRS ? 'tight' : 'ok';
-  return { daylight_hrs: daylight, daytime_load_hrs: Math.round(load * 10) / 10, predawn_hrs: predawn, slack_hrs: s, verdict };
+  const verdict = s < TOO_MUCH_BELOW_HRS ? 'too much' : s < okHrs ? 'tight' : 'ok';
+  return { daylight_hrs: daylight, daytime_load_hrs: Math.round(load * 10) / 10, predawn_hrs: predawn, slack_hrs: s, slack_ok_hrs: okHrs, verdict };
 }
 
 // ---- command line
@@ -113,7 +117,9 @@ function main(argv) {
   const num = (n, dflt) => { const v = opt(n); if (v === undefined) return dflt; const x = Number(v); if (!Number.isFinite(x)) throw new Error(`${n} must be a number, got "${v}"`); return x; };
   if (cmd === 'slack') {
     const need = n => { const x = num(n); if (x === undefined) throw new Error(`missing ${n}`); return x; };
-    return slack({ daylight: need('--daylight'), drive: need('--drive'), activity: need('--activity'), predawn: num('--predawn', 0) });
+    const { limits, changed } = strictPlanningLimits(opt('--vault') || process.cwd());
+    return { ...slack({ daylight: need('--daylight'), drive: need('--drive'), activity: need('--activity'), predawn: num('--predawn', 0), okHrs: limits.slack_ok_hrs }),
+      limit_source: changed.includes('slack_ok_hrs') ? 'planning_limits in trip.md' : 'default' };
   }
   if (cmd === 'times') {
     const date = opt('--date');
@@ -127,7 +133,7 @@ function main(argv) {
     else throw new Error('give the local time zone: --tz Area/City (for example Europe/Lisbon) or --utc-offset 5.5');
     return { ...sunTimes(date, lat, lng, off), tz: opt('--tz') || null, source: 'computed' };
   }
-  throw new Error('usage: sun.mjs times --date YYYY-MM-DD --lat N --lng N (--tz Area/City | --utc-offset H)\n       sun.mjs slack --daylight H --drive H --activity H [--predawn H]');
+  throw new Error('usage: sun.mjs times --date YYYY-MM-DD --lat N --lng N (--tz Area/City | --utc-offset H)\n       sun.mjs slack --daylight H --drive H --activity H [--predawn H] [--vault <folder>]');
 }
 
 // No coordinates: the trip's own season defaults. Not date-specific, so it says so.

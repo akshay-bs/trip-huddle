@@ -93,6 +93,8 @@
     "daylight_hrs": "number",
     "total_walk_km": "number",
     "rule_bends": "number",
+    "travel_checked": "date",
+    "travel_verdict": "text",
     "cuisine": "text",
     "veg_options": "text",
     "price_band": "text",
@@ -104,6 +106,10 @@
     "driver": "text",
     "quote": "number",
     "max_km_per_day": "number",
-    "max_hrs_per_day": "number"
+    "max_hrs_per_day": "number",
+    "options": "multitext",
+    "compared_on": "date",
+    "recommended": "text",
+    "decided_option": "text"
   }
 }

@@ -42,5 +42,11 @@
     "lng_min": 89,
     "lng_max": 97
   },
-  "field_packs": []
+  "field_packs": [],
+  "planning_limits": {
+    "slack_ok_hrs": 1.5,
+    "dark_drive_tight_min": 30,
+    "late_finish_min": 60,
+    "max_drive_hrs_day": 6
+  }
 }

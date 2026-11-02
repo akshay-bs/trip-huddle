@@ -11,9 +11,12 @@
 //                      FIELD GUIDE lines "key: a | b | c" are closed value lists (a list that
 //                      contains "…" is open and not checked).
 //   .obsidian/types.json  property types (number, checkbox, date, multitext).
-//   trip.md (optional) map_box, regions, decision_values, and folders (a map of note type to folder).
+//   trip.md (optional) map_box, regions, decision_values, folders (a map of note type to folder) and
+//                      planning_limits (slack_ok_hrs is the "ok" threshold of the travel_verdict check).
 import fs from 'node:fs';
 import path from 'node:path';
+import { TOO_MUCH_BELOW_HRS } from '../skills/plan-day/scripts/sun.mjs';   // the slack verdict thresholds
+import { loadPlanningLimits } from './trip-settings.mjs';
 
 // ---------- arguments ----------
 const argv = process.argv.slice(2);
@@ -134,7 +137,8 @@ const eveningBases = Array.isArray(trip.evening_bases) ? trip.evening_bases.map(
 const regions = Array.isArray(trip.regions) && trip.regions.length ? trip.regions.map(String) : null;
 const decisionValues = Array.isArray(trip.decision_values) && trip.decision_values.length
   ? trip.decision_values.map(String) : ['considering', 'selected', 'backup', 'dropped'];
-const FOLDERS = { location: 'Locations', stay: 'Stays', day: 'Itinerary', source: 'Sources', food: 'Food', route: 'Itinerary', transport: 'Logistics' };
+const FOLDERS = { location: 'Locations', stay: 'Stays', day: 'Itinerary', source: 'Sources', comparison: 'Sources', food: 'Food', route: 'Itinerary', transport: 'Logistics' };
+const planning = loadPlanningLimits(VAULT);   // the defaults, changed by planning_limits in trip.md
 if (trip.folders && typeof trip.folders === 'object' && !Array.isArray(trip.folders)) {
   for (const [t, f] of Object.entries(trip.folders)) if (f) FOLDERS[t] = String(f).replace(/^\/+|\/+$/g, '');
 }
@@ -162,6 +166,7 @@ const wikilinks = s => [...s.replace(/<!--[\s\S]*?-->/g, '').matchAll(/\[\[([^\]
 const errors = [], warnings = [], droppedNoReason = [];
 const err = (f, msg) => errors.push(`${rel(f)}: ${msg}`);
 const warn = (f, msg) => warnings.push(`${rel(f)}: ${msg}`);
+for (const p of planning.problems) warnings.push(`trip.md: ${p}. The default is used instead`);
 const strayEvening = Array.isArray(trip.bases) ? eveningBases.filter(x => !trip.bases.map(String).includes(x)) : [];
 if (strayEvening.length) warnings.push(`trip.md: evening_bases has towns that are not in bases: ${strayEvening.join(', ')}. Use the same spelling as in bases`);
 
@@ -290,6 +295,7 @@ for (const f of targets) {
     }
     dayChecks(f, fm.data, fm.body);
   }
+  if (type === 'comparison') comparisonChecks(f, fm.data);
   if (type === 'source' && String(fm.data.processed) === 'true') {
     for (const l of new Set(wikilinks(fm.body))) if (!resolves(l)) warn(f, `marked processed, but [[${l}]] has no note yet`);
     const open = fm.body.replace(/<!--[\s\S]*?-->/g, '').split('\n').filter(l => /^\s*- \[ \]\s*\S/.test(l) && !/^\s*- \[ \]\s*(\[\[\s*\]\])\s*$/.test(l));
@@ -303,6 +309,27 @@ for (const f of targets) {
   if (!/^# .+/m.test(fm.body)) warn(f, 'no H1 heading (a line starting with "# ")');
   else if (!fm.body.match(/^# (.+)$/m)[1].includes(name.replace(/\s*\(.*\)$/, ''))) warn(f, 'the H1 heading does not match the file name');
   if (/\{\{(title|date|time)\}\}/.test(text)) err(f, 'a template placeholder like {{title}} was not replaced with real text');
+}
+
+// Comparison notes (compare-itineraries): 2 or more options, each a Source or Route note; a decided comparison names
+// the option that was chosen, and the choice is one of the options.
+function comparisonChecks(f, d) {
+  const linkName = v => String(v ?? '').replace(/^\[\[|\]\]$/g, '').split('|')[0].split('#')[0].trim();
+  const has = v => v !== null && v !== undefined && v !== '' && linkName(v) !== '';
+  const options = (Array.isArray(d.options) ? d.options : []).map(linkName).filter(Boolean);
+  if (options.length < 2) err(f, `options needs 2 or more links to the Source or Route notes being compared, found ${options.length}`);
+  if (new Set(options).size < options.length) warn(f, 'options lists the same note twice');
+  for (const o of options) {
+    const hits = byBase.get(o);
+    if (!hits) continue;   // an unresolved link is reported with the other links
+    const types = hits.map(p => parseFrontmatter(read(p))?.data.type);
+    if (!types.some(t => t === 'source' || t === 'route')) warn(f, `option [[${o}]] is not a Source or Route note`);
+  }
+  if (has(d.recommended) && !options.includes(linkName(d.recommended))) warn(f, `recommended [[${linkName(d.recommended)}]] is not one of the options`);
+  const decided = String(d.status) === 'decided';
+  if (has(d.decided_option) && !options.includes(linkName(d.decided_option))) err(f, `decided_option [[${linkName(d.decided_option)}]] is not one of the options`);
+  if (has(d.decided_option) && !decided) warn(f, `decided_option is set but status is "${d.status ?? ''}". Set status: decided, or clear decided_option`);
+  if (decided && !has(d.decided_option)) warn(f, 'status is decided but decided_option is empty. Say which option the group chose');
 }
 
 // Day notes: sun times and the daylight arithmetic must agree with each other.
@@ -327,7 +354,27 @@ function dayChecks(f, d, body = '') {
     const slack = Number(d.daylight_hrs) - (num(d.drive_hrs) + num(d.activity_hrs) - num(d.predawn_hrs));
     if (slack < -0.05) warn(f, `drive_hrs + activity_hrs are ${(-slack).toFixed(1)} hrs more than the daylight. Cut or move something, or split the day (verdict: too much)`);
   }
+  travelChecks(f, d);
   afterDarkChecks(f, d, body, times.sunset);
+}
+
+// The travel-time check (review-travel-times). Its verdict allows for stops, road types and local reports, so it should
+// never be kinder than the slack verdict, which the Itinerary base computes from the same drive_hrs. If it is, the check
+// is out of date (the day changed after it) or was written wrong.
+function travelChecks(f, d) {
+  const has = v => v !== null && v !== undefined && v !== '';
+  if (has(d.travel_verdict) && !has(d.travel_checked)) warn(f, 'travel_verdict is set but travel_checked is empty. Say on which date the drive times were checked');
+  if (has(d.travel_checked) && !has(d.travel_verdict)) warn(f, 'travel_checked is set but travel_verdict is empty');
+  if (!has(d.travel_verdict) || !d.daylight_hrs) return;
+  const rank = { ok: 0, tight: 1, 'too much': 2 };
+  if (!(String(d.travel_verdict) in rank)) return;   // a bad value is reported by the value-list check
+  const n = v => (has(v) ? Number(v) : 0);
+  const slack = Math.round((Number(d.daylight_hrs) - (n(d.drive_hrs) + n(d.activity_hrs) - n(d.predawn_hrs))) * 10) / 10;
+  if (!Number.isFinite(slack)) return;
+  const slackVerdict = slack < TOO_MUCH_BELOW_HRS ? 'too much' : slack < planning.limits.slack_ok_hrs ? 'tight' : 'ok';
+  if (rank[d.travel_verdict] < rank[slackVerdict]) {
+    warn(f, `travel_verdict is "${d.travel_verdict}", but the day's slack (${slack} hrs) gives "${slackVerdict}". The travel check is out of date: the day changed after it, or the drive times were not updated. Run the travel-time check again`);
+  }
 }
 
 // After dark. The Schedule says when things happen; the Legs table says which roads are bad at night.

@@ -1,0 +1,22 @@
+{
+  "date": "2027-06-09",
+  "start": "13:30",
+  "sunrise": "06:07",
+  "sunset": "20:55",
+  "daylight_hrs": 14.8,
+  "activity_hrs": 4,
+  "predawn_hrs": 0,
+  "evening_base_end": true,
+  "legs": [
+    {
+      "from": "Évora", "to": "Mountain Fort", "after_dark": "avoid", "stay_hrs": 1.5,
+      "segments": [{ "km": 150, "road": "motorway" }, { "km": 40, "road": "hill" }],
+      "map_hrs": 2.4, "reports_hrs": null
+    },
+    {
+      "from": "Mountain Fort", "to": "Lagos", "after_dark": "avoid",
+      "segments": [{ "km": 30, "road": "hill" }, { "km": 15, "road": "rural" }],
+      "map_hrs": 1.2, "reports_hrs": null
+    }
+  ]
+}

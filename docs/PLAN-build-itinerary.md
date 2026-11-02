@@ -107,11 +107,11 @@ One saved file of road facts between places, `Logistics/legs.json`, shared by th
 
 **It holds facts about roads, never decisions.** Which stay, place or food spot is selected stays in the notes. When a hotel falls through, the road between two towns has not changed, so the file stays right; the skills read the current choices from the notes each time. There is no "update the file" step to forget. A new place only adds links.
 
-**Which links, so a day between two bases works.** Not every pair (60 places would be thousands of links), and not only each place to its own base, which breaks a day like *Jowai → Krang Suri → Dawki*: Krang Suri sits between the two bases, and a day that checks out of one and checks in at the other needs both sides. So:
-- every base town to every other base town;
-- every place to **every base within `link_reach_hrs`** (2 hrs by default), not just its nearest one. Krang Suri then links to both Jowai and Dawki;
-- places to each other within `link_reach_hrs` of each other;
-- **filled in when needed:** when a route option has a day from base A to base B, the script lists the places that could sit on that day and adds any missing A → place → B links before checking it.
+**Which links, so a day between two bases works.** Not every pair researched (60 places would be thousands of links), and not only each place to its own base, which breaks a day like *Jowai → Krang Suri → Dawki*: Krang Suri sits between the two bases, and a day that checks out of one and checks in at the other needs both sides. **And no fixed reach like "2 hours"**: 2 hours suits Meghalaya's hill roads, but on a motorway trip it is far too short, and on a trek or ferry trip too long. The reach comes from the trip's own numbers, in two stages:
+1. **Rough links for every pair, for free.** From coordinates alone: straight-line km × a winding factor for the road type, at the trip's road speeds (`travel.mjs` and `road_speeds` in `trip.md`). No research, so every pair can have one. Marked `rough`.
+2. **Real links only where a day could use them.** A place P is a candidate for a day from base A to base B (A = B for a day trip) when, on the rough figures, `A→P + time_needed_hrs(P) + P→B` fits that day: the drive within `max_drive_hrs_day` (or the selected vehicle's limit), the whole within the day's daylight minus `slack_ok_hrs`. Only those links get researched (map time, road type, after dark, cutoff area) and marked `researched` with their source and date.
+
+So the reach is different for each place (a 4-hour trek has a shorter reach than a 20-minute viewpoint), each trip (motorway or hill roads) and each season (winter daylight is shorter), with no new number to guess. Krang Suri fits a Jowai → Dawki day, so it gets both links.
 
 **On the way or a detour.** For a day from A to B, a place P costs `A→P + P→B − A→B` extra. Under about 20 minutes it is "on the way" (the same rule `plan-day` uses); more is a detour and a stop of its own. This is how the script builds the stops of a moving day, and how it shows what the group passes without stopping.
 
@@ -143,3 +143,4 @@ One saved file of road facts between places, `Logistics/legs.json`, shared by th
 2. The skill may suggest base towns not in the list, marked "not in your list yet".
 3. One operator brief per route option, on request.
 4. Road facts go in a shared distance file; decisions stay in the notes.
+5. No fixed link reach: rough straight-line links for every pair, researched links only where the trip's own limits say a day could use them.

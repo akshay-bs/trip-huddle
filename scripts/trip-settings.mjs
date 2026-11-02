@@ -1,5 +1,5 @@
 // Shared reader for trip.md settings, and the planning limits. Plain Node, no dependencies.
-// Used by scripts/validate.mjs, the plan-day sun script, the review-travel-times script and trip-init,
+// Used by scripts/validate.mjs, the plan-day sun script, the review-travel-times script, the build-itinerary route script and trip-init,
 // so the numbers a group changes in trip.md reach every one of them the same way.
 import fs from 'node:fs';
 import path from 'node:path';
@@ -39,7 +39,8 @@ function parseFlow(src) {
   const v = value(); ws(); if (i < src.length) fail();
   return v;
 }
-function parseBlock(lines) {   // indented "key: value" lines -> nested object
+function parseBlock(lines) {   // indented "key: value" lines -> nested object; "- " lines -> a list
+  if (/^\s+-(\s|$)/.test(lines[0] || '')) return parseBlockList(lines);
   const root = {}, stack = [{ indent: -1, obj: root }];
   for (const line of lines) {
     const m = line.match(/^(\s+)([\w-]+):\s*(.*?)\s*$/);
@@ -50,6 +51,23 @@ function parseBlock(lines) {   // indented "key: value" lines -> nested object
     else parent[m[2]] = parseFlow(m[3]);
   }
   return root;
+}
+function parseBlockList(lines) {   // "  - area: X\n    no_drive_after: ..." or "  - {area: X}" or "  - text"
+  const out = [];
+  let item = null;
+  for (const line of lines) {
+    const dash = line.match(/^\s+-\s*(.*?)\s*$/);
+    if (dash) {
+      const kv = dash[1].match(/^([\w-]+):\s*(.*)$/);
+      if (kv && !/^[{[]/.test(dash[1])) { item = { [kv[1]]: kv[2] === '' ? '' : parseFlow(kv[2]) }; out.push(item); }
+      else { item = null; out.push(dash[1] === '' ? '' : parseFlow(dash[1])); }
+      continue;
+    }
+    const kv = line.match(/^\s+([\w-]+):\s*(.*?)\s*$/);
+    if (kv && item) item[kv[1]] = kv[2] === '' ? '' : parseFlow(kv[2]);
+    else throw new Error(`can't read the line "${line.trim()}" in a list`);
+  }
+  return out;
 }
 // Read one top-level property of trip.md: a scalar, a flow map, or an indented block. undefined if absent or empty.
 export function tripSetting(frontmatter, key) {
@@ -79,12 +97,14 @@ export const PLANNING_LIMIT_DEFAULTS = {
   dark_drive_tight_min: 30,   // driving a road to avoid this long in the dark (not agreed) is "tight"; more is "too much"
   late_finish_min: 60,        // a day that ends this long after sunset away from an evening base is "tight"
   max_drive_hrs_day: 6,       // compare-itineraries flags a day with more driving than this
+  on_the_way_min: 20,         // a stop that adds at most this many minutes to a day's drive is "on the way"; more is a detour
 };
 const LIMIT_RULES = {         // what each value must be
   slack_ok_hrs: [x => x >= 0, 'a number of hours, 0 or more'],
   dark_drive_tight_min: [x => x >= 0, 'a number of minutes, 0 or more'],
   late_finish_min: [x => x >= 0, 'a number of minutes, 0 or more'],
   max_drive_hrs_day: [x => x > 0, 'a number of hours above 0'],
+  on_the_way_min: [x => x >= 0, 'a number of minutes, 0 or more'],
 };
 
 // Problems with a planning_limits value, as plain sentences (empty list = fine).
@@ -131,3 +151,41 @@ export const STAGES = ['planning', 'booking', 'travelling', 'after'];
 export const DEFAULT_STAGE = 'planning';
 export const stageProblems = v => (v === undefined || v === null || v === '' || STAGES.includes(String(v))) ? []
   : [`stage "${v}" is not one of: ${STAGES.join(' | ')}`];
+
+// ---- road cutoffs (`road_cutoffs` in trip.md): areas where nobody drives after a set time, e.g.
+// [{area: Jowai, no_drive_after: "16:00", reason: single-track border roads}]. A leg in that area that ends after the time
+// is a rule bend (plan-day, review-travel-times, build-itinerary and the checker read it). Empty by default.
+const CUTOFF_KEYS = ['area', 'no_drive_after', 'reason'];
+export const clockMinutes = v => { const m = /^(\d{1,2}):(\d{2})$/.exec(String(v ?? '').trim()); return m && Number(m[1]) < 24 && Number(m[2]) < 60 ? Number(m[1]) * 60 + Number(m[2]) : null; };
+export function roadCutoffsProblems(v) {
+  if (v === undefined || v === null || v === '') return [];
+  if (!Array.isArray(v)) return ['road_cutoffs must be a list like [{area: Jowai, no_drive_after: "16:00", reason: single-track border roads}]'];
+  const out = [];
+  v.forEach((c, i) => {
+    const at = `road_cutoffs item ${i + 1}`;
+    if (!c || typeof c !== 'object' || Array.isArray(c)) { out.push(`${at} must be a map like {area: Jowai, no_drive_after: "16:00", reason: ...}`); return; }
+    for (const k of Object.keys(c)) if (!CUTOFF_KEYS.includes(k)) out.push(`${at}: "${k}" is not a setting (use: ${CUTOFF_KEYS.join(', ')})`);
+    if (typeof c.area !== 'string' || !c.area.trim()) out.push(`${at} needs an area (a town or area name)`);
+    if (clockMinutes(c.no_drive_after) === null) out.push(`${at}: no_drive_after must be a time like "16:00" (in quotes), got "${c.no_drive_after ?? ''}"`);
+  });
+  return out;
+}
+// The cutoffs in force for a vault (valid entries only; the rest are listed in `problems`).
+export function loadRoadCutoffs(vault) {
+  let given;
+  const problems = [];
+  try { given = tripSetting(tripFrontmatter(vault), 'road_cutoffs'); }
+  catch (e) { problems.push(`road_cutoffs: ${e.message}`); }
+  problems.push(...roadCutoffsProblems(given));
+  const cutoffs = (Array.isArray(given) ? given : [])
+    .filter(c => c && typeof c === 'object' && typeof c.area === 'string' && c.area.trim() && clockMinutes(c.no_drive_after) !== null)
+    .map(c => ({ area: c.area.trim(), no_drive_after: String(c.no_drive_after).trim(), reason: c.reason ? String(c.reason) : '', min: clockMinutes(c.no_drive_after) }));
+  return { cutoffs, problems };
+}
+export function strictRoadCutoffs(vault) {
+  const r = loadRoadCutoffs(vault);
+  if (r.problems.length) throw new Error('trip.md has a problem:\n  - ' + r.problems.join('\n  - '));
+  return r.cutoffs;
+}
+// The cutoff for an area name (case and spacing ignored), or null.
+export const cutoffFor = (cutoffs, area) => (area ? cutoffs.find(c => c.area.toLowerCase() === String(area).trim().toLowerCase()) || null : null);

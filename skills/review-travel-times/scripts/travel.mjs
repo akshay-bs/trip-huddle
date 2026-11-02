@@ -9,7 +9,8 @@
 // `check` takes one day's legs (JSON, see references/checked-example-input.json) and prints one JSON object:
 // the road-type time for each leg, the estimate kept, the checked range, the stops buffer, the day's drive hours,
 // the slack and verdict (the same rule as the Itinerary base, from plan-day/scripts/sun.mjs), the driving that falls
-// after sunset on `avoid` legs, whether the day is over `max_drive_hrs_day`, and a day verdict that takes the worst of them.
+// after sunset on `avoid` legs, the driving after a road cutoff (`road_cutoffs` in trip.md; a leg names its area in
+// `cutoff_area`), whether the day is over `max_drive_hrs_day`, and a day verdict that takes the worst of them.
 //
 // Vehicle class: `group` for a van, bus, coach or anything with 6 or more seats, else `car`. It is read from
 // `group_vehicle` in trip.md. A flag (--vehicle) or "vehicle" in the input overrides it.
@@ -17,7 +18,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { slack, toMinutes } from '../../plan-day/scripts/sun.mjs';
-import { tripSetting, tripFrontmatter, strictPlanningLimits, PLANNING_LIMIT_DEFAULTS } from '../../../scripts/trip-settings.mjs';
+import { tripSetting, tripFrontmatter, strictPlanningLimits, strictRoadCutoffs, cutoffFor, PLANNING_LIMIT_DEFAULTS } from '../../../scripts/trip-settings.mjs';
 export { tripSetting };
 
 // ---- the approved defaults. Keep in step with docs/PLAN-travel-times.md and review-travel-times/SKILL.md.
@@ -96,6 +97,7 @@ export function loadSettings(vault, vehicleOverride) {
   }
   const buffer = { ...DEFAULT_STOP_BUFFER, ...(stopBuffer || {}) };
   const planning = strictPlanningLimits(vault);
+  const roadCutoffs = strictRoadCutoffs(vault);
   let vehicle;
   if (vehicleOverride) {
     if (!CLASSES.includes(vehicleOverride)) throw new Error(`vehicle must be car or group, got "${vehicleOverride}"`);
@@ -106,6 +108,7 @@ export function loadSettings(vault, vehicleOverride) {
     speeds_kmh: Object.fromEntries(ROAD_TYPES.map(t => [t, speeds[t][vehicle.cls]])),
     stop_buffer: buffer,
     limits: planning.limits,
+    road_cutoffs: roadCutoffs.map(({ min, ...c }) => c),
     changed_in_trip_md: { road_speeds: roadSpeeds ? Object.keys(roadSpeeds) : [], stop_buffer: stopBuffer ? Object.keys(stopBuffer) : [], planning_limits: planning.changed },
   };
 }
@@ -159,6 +162,7 @@ function legEstimates(leg, speeds) {
 export function checkDay(input, settings) {
   if (!input || !Array.isArray(input.legs) || !input.legs.length) throw new Error('the input needs a "legs" list');
   const { speeds_kmh, stop_buffer: buf } = settings;
+  const cutoffs = (settings.road_cutoffs || []).map(c => ({ ...c, min: toMinutes(c.no_drive_after) }));
   const lim = { ...PLANNING_LIMIT_DEFAULTS, ...(settings.limits || {}) };   // planning_limits from trip.md
   const legs = input.legs.map(l => ({ src: l, ...legEstimates(l, speeds_kmh) }));
   const extraStops = input.legs.reduce((n, l) => n + (isNum(l.extra_stops) ? l.extra_stops : 0), 0);
@@ -181,16 +185,23 @@ export function checkDay(input, settings) {
       t = arrive + (last ? 0 : (isNum(l.src.stay_hrs) ? l.src.stay_hrs : 0) * 60 + buf.min_per_stop);
       const dark = String(l.src.after_dark || '').toLowerCase() === 'avoid' ? Math.round(darkOverlap(depart, arrive)) : 0;
       const agreed = l.src.bent ? (isNum(l.src.agreed_dark_min) ? l.src.agreed_dark_min : Infinity) : 0;
-      return { depart, arrive, dark, agreed, uncovered: Math.max(0, dark - agreed) };
+      // A road cutoff: the minutes of this leg driven after the area's no_drive_after time (the leg ends after it).
+      const cut = cutoffFor(cutoffs, l.src.cutoff_area);
+      const late = cut ? Math.round(Math.max(0, arrive - Math.max(depart, cut.min))) : 0;
+      const agreedLate = l.src.bent ? (isNum(l.src.agreed_cutoff_min) ? l.src.agreed_cutoff_min : Infinity) : 0;
+      return { depart, arrive, dark, agreed, uncovered: Math.max(0, dark - agreed), cut, late, lateUncovered: Math.max(0, late - agreedLate) };
     });
   };
-  const darkRank = tl => Math.max(0, ...tl.map(x => (x.uncovered > lim.dark_drive_tight_min ? 2 : x.uncovered > 0 ? 1 : 0)));
+  const rankOf = min => (min > lim.dark_drive_tight_min ? 2 : min > 0 ? 1 : 0);
+  const darkRank = tl => Math.max(0, ...tl.map(x => Math.max(rankOf(x.uncovered), rankOf(x.lateUncovered))));
   if (!input.start) throw new Error('the input needs "start" (the time the first drive begins, like "08:30")');
   const tl = timeline(0);
   legs.forEach((l, i) => Object.assign(l, {
     depart: hhmm(tl[i].depart), arrive: hhmm(tl[i].arrive), after_dark: l.src.after_dark || null,
     dark_driving_min: tl[i].dark, bent: !!l.src.bent, agreed_dark_min: isNum(l.src.agreed_dark_min) ? l.src.agreed_dark_min : null,
     worse_than_agreed: !!l.src.bent && isNum(l.src.agreed_dark_min) && tl[i].dark > l.src.agreed_dark_min,
+    cutoff_area: tl[i].cut ? tl[i].cut.area : (l.src.cutoff_area || null), no_drive_after: tl[i].cut ? tl[i].cut.no_drive_after : null,
+    after_cutoff_min: tl[i].late,
   }));
 
   const reasons = [];
@@ -210,6 +221,13 @@ export function checkDay(input, settings) {
     const l = legs[i];
     add(x.uncovered > lim.dark_drive_tight_min ? 'too much' : 'tight',
       `${l.from} to ${l.to} is a road to avoid in the dark, and the checked times put ${x.uncovered} min of it ${sunset !== null && tl[i].arrive > sunset ? 'after sunset' : 'before sunrise'}${l.bent ? ' on top of what was agreed' : ''}`);
+  }
+  // 2b. Driving in a road-cutoff area after its time (trip.md road_cutoffs), beyond what the group agreed to
+  for (const [i, x] of tl.entries()) {
+    if (!x.lateUncovered) continue;
+    const l = legs[i];
+    add(x.lateUncovered > lim.dark_drive_tight_min ? 'too much' : 'tight',
+      `${l.from} to ${l.to} is in the ${x.cut.area} area, where nobody drives after ${x.cut.no_drive_after}${x.cut.reason ? ` (${x.cut.reason})` : ''}, and the checked times put ${x.lateUncovered} min of it after that${l.bent ? ' on top of what was agreed' : ''}`);
   }
   // 3. A day that ends late somewhere without evenings out
   const homeAt = tl[tl.length - 1].arrive;
@@ -252,7 +270,7 @@ function main(argv) {
     let input;
     try { input = JSON.parse(fs.readFileSync(path.resolve(file), 'utf8')); } catch (e) { throw new Error(`can't read ${file}: ${e.message}`); }
     const settings = loadSettings(vault, opt('--vehicle') || input.vehicle);
-    return { settings: { vehicle_class: settings.vehicle_class, vehicle_why: settings.vehicle_why, speeds_kmh: settings.speeds_kmh, stop_buffer: settings.stop_buffer, limits: settings.limits }, ...checkDay(input, settings) };
+    return { settings: { vehicle_class: settings.vehicle_class, vehicle_why: settings.vehicle_why, speeds_kmh: settings.speeds_kmh, stop_buffer: settings.stop_buffer, limits: settings.limits, road_cutoffs: settings.road_cutoffs }, ...checkDay(input, settings) };
   }
   throw new Error('usage: travel.mjs config [--vault <folder>] [--vehicle car|group]\n       travel.mjs check --input <day.json> [--vault <folder>] [--vehicle car|group]');
 }

@@ -52,7 +52,7 @@ Day by day: one row per day, so total_nights + 1 rows (the last day has no night
 - No road is driven twice: about 630 km in all.
 
 ## Red flags
-- Day 3 is tight: 5 hrs at the falls leaves under an hour of daylight to spare. If the 4x4 to the falls is late, the drive back gets close to the 4 pm cutoff. Start at 7.
+- Day 3 is a big day the group has to accept: 5 hrs at the falls leaves under an hour of daylight to spare (tight). If the 4x4 to the falls is late, the drive back gets close to the 4 pm cutoff. Start at 7.
 - No stay looked at yet in Jowai (two nights) or Pobitora.
 
 ## What it costs

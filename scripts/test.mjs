@@ -1040,10 +1040,16 @@ const warnLine = (out, file, text) => out.split('\n').some(l => l.includes(file)
     const kc = all.left_out.find(x => x.place === 'Krem Chympe Falls');
     const bad = [];
     if (!(ks && ks.kind === 'on the way' && ks.adds_min <= c.limits.on_the_way_min && ks.links_to_research.join() === 'Jowai – Dawki')) bad.push(`Krang Suri: ${JSON.stringify(ks)}`);
-    if (short.candidates.some(x => x.place === 'Krang Suri Falls')) bad.push('with 6 hrs of daylight Krang Suri should not fit');
-    if (c.candidates.some(x => x.place === 'Krem Chympe Falls') || !kc || !/daylight/.test(kc.why_not)) bad.push('Krem Chympe (5 hrs there) does not fit a Jowai to Dawki day');
-    // 5 hrs at the falls makes a day trip from Jowai tight on the season's 9.5 hrs (Option B's Day 3), and fine on a 10.5-hr day
-    if (!trip.left_out.some(x => x.place === 'Krem Chympe Falls' && /daylight/.test(x.why_not)) || !longer.candidates.some(x => x.place === 'Krem Chympe Falls' && x.kind === 'day trip')) bad.push('Krem Chympe as a day trip from Jowai: tight on 9.5 hrs, fits on 10.5');
+    const ksShort = short.candidates.find(x => x.place === 'Krang Suri Falls');
+    if (!(ksShort && ksShort.fit === 'tight' && ksShort.slack_hrs < short.limits.slack_ok_hrs && /big day/.test(ksShort.why_tight))) bad.push('with 6 hrs of daylight Krang Suri should be tight');
+    const tiny = routeJson(bv, 'candidates', '--from', 'Jowai', '--to', 'Dawki', '--daylight', '4');
+    if (tiny.candidates.some(x => x.place === 'Krang Suri Falls')) bad.push('with 4 hrs of daylight Krang Suri is too much and left out');
+    if (ks?.fit !== 'ok' || c.candidates.some(x => x.fit === 'tight' && c.candidates.indexOf(x) < c.candidates.findLastIndex(y => y.fit === 'ok'))) bad.push('ok candidates come first, and Krang Suri is ok on 9.5 hrs');
+    if (c.candidates.some(x => x.place === 'Krem Chympe Falls') || !kc || kc.fit !== 'too much' || !/daylight/.test(kc.why_not)) bad.push('Krem Chympe (5 hrs there) is too much for a Jowai to Dawki day');
+    // 5 hrs at the falls makes a day trip from Jowai a tight candidate on the season's 9.5 hrs (Option B's Day 3), ok on a 10.5-hr day
+    const kcTrip = trip.candidates.find(x => x.place === 'Krem Chympe Falls');
+    if (!(kcTrip && kcTrip.kind === 'day trip' && kcTrip.fit === 'tight' && kcTrip.slack_hrs === B.days[2].slack.slack_hrs) || trip.left_out.some(x => x.place === 'Krem Chympe Falls')
+      || longer.candidates.find(x => x.place === 'Krem Chympe Falls')?.fit !== 'ok') bad.push(`Krem Chympe as a day trip from Jowai: tight on 9.5 hrs, ok on 10.5: ${JSON.stringify(kcTrip)}`);
     if (B.days[2].verdict !== 'tight') bad.push('Option B Day 3 (Krem Chympe from Jowai) should be tight');
     if (/reach/.test(JSON.stringify(c.limits)) || c.limits.usable_hrs !== 8 || c.limits.drive_limit_hrs !== 6) bad.push(`limits: ${JSON.stringify(c.limits)}`);
     return bad.join('\n');
@@ -1139,20 +1145,23 @@ const warnLine = (out, file, text) => out.split('\n').some(l => l.includes(file)
     fs.writeFileSync(path.join(noCut, 'trip.md'), rd(noCut, 'trip.md').replace(/^road_cutoffs:.*$/m, 'road_cutoffs: []'));
     const none = dayNote(noCut, '16:30');
     const msg = 'the leg Krem Chympe Falls to Jowai is in the Jowai area, where nobody drives after 16:00';
-    test('checker: a Day note leg in a cutoff area driven after its time warns when rule_bends is 0', () => warnLine(late, 'Day 03.md', msg) && warnLine(late, 'Day 03.md', 'rule_bends is 0') ? '' : late);
+    test('checker: a Day note leg in a cutoff area driven after its time warns when rule_bends is 0, and says it makes the day too much', () => warnLine(late, 'Day 03.md', msg) && warnLine(late, 'Day 03.md', 'rule_bends is 0') && warnLine(late, 'Day 03.md', 'makes the day too much, even a minute over') ? '' : late);
     test('checker: the same leg before the cutoff, or with the bend written down, or with no cutoffs in trip.md, does not warn', () =>
       [early, bent, none].some(o => warnLine(o, 'Day 03.md', 'nobody drives after')) || warnLine(bent, 'Day 03.md', 'rule_bends is 1 but') ? early + bent + none : '');
   }
-  test('travel: a leg in a cutoff area after its time is tight, then too much; an agreed bend covers it; leave_earlier gets out of it', () => {
+  test('travel: a leg in a cutoff area after its time is too much from the first minute; an agreed bend makes it tight; leave_earlier gets out of it', () => {
     const s = loadSettings(bv);
     const leg = extra => ({ from: 'Krem Chympe Falls', to: 'Jowai', km: 48, road: 'rural', after_dark: 'ok', cutoff_area: 'Jowai', ...extra });
     const day = (start, extra = {}) => checkDay({ start, sunset: '18:00', sunrise: '06:00', daylight_hrs: 12, activity_hrs: 0, legs: [leg(extra)] }, s);
-    const fine = day('13:00'), tight = day('14:30'), much = day('15:30'), agreed = day('15:30', { bent: true, agreed_cutoff_min: 120 }), other = checkDay({ start: '15:30', sunset: '18:00', daylight_hrs: 12, activity_hrs: 0, legs: [leg({ cutoff_area: 'Elsewhere' })] }, s);
+    const dayDark = start => checkDay({ start, sunset: '19:20', sunrise: '06:00', daylight_hrs: 13.3, activity_hrs: 0, legs: [leg({ cutoff_area: null, after_dark: 'avoid' })] }, s);   // 48 km rural: about 100 min on the road, the last 18 of them after sunset
+    const fine = day('13:00'), oneMin = day('14:30'), much = day('15:30'), agreed = day('15:30', { bent: true, agreed_cutoff_min: 120 }), beyond = day('15:30', { bent: true, agreed_cutoff_min: 10 }), other = checkDay({ start: '15:30', sunset: '18:00', daylight_hrs: 12, activity_hrs: 0, legs: [leg({ cutoff_area: 'Elsewhere' })] }, s);
     const ok = s.road_cutoffs.length === 1 && s.road_cutoffs[0].no_drive_after === '16:00'
       && fine.day.verdict === 'ok' && fine.legs[0].after_cutoff_min === 0
-      && tight.legs[0].after_cutoff_min > 0 && tight.legs[0].after_cutoff_min <= 30 && tight.day.verdict === 'tight' && /nobody drives after 16:00/.test(tight.day.reasons[0].text)
-      && much.day.verdict === 'too much' && much.day.leave_earlier && agreed.day.verdict === 'ok' && other.day.verdict === 'ok';
-    return ok ? '' : JSON.stringify([fine.legs[0], tight.day, much.day, agreed.day]);
+      && oneMin.legs[0].after_cutoff_min > 0 && oneMin.legs[0].after_cutoff_min <= 30 && oneMin.day.verdict === 'too much' && /nobody drives after 16:00/.test(oneMin.day.reasons[0].text)
+      && much.day.verdict === 'too much' && much.day.leave_earlier && agreed.day.verdict === 'tight' && /as the group agreed \(1 rule bend\)/.test(agreed.day.reasons[0].text)
+      && !agreed.day.leave_earlier && beyond.day.verdict === 'too much' && other.day.verdict === 'ok'
+      && dayDark('18:00').day.verdict === 'tight';   // ordinary after-dark driving keeps its 30-minute tight band
+    return ok ? '' : JSON.stringify([fine.legs[0], oneMin.day, much.day, agreed.day, beyond.day]);
   });
 
   // The Trip itinerary and the Operator brief (Portugal, Day 04 and Day 05 of the plan-day and review-travel-times examples)
@@ -1291,7 +1300,7 @@ const warnLine = (out, file, text) => out.split('\n').some(l => l.includes(file)
   test('build-itinerary: the skill and the skills it works with describe the new pieces', () => {
     const sk = n => fs.readFileSync(path.join(ROOT, 'skills', n, 'SKILL.md'), 'utf8'), bad = [];
     const b = sk('build-itinerary');
-    for (const w of ['route.mjs', 'candidates', 'links', 'check --route', 'legs.json', 'compare-itineraries', 'plan-day', 'Trip itinerary', 'Operator brief', 'not in your list yet', 'Decisions/', 'status: locked', 'never', 'reverse', 'big day', 'What it makes possible', 'Red flags', 'What it costs', 'migrate-itinerary.mjs', '--add-itinerary', 'researched', 'rough'])
+    for (const w of ['route.mjs', 'candidates', 'tight candidate', 'never a silent pick', 'even a minute over', 'links', 'check --route', 'legs.json', 'compare-itineraries', 'plan-day', 'Trip itinerary', 'Operator brief', 'not in your list yet', 'Decisions/', 'status: locked', 'never', 'reverse', 'big day', 'What it makes possible', 'Red flags', 'What it costs', 'migrate-itinerary.mjs', '--add-itinerary', 'researched', 'rough'])
       if (!b.includes(w)) bad.push(`build-itinerary: ${w}`);
     for (const n of ['plan-day', 'review-travel-times']) for (const w of ['road_cutoffs', 'legs.json']) if (!sk(n).includes(w)) bad.push(`${n}: ${w}`);
     for (const w of ['start_time', 'backtrack_km', 'Along the way', 'on_the_way_min']) if (!sk('plan-day').includes(w)) bad.push(`plan-day: ${w}`);

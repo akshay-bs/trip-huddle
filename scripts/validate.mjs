@@ -546,7 +546,8 @@ function afterDarkChecks(f, d, body, sunset) {
 // Road cutoffs (road_cutoffs in trip.md). A leg is in a cutoff area when its From or To is that area (a town), or a place or
 // stay whose nearest_base or base_town is that area, or when Logistics/legs.json puts the link in it. As with after dark,
 // only what can be read reliably is checked: a Schedule row that starts after the cutoff time, with a driving or arriving
-// word and the leg's From or To, counts as that leg ending after the cutoff.
+// word and the leg's From or To, counts as that leg ending after the cutoff. Unagreed, it makes the day "too much" (the
+// travel check gives the same); written down as a rule bend, the day is "tight (1 rule bend)" and there is no warning.
 function cutoffChecks(f, d, body) {
   const cuts = roadCutoffs.cutoffs;
   const bends = Number(d.rule_bends);
@@ -575,7 +576,7 @@ function cutoffChecks(f, d, body) {
       }
     }
   }
-  for (const h of hits) warn(f, `${h}, and rule_bends is ${Number.isFinite(bends) ? bends : 0}. Drive it before ${cutoffFor(cuts, h.match(/in the (.*?) area/)[1]).no_drive_after}, or if the group chooses it, write it under "Choices that bend the rules" and set rule_bends`);
+  for (const h of hits) warn(f, `${h}, and rule_bends is ${Number.isFinite(bends) ? bends : 0}. Unless the group agrees to it as a rule bend, that makes the day too much, even a minute over. Drive it before ${cutoffFor(cuts, h.match(/in the (.*?) area/)[1]).no_drive_after}, or if the group chooses it, write it under "Choices that bend the rules" and set rule_bends`);
 }
 // The base town of a place or stay note (nearest_base or base_town), or null.
 function noteArea(name) {

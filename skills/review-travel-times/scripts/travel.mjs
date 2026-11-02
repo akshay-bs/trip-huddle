@@ -10,7 +10,7 @@
 // the road-type time for each leg, the estimate kept, the checked range, the stops buffer, the day's drive hours,
 // the slack and verdict (the same rule as the Itinerary base, from plan-day/scripts/sun.mjs), the driving that falls
 // after sunset on `avoid` legs, the driving after a road cutoff (`road_cutoffs` in trip.md; a leg names its area in
-// `cutoff_area`), whether the day is over `max_drive_hrs_day`, and a day verdict that takes the worst of them.
+// `cutoff_area`; unagreed it is "too much" from the first minute, agreed it is "tight"), whether the day is over `max_drive_hrs_day`, and a day verdict that takes the worst of them.
 //
 // Vehicle class: `group` for a van, bus, coach or anything with 6 or more seats, else `car`. It is read from
 // `group_vehicle` in trip.md. A flag (--vehicle) or "vehicle" in the input overrides it.
@@ -193,7 +193,8 @@ export function checkDay(input, settings) {
     });
   };
   const rankOf = min => (min > lim.dark_drive_tight_min ? 2 : min > 0 ? 1 : 0);
-  const darkRank = tl => Math.max(0, ...tl.map(x => Math.max(rankOf(x.uncovered), rankOf(x.lateUncovered))));
+  // A road cutoff is firmer than darkness: any unagreed minute after it is "too much" (no tight band).
+  const darkRank = tl => Math.max(0, ...tl.map(x => Math.max(rankOf(x.uncovered), x.lateUncovered > 0 ? 2 : 0)));
   if (!input.start) throw new Error('the input needs "start" (the time the first drive begins, like "08:30")');
   const tl = timeline(0);
   legs.forEach((l, i) => Object.assign(l, {
@@ -222,12 +223,12 @@ export function checkDay(input, settings) {
     add(x.uncovered > lim.dark_drive_tight_min ? 'too much' : 'tight',
       `${l.from} to ${l.to} is a road to avoid in the dark, and the checked times put ${x.uncovered} min of it ${sunset !== null && tl[i].arrive > sunset ? 'after sunset' : 'before sunrise'}${l.bent ? ' on top of what was agreed' : ''}`);
   }
-  // 2b. Driving in a road-cutoff area after its time (trip.md road_cutoffs), beyond what the group agreed to
+  // 2b. Driving in a road-cutoff area after its time (trip.md road_cutoffs). Unagreed, even one minute is "too much";
+  // a break the group recorded as a rule bend is "tight (1 rule bend)", like the other bends.
   for (const [i, x] of tl.entries()) {
-    if (!x.lateUncovered) continue;
-    const l = legs[i];
-    add(x.lateUncovered > lim.dark_drive_tight_min ? 'too much' : 'tight',
-      `${l.from} to ${l.to} is in the ${x.cut.area} area, where nobody drives after ${x.cut.no_drive_after}${x.cut.reason ? ` (${x.cut.reason})` : ''}, and the checked times put ${x.lateUncovered} min of it after that${l.bent ? ' on top of what was agreed' : ''}`);
+    const l = legs[i], where = x.cut ? `${l.from} to ${l.to} is in the ${x.cut.area} area, where nobody drives after ${x.cut.no_drive_after}${x.cut.reason ? ` (${x.cut.reason})` : ''}` : '';
+    if (x.lateUncovered) add('too much', `${where}, and the checked times put ${x.lateUncovered} min of it after that${l.bent ? ' on top of what was agreed' : ''}`);
+    else if (x.late) add('tight', `${where}; the checked times put ${x.late} min of it after that, as the group agreed (1 rule bend)`);
   }
   // 3. A day that ends late somewhere without evenings out
   const homeAt = tl[tl.length - 1].arrive;

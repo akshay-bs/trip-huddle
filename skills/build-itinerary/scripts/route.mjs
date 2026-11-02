@@ -22,8 +22,9 @@
 // `town` saves the coordinates of a town or point that has no note (a base town, an airport).
 // `candidates` lists the places that fit a day from A to B (A = B for a day trip), with no fixed reach: the rough or
 //   researched A→P + P→B drive (with the stops buffer) is within the day's drive limit (the selected Transport note's
-//   max_hrs_per_day, else planning_limits.max_drive_hrs_day), and drive + time_needed_hrs(P) is within the daylight
-//   minus slack_ok_hrs. Each is "on the way" (it adds at most planning_limits.on_the_way_min minutes) or a detour,
+//   max_hrs_per_day, else planning_limits.max_drive_hrs_day), and drive + time_needed_hrs(P) is within the daylight.
+//   Each is marked ok (slack_ok_hrs or more to spare) or tight (less: a big day the group has to accept, with the slack);
+//   a too-much day is left out with the reason. Each is "on the way" (it adds at most planning_limits.on_the_way_min minutes) or a detour,
 //   with the links that still need research.
 // `check` runs a quick check of a Route note's Day by day table: per day the km, the drive hours (travel.mjs, with
 //   stops), the legs after a road cutoff or after dark on avoid roads, the slack and verdict; for the trip the doubling
@@ -281,17 +282,22 @@ export function candidates(vault, { from, to, daylight, all = false }) {
       cutoff_area: legArea(ap, A, p, ctx.cutoffs) || legArea(pb, p, B, ctx.cutoffs),
       links_to_research: [...research(ap), ...research(pb), ...(same ? [] : research(ab))],
     };
+    // The day's verdict, by the slack rule: ok (slack_ok_hrs or more left), tight (0 to under it), too much (below 0).
+    const slackHrs = round1(day - total);
     const why = [];
     if (withStops > limit.hrs) why.push(`${withStops} hrs of driving is over the ${limit.hrs} hr limit`);
-    if (total > usable) why.push(`${total} hrs is over the ${usable} hrs of daylight left after ${lim.slack_ok_hrs} hrs of slack`);
-    (why.length ? left : out).push(why.length ? { ...row, why_not: why.join('; ') } : row);
+    if (slackHrs < 0) why.push(`${total} hrs is more than the ${day} hrs of daylight (too much)`);
+    if (why.length) { left.push({ ...row, fit: 'too much', slack_hrs: slackHrs, why_not: why.join('; ') }); continue; }
+    out.push(total > usable
+      ? { ...row, fit: 'tight', slack_hrs: slackHrs, why_tight: `${total} hrs leaves ${slackHrs} hrs of the ${day} hrs of daylight, under the ${lim.slack_ok_hrs} hrs of slack an ok day has: a big day the group has to accept` }
+      : { ...row, fit: 'ok', slack_hrs: slackHrs });
   }
-  const order = (a, b) => (a.kind === b.kind ? 0 : a.kind === 'on the way' ? -1 : b.kind === 'on the way' ? 1 : 0)
+  const order = (a, b) => (a.fit === b.fit ? 0 : a.fit === 'ok' ? -1 : b.fit === 'ok' ? 1 : 0) || (a.kind === b.kind ? 0 : a.kind === 'on the way' ? -1 : b.kind === 'on the way' ? 1 : 0)
     || (PRIORITY_RANK[a.priority] ?? 3) - (PRIORITY_RANK[b.priority] ?? 3) || (a.adds_min ?? a.drive_hrs) - (b.adds_min ?? b.drive_hrs);
   out.sort(order); left.sort(order);
   return {
     from: A.name, to: B.name, day_trip: same,
-    rule: 'A→P + time at P + P→B: the drive (with stops) within the drive limit, and the whole within the daylight minus slack_ok_hrs. No fixed reach.',
+    rule: 'A→P + time at P + P→B: the drive (with stops) within the drive limit, and the whole within the daylight: ok with slack_ok_hrs or more to spare, tight with less (a big day the group must accept), too much (left out) over the daylight. No fixed reach.',
     limits: { drive_limit_hrs: limit.hrs, drive_limit_from: limit.from, daylight_hrs: day, daylight_from: daylight !== undefined ? '--daylight' : 'trip.md daylight_hrs (season default)',
       slack_ok_hrs: lim.slack_ok_hrs, usable_hrs: usable, on_the_way_min: lim.on_the_way_min, stop_buffer: buf, vehicle_class: ctx.cls },
     direct: same ? null : { km: ab.km, drive_hrs: ab.drive_hrs, status: ab.status_note },

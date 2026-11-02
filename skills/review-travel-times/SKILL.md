@@ -67,7 +67,7 @@ A leg is one drive: from a stay or place to the next. For each, get three estima
 - **Agreed bends:** read *Choices that bend the rules*. For each `avoid` leg a bend covers, set `"bent": true`, and `"agreed_dark_min"` to the minutes of dark driving the bend states (45 minutes, "about an hour"). If it states none, leave `agreed_dark_min` out. A bent leg is not counted as a problem, except for time beyond what was agreed.
 - **Evenings:** set `"evening_base_end": false` when the day ends at a base that is not in `evening_bases`, otherwise `true` (leave it out if unknown).
 - **Extra stops:** a lunch stop or photo stop in the middle of a leg is `"extra_stops": 1` on that leg.
-- **Road cutoffs:** a leg in an area of `road_cutoffs` gets `"cutoff_area": "<area>"`: when its start or end is that town, or a place or stay whose `nearest_base` or `base_town` is that area, or `legs.json` puts the link in it. The script counts the minutes of that leg driven after the area's `no_drive_after`. A bend under *Choices that bend the rules* that covers it sets `"bent": true` and, if it says how long, `"agreed_cutoff_min"`.
+- **Road cutoffs:** a leg in an area of `road_cutoffs` gets `"cutoff_area": "<area>"`: when its start or end is that town, or a place or stay whose `nearest_base` or `base_town` is that area, or `legs.json` puts the link in it. The script counts the minutes of that leg driven after the area's `no_drive_after`; any unagreed minute makes the day too much. A bend under *Choices that bend the rules* that covers it sets `"bent": true` and, if it says how long, `"agreed_cutoff_min"`.
 
 ## 5. Run the script
 Write one JSON file per day in `.claude/scratch/`, then run it from the vault root. A complete input is in `${CLAUDE_PLUGIN_ROOT}/skills/review-travel-times/references/checked-example-input.json`; the fields are:
@@ -92,7 +92,7 @@ The day's verdict is the **worst** of these:
 |---|---|
 | Slack, from the drive hours (with stops), the activity hours and the daylight. Same thresholds as plan-day: `slack_ok_hrs` (1.5 hrs by default) or more is ok, 0 to under that is tight, below 0 is too much | ok / tight / too much |
 | An `avoid` leg driven after sunset (or before sunrise) beyond what the group agreed to: up to `dark_drive_tight_min` (30 by default) minutes is tight, more is too much | tight / too much |
-| A leg in a `road_cutoffs` area driven after its `no_drive_after` time, beyond what the group agreed to: up to `dark_drive_tight_min` minutes is tight, more is too much | tight / too much |
+| A leg in a `road_cutoffs` area driven after its `no_drive_after` time that the group has not agreed to as a rule bend: too much, even a minute over (the 30-minute tight band is only for after-dark driving). Recorded as an agreed bend, it is tight (1 rule bend) | too much / tight |
 | The day ends more than `late_finish_min` (60 by default) minutes after sunset at a base that is not in `evening_bases` | tight |
 | A road that is closed | too much |
 

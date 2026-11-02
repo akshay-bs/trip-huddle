@@ -20,7 +20,7 @@
 6. **Plan the days.** Create `Itinerary/Day 01…` with the *Day Plan* template, and set `scheduled_day` on each selected place.
 7. **Book.** Move each selected stay's `booking_status` from enquired → quoted → booked → paid.
 
-With the trip-huddle plugin, ask Claude to "add <place or hotel> to the list". The `add-place` skill does steps 1–3 and validates the notes.
+With the trip-huddle plugin, paste or forward an itinerary, quote or friend's list and the `add-source` skill does steps 1–3. To add a single place or hotel, ask Claude to "add <place or hotel> to the list" (the `add-place` skill). Both check the notes when they finish.
 
 To insert a template by hand, use the Command palette → *Templates: Insert template*.
 

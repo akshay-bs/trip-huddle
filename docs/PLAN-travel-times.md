@@ -1,6 +1,17 @@
 # Plan: review-travel-times skill
 
-Status: proposal, not built yet.
+Status: built (v0.7.0).
+
+How it was built, where it differs from the proposal below:
+- **No Road type column** in the Legs table. The script takes road types as input (a leg can mix several), so one cell per leg would not fit, and the Road notes already say it in words. The skill keeps road types in its working input and the basis line.
+- **The stops buffer is part of `drive_hrs`.** `drive_hrs` is the upper end of each checked range plus the buffer, so a re-check gives the same number and the Itinerary base's slack and verdict update by themselves. The basis line and the *Daylight and slack* line say how much of it is stops.
+- **The verdict** is the worst of: the slack verdict (plan-day's thresholds, on the checked drive hours); an `avoid` leg driven after sunset or before sunrise beyond what the group agreed (up to 30 minutes is tight, more is too much); a day that ends over an hour after sunset away from an `evening_base` (tight); a closed road (too much). So it is never kinder than the slack verdict. An agreed bend is not counted, except for time beyond what was agreed.
+- **Vehicle class** is read from `group_vehicle` (a van, bus, coach or 6 or more seats is `group`, otherwise `car`), and can be overridden for one check.
+- **The checker** also warns when `travel_verdict` and `travel_checked` do not go together. A Day note that changed after `travel_checked` is still not detected; plan-day clears both properties when it changes the legs.
+- Day notes made before 0.7.0 have no travel properties; the checker warns about the missing ones, and the skill asks before adding them to the template.
+
+---
+
 
 ## The problem
 plan-day writes drive times as researched estimates. They are usually optimistic:

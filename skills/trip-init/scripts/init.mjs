@@ -11,6 +11,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { settingsProblems } from '../../review-travel-times/scripts/travel.mjs';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const SKILL = path.resolve(HERE, '..');
@@ -59,6 +60,8 @@ if (A.map_box) {
   if (!ks.every(k => typeof b[k] === 'number')) problems.push('map_box needs numbers lat_min, lat_max, lng_min, lng_max');
   else if (b.lat_min >= b.lat_max || b.lng_min >= b.lng_max) problems.push('map_box minimums must be below the maximums');
 }
+// Optional travel settings, read by the review-travel-times skill (see ../slots.md). Left out of trip.md unless given.
+problems.push(...settingsProblems(A.road_speeds, A.stop_buffer));
 const PACK_DIR = path.join(SKILL, 'field-packs');
 const PACKS = Object.fromEntries(fs.readdirSync(PACK_DIR).filter(f => f.endsWith('.json'))
   .map(f => [f.replace(/\.json$/, ''), JSON.parse(fs.readFileSync(path.join(PACK_DIR, f), 'utf8'))]));
@@ -96,13 +99,14 @@ const needsQuote = s => s === '' || /^[\s\-?:,\[\]{}#&*!|>'"%@`]|[:#]\s|:$|^\d{2
 const scalar = v => typeof v === 'number' || typeof v === 'boolean' ? String(v)
   : v == null ? '' : needsQuote(String(v)) ? JSON.stringify(String(v)) : String(v);
 const yamlValue = v => Array.isArray(v) ? `[${v.map(scalar).join(', ')}]`
-  : v && typeof v === 'object' ? `{${Object.entries(v).map(([k, x]) => `${k}: ${scalar(x)}`).join(', ')}}`
+  : v && typeof v === 'object' ? `{${Object.entries(v).map(([k, x]) => `${k}: ${yamlValue(x)}`).join(', ')}}`
   : scalar(v);
 const keys = [...Object.keys(DEFAULTS), ...Object.keys(A).filter(k => !(k in DEFAULTS))];
 let front = keys.map(k => { const v = yamlValue(A[k]); return v === '' ? `${k}:` : `${k}: ${v}`; }).join('\n');
-// Optional settings that people add by hand (read by scripts/validate.mjs): keep them when settings are rewritten.
+// Optional settings that people add by hand (read by scripts/validate.mjs and the review-travel-times skill):
+// keep them when settings are rewritten, unless the answers give a new value.
 const oldFront = fs.existsSync(tripMd) ? (fs.readFileSync(tripMd, 'utf8').match(/^---\n([\s\S]*?)\n---/)?.[1] || '') : '';
-for (const k of ['decision_values', 'folders']) {
+for (const k of ['decision_values', 'folders', 'road_speeds', 'stop_buffer']) {
   const m = k in A ? null : oldFront.match(new RegExp(`^${k}:.*(?:\\n[ \\t]+.*)*`, 'm'));
   if (m) front += '\n' + m[0];
 }

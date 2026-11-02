@@ -18,7 +18,7 @@ Ask in small groups, one group per message. Offer a sensible default for every q
 
 1. **Basics:** trip name; destination; dates, and whether they're fixed (flights booked) or flexible; where the trip starts and ends.
 2. **People:** how many people; how costs are split (per family, per couple, per person) and how many shares; ages or mobility needs that affect walking and pace; food needs.
-3. **Getting around:** self-drive car, hired van with driver, public transport, or on foot. This decides the parking field and the travel-time notes.
+3. **Getting around:** self-drive car, hired van with driver, public transport, or on foot. This decides the parking field and the travel-time notes. Write the vehicle in words that show its size ("hired 7-seat van with driver", "own car"): the `review-travel-times` skill reads `group_vehicle` to choose car or group-vehicle speeds (a van, bus, coach or anything with 6 or more seats is a group vehicle).
 4. **Place and season:** regions or states; likely base towns, and which of those bases are good for evenings out (lit streets, food open late, short trips back to the stay; small villages and forest stays are not) — ask "Which of your bases are good for evenings out?" and leave it empty if they don't know; the season in a word or two (e.g. "December", "monsoon", "summer"). **You suggest** daylight hours, a usual day start, sunset time, and a map box around the regions (rounded to half a degree, a little wider than the regions). The user confirms or corrects them. Say they are estimates.
 5. **Money:** currency code and symbol. Suggest from the destination.
 6. **What to track:** suggest place categories that fit the destination, and the field packs that fit the answers so far (see `${CLAUDE_PLUGIN_ROOT}/skills/trip-init/field-packs/`, one JSON file per pack, each with a `description` and `suggest_when`). The user picks.
@@ -35,6 +35,7 @@ Write the answers as JSON to `.claude/scratch/trip-answers.json` inside the targ
 - `map_box` as `{"lat_min":…, "lat_max":…, "lng_min":…, "lng_max":…}`, or `null`.
 - `cost_split_label` singular and lowercase: `family`, `couple`, `person`.
 - Unknown values: `""` (or `[]` for lists).
+- `road_speeds` and `stop_buffer` are optional settings for `review-travel-times`. Don't ask about them in the interview, and leave them out of the answers unless the user gives them ("our van is slow on hills, 18 km/h"). Shapes: `"road_speeds": {"hill": {"car": 30, "group": 18}}` (road types: motorway, highway, rural, hill, city, track; leave out what stays at the default) and `"stop_buffer": {"min_per_hour": 10, "min_per_stop": 15}`. The script checks them. In the change-settings mode, leaving them out keeps the vault's current values.
 
 ## 4. Run the script
 From the target folder:

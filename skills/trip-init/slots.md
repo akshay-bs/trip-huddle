@@ -105,6 +105,7 @@ How to use this file:
 - Map box: `scripts/validate.mjs` reads `map_box` (`{lat_min, lat_max, lng_min, lng_max}`) from `trip.md` at the vault root. When `trip.md` or `map_box` is missing or empty, the coordinate box check is skipped. Nothing to replace.
 - Regions: the validator reads `regions` (a list) from `trip.md` and warns when a Location's `state` is not in it. When absent, it falls back to the FIELD GUIDE list (S4). When `regions` is set, the S4 list is not checked.
 - Trip facts in `00 Home.md`: `init.mjs` fills a line only while it still holds the starter text (`<...>` or empty). Hand-written lines are kept.
+- Travel settings: `skills/review-travel-times/scripts/travel.mjs` reads the optional `road_speeds` (e.g. `{hill: {car: 30, group: 22}}`) and `stop_buffer` (`{min_per_hour: 10, min_per_stop: 15}`) from `trip.md`, and the vehicle class from `group_vehicle`. They are not in the starter `trip.md`; the answers file can carry them, `init.mjs` checks them (with `settingsProblems` from `travel.mjs`) and writes them after `field_packs`, and `--reconfigure` keeps the existing ones when the answers leave them out. Nothing to replace in the templates.
 - Field packs (`field-packs/*.json`): extra properties added before `recommended_by:` and extra FIELD GUIDE lines, plus their types in `.obsidian/types.json`. Packs not chosen are taken out again; their types stay (harmless).
 
 ## Check

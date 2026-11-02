@@ -1,6 +1,8 @@
 // Tests for trip-huddle. Run from anywhere:  node scripts/test.mjs
 // Covers: the checker on the example vault, trip-init reconfigure leaving the example vault unchanged,
-// trip-init making a new vault the checker accepts, and a deliberately broken vault where every problem
+// trip-init making a new vault the checker accepts, the plan-day sun script and example, the after-dark checks
+// and migration, the review-travel-times script (road-type time, stops buffer, trip.md settings, verdicts), its
+// made-up checked example, the travel_verdict warning, and a deliberately broken vault where every problem
 // must be reported. Works on temporary copies, so the repo is never modified. Exits 1 if anything fails.
 import fs from 'node:fs';
 import os from 'node:os';
@@ -8,12 +10,15 @@ import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { sunTimes, slack, tzOffsetMinutes, TIGHT_BELOW_HRS, TOO_MUCH_BELOW_HRS } from '../skills/plan-day/scripts/sun.mjs';
+import { vehicleClass, loadSettings, checkDay, settingsProblems, DEFAULT_SPEEDS, DEFAULT_STOP_BUFFER, DARK_TOO_MUCH_MIN } from '../skills/review-travel-times/scripts/travel.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const CHECKER = path.join(ROOT, 'scripts/validate.mjs');
 const INIT = path.join(ROOT, 'skills/trip-init/scripts/init.mjs');
 const ANSWERS = path.join(ROOT, 'skills/trip-init/tests');
 const SUN = path.join(ROOT, 'skills/plan-day/scripts/sun.mjs');
+const TRAVEL = path.join(ROOT, 'skills/review-travel-times/scripts/travel.mjs');
+const CHECKED = path.join(ROOT, 'skills/review-travel-times/references');
 const TMP = fs.mkdtempSync(path.join(os.tmpdir(), 'trip-huddle-test-'));
 
 const run = (file, args, cwd = ROOT) => {
@@ -185,15 +190,16 @@ fs.cpSync(portugal, dayVault, { recursive: true });
 {
   const tpl = n => fs.readFileSync(path.join(dayVault, 'Templates', n), 'utf8');
   const put = (rel, text) => { fs.mkdirSync(path.dirname(path.join(dayVault, rel)), { recursive: true }); fs.writeFileSync(path.join(dayVault, rel), text); };
-  put('Sources/Src.md', '---\ntype: source\ntags:\n  - source\n---\n# Src\n[[Cliff Viewpoint (Example)]] [[Fishing Harbour (Example)]] [[Old Town Walk (Example)]] [[Mountain Fort (Example)]]\n');
-  for (const n of ['Cliff Viewpoint (Example)', 'Fishing Harbour (Example)', 'Old Town Walk (Example)', 'Mountain Fort (Example)']) {
+  put('Sources/Src.md', '---\ntype: source\ntags:\n  - source\n---\n# Src\n[[Cliff Viewpoint (Example)]] [[Fishing Harbour (Example)]] [[Old Town Walk (Example)]] [[Mountain Fort (Example)]] [[Cork Oak Farm (Example)]]\n');
+  for (const n of ['Cliff Viewpoint (Example)', 'Fishing Harbour (Example)', 'Old Town Walk (Example)', 'Mountain Fort (Example)', 'Cork Oak Farm (Example)']) {
     put(`Locations/${n}.md`, tpl('Location.md').replace('{{title}}', n).replace('location: []', 'location: [37.1, -8.7]')
-      .replace('recommended_by: []', 'recommended_by:\n  - "[[Src]]"').replace(/scheduled_day:.*/, n.startsWith('Mountain') ? 'scheduled_day:' : 'scheduled_day: "[[Day 04]]"'));
+      .replace('recommended_by: []', 'recommended_by:\n  - "[[Src]]"').replace(/scheduled_day:.*/, /^(Mountain|Cork)/.test(n) ? 'scheduled_day: "[[Day 05]]"' : 'scheduled_day: "[[Day 04]]"'));
   }
   put('Stays/Example Guesthouse Lagos.md', tpl('Stay.md').replace('{{title}}', 'Example Guesthouse Lagos').replace('location: []', 'location: [37.1, -8.67]')
     .replace('recommended_by: []', 'recommended_by:\n  - "[[Src]]"'));
   fs.appendFileSync(path.join(dayVault, 'Sources/Src.md'), '[[Example Guesthouse Lagos]]\n');
   fs.copyFileSync(path.join(ROOT, 'skills/plan-day/references/day-example.md'), path.join(dayVault, 'Itinerary/Day 04.md'));
+  fs.copyFileSync(path.join(CHECKED, 'checked-example.md'), path.join(dayVault, 'Itinerary/Day 05.md'));
 }
 test('plan-day: the reference example Day note passes the checker with no errors or warnings about it', () => {
   const r = check(dayVault), mine = r.out.split('\n').filter(l => /Day 04|Day Plan/.test(l));
@@ -302,6 +308,260 @@ const warnLine = (out, file, text) => out.split('\n').some(l => l.includes(file)
     return warnLine(check(v).out, 'trip.md', 'evening_bases has towns that are not in bases: Atlantis') ? '' : 'not flagged';
   });
 }
+// ---- review-travel-times: the script (known inputs and outputs), trip.md settings, verdicts
+{
+  const near1 = (a, b, tol = 0.011) => Math.abs(a - b) <= tol;
+  const car = loadSettings(path.join(ROOT, 'example-vault'));          // the example has no vehicle: car speeds
+  const van = loadSettings(portugal);                                  // "hired 7-seat van", motorway overridden to 90 / 80
+  const leg = (km, road, extra = {}) => ({ from: 'A', to: 'B', km, road, after_dark: 'ok', ...extra });
+  const day = (legs, extra = {}, settings = van) => checkDay({ start: '08:00', sunset: '20:00', sunrise: '06:00', daylight_hrs: 14, activity_hrs: 0, legs, ...extra }, settings);
+
+  test('travel: the default speeds and stops buffer are the approved ones', () => {
+    const want = { motorway: [70, 55], highway: [50, 40], rural: [35, 28], hill: [30, 22], city: [20, 15], track: [15, 10] };
+    const bad = Object.entries(want).filter(([t, [c, g]]) => DEFAULT_SPEEDS[t].car !== c || DEFAULT_SPEEDS[t].group !== g).map(([t]) => t);
+    return !bad.length && Object.keys(DEFAULT_SPEEDS).length === 6 && DEFAULT_STOP_BUFFER.min_per_hour === 10 && DEFAULT_STOP_BUFFER.min_per_stop === 15 ? '' : `differs: ${bad}`;
+  });
+  test('travel: the vehicle class comes from group_vehicle (van, bus, coach, 6+ seats = group; otherwise car)', () => {
+    const want = { 'hired 7-seat van': 'group', 'Tempo Traveller with driver': 'group', '9-seater minibus': 'group', 'coach': 'group', '7 seater SUV': 'group',
+      'own car': 'car', 'hired 5-seat car': 'car', 'SUV with driver': 'car', 'trains and taxis': 'car', '': 'car', 'business class flights': 'car' };
+    const bad = Object.entries(want).filter(([t, c]) => vehicleClass(t).cls !== c).map(([t]) => `"${t}" gave ${vehicleClass(t).cls}`);
+    return bad.join('; ');
+  });
+  test('travel: config reads the vehicle and trip.md overrides, and the other speeds keep their defaults', () => {
+    const cli = JSON.parse(run(TRAVEL, ['config', '--vault', portugal]).out);
+    return car.vehicle_class === 'car' && car.speeds_kmh.hill === 30 && van.vehicle_class === 'group' && van.speeds_kmh.motorway === 80 && van.speeds_kmh.hill === 22
+      && cli.speeds_kmh.motorway === 80 && cli.changed_in_trip_md.road_speeds.join() === 'motorway' && /van/.test(cli.vehicle_why) ? '' : JSON.stringify([car, van, cli]);
+  });
+  test('travel: --vehicle overrides the class', () => {
+    const j = JSON.parse(run(TRAVEL, ['config', '--vault', portugal, '--vehicle', 'car']).out);
+    const bad = run(TRAVEL, ['config', '--vault', portugal, '--vehicle', 'boat']);
+    return j.vehicle_class === 'car' && j.speeds_kmh.hill === 30 && bad.code === 2 ? '' : j.vehicle_class + bad.out;
+  });
+
+  test('travel: road-type time for both vehicle classes (km / speed), and mixed stretches add up', () => {
+    const l = (s, legs) => day(legs, {}, s).legs[0];
+    const g = l(van, [leg(44, 'hill')]), c = l(car, [leg(30, 'hill')]);
+    const mixed = l(van, [{ from: 'A', to: 'B', after_dark: 'ok', segments: [{ km: 15, road: 'rural' }, { km: 30, road: 'hill' }] }]);
+    const mw = l(van, [leg(160, 'motorway')]);
+    return g.road_hrs === 2 && c.road_hrs === 1 && near1(mixed.road_hrs, 15 / 28 + 30 / 22) && mixed.km === 45 && mixed.road === 'mixed'
+      && mw.road_hrs === 2 && l(car, [leg(70, 'motorway')]).road_hrs === 1 ? '' : JSON.stringify([g, c, mixed, mw]);
+  });
+  test('travel: the slowest of the three estimates is kept, and the range runs from the fastest to it', () => {
+    const slowRoad = day([leg(44, 'hill', { map_hrs: 1.2 })]).legs[0];                       // road 2 h, map 1.2 h
+    const slowMap = day([leg(22, 'hill', { map_hrs: 1.6 })]).legs[0];                        // road 1 h, map 1.6 h
+    const slowReport = day([leg(44, 'hill', { map_hrs: [1.5, 1.8], reports_hrs: 3 })]).legs[0];
+    return slowRoad.kept_source === 'road' && slowRoad.range.text === '1.2–2 hrs' && slowRoad.slower_than_map_min === 48
+      && slowMap.kept_source === 'map' && slowMap.range.text === '1–1.6 hrs'
+      && slowReport.kept_source === 'reports' && slowReport.range.high === 3 && slowReport.range.low === 1.5
+      && day([leg(22, 'hill')]).legs[0].range.text === '~1 hrs' ? '' : JSON.stringify([slowRoad, slowMap, slowReport]);
+  });
+  test('travel: keeping an estimate other than the slowest needs a reason, and a bad road type is refused', () => {
+    let noReason = '', badRoad = '';
+    try { day([leg(44, 'hill', { map_hrs: 1.2, keep: 'map' })]); noReason = 'no error'; } catch (e) { noReason = /keep_reason/.test(e.message) ? '' : e.message; }
+    try { day([leg(44, 'goat-path')]); badRoad = 'no error'; } catch (e) { badRoad = /road must be one of/.test(e.message) ? '' : e.message; }
+    const ok = day([leg(44, 'hill', { map_hrs: 1.2, keep: 'map', keep_reason: 'the map route is the faster, signed road' })]).legs[0];
+    return noReason || badRoad || (ok.kept_source === 'map' && ok.range.high === 1.2 ? '' : JSON.stringify(ok));
+  });
+  test('travel: the stops buffer is 10 min per driving hour plus 15 min per stop, and drive hours include it', () => {
+    // legs of 1.9, 0.6 and 1.2 hrs (the made-up checked example): 3.7 hrs of driving, 2 stops
+    const d = day([leg(0, 'hill', { map_hrs: 1.9 }), leg(0, 'hill', { map_hrs: 0.6 }), leg(0, 'hill', { map_hrs: 1.2 })]).day;
+    const one = day([leg(22, 'hill', { extra_stops: 1 })]).day;      // a one-leg day with a lunch stop in the middle
+    return d.drive_legs_hrs === 3.7 && d.stops === 2 && d.buffer_hrs === 1.1 && d.drive_hrs === 4.8
+      && one.stops === 1 && one.buffer_hrs === 0.4 && one.drive_hrs === 1.4 ? '' : JSON.stringify([d, one]);
+  });
+  test('travel: stop_buffer and road_speeds in trip.md change the result (flow and block forms), and bad ones are refused', () => {
+    const v = path.join(TMP, 'travel-settings');
+    fs.cpSync(portugal, v, { recursive: true });
+    const f = path.join(v, 'trip.md'), orig = fs.readFileSync(f, 'utf8');
+    const legs = [leg(0, 'hill', { map_hrs: 1.9 }), leg(0, 'hill', { map_hrs: 0.6 }), leg(0, 'hill', { map_hrs: 1.2 })];
+    fs.writeFileSync(f, orig.replace(/^road_speeds:.*$/m, 'road_speeds:\n  hill:\n    group: 18\n  city: 12\nstop_buffer:\n  min_per_hour: 20\n  min_per_stop: 30'));
+    const s = loadSettings(v), d = day(legs, {}, s).day, g = day([leg(36, 'hill'), leg(24, 'city')], {}, s).legs;
+    fs.writeFileSync(f, orig.replace(/^road_speeds:.*$/m, 'road_speeds: {hill: {car: 25}}\nstop_buffer: {min_per_stop: 0}'));
+    const s2 = loadSettings(v, 'car');
+    fs.writeFileSync(f, orig.replace(/^road_speeds:.*$/m, 'road_speeds: {hil: {car: 25}}'));
+    const bad = run(TRAVEL, ['config', '--vault', v]);
+    fs.writeFileSync(f, orig.replace(/^road_speeds:.*$/m, 'stop_buffer: {min_per_hour: -5}'));
+    const bad2 = run(TRAVEL, ['config', '--vault', v]);
+    return s.speeds_kmh.hill === 18 && s.speeds_kmh.city === 12 && s.speeds_kmh.rural === 28 && s.stop_buffer.min_per_hour === 20
+      && d.buffer_hrs === 2.2 && d.drive_hrs === 5.9 && g[0].road_hrs === 2 && g[1].road_hrs === 2
+      && s2.speeds_kmh.hill === 25 && s2.speeds_kmh.rural === 35 && s2.stop_buffer.min_per_stop === 0 && s2.stop_buffer.min_per_hour === 10
+      && bad.code === 2 && /"hil" is not a road type/.test(bad.out) && bad2.code === 2 && /min_per_hour/.test(bad2.out) ? '' : JSON.stringify([s, d, s2]) + bad.out + bad2.out;
+  });
+  test('travel: settingsProblems accepts the defaults and a plain number, and names what is wrong', () => {
+    const bad = settingsProblems({ hill: { lorry: 20 }, track: 0 }, { min_per_week: 1 });
+    return !settingsProblems(undefined, undefined).length && !settingsProblems({ hill: 25, motorway: { car: 90 } }, { min_per_stop: 20 }).length
+      && bad.length === 3 && bad.some(p => /lorry/.test(p)) && bad.some(p => /track/.test(p)) && bad.some(p => /min_per_week/.test(p)) ? '' : bad.join('; ');
+  });
+
+  // The day verdict. A group van on a hill road: 44 km = 2 h on the road; with 10 min per driving hour the drive takes 140 min.
+  const dark = (start, extra = {}, legExtra = {}) => day([leg(44, 'hill', { after_dark: 'avoid', ...legExtra })], { start, sunset: '20:00', ...extra });
+  test('verdict: no dark driving and plenty of daylight is ok', () => dark('09:00').day.verdict === 'ok' && dark('09:00').day.reasons.length === 0 ? '' : JSON.stringify(dark('09:00').day));
+  test('verdict: an avoid leg driven up to 30 min after sunset is tight; more is too much; an ok leg after dark is fine', () => {
+    const a = dark('18:00'), b = dark('18:30'), c = day([leg(44, 'hill', { after_dark: 'ok' })], { start: '18:30', sunset: '20:00' });
+    return a.legs[0].dark_driving_min === 20 && a.day.verdict === 'tight' && b.legs[0].dark_driving_min === 50 && b.day.verdict === 'too much'
+      && DARK_TOO_MUCH_MIN === 30 && c.legs[0].dark_driving_min === 0 && c.day.verdict === 'ok' ? '' : JSON.stringify([a.day, b.day, c.day]);
+  });
+  test('verdict: an agreed bend is not a new problem, but time beyond what was agreed is reported', () => {
+    const within = dark('18:30', {}, { bent: true, agreed_dark_min: 60 }), worse = dark('18:30', {}, { bent: true, agreed_dark_min: 30 });
+    const unknown = dark('18:30', {}, { bent: true });
+    return within.day.verdict === 'ok' && !within.legs[0].worse_than_agreed && worse.legs[0].worse_than_agreed && worse.day.verdict === 'tight'
+      && /on top of what was agreed/.test(worse.day.reasons[0].text) && unknown.day.verdict === 'ok' ? '' : JSON.stringify([within.day, worse.day, unknown.day]);
+  });
+  test('verdict: the output says how much earlier to leave to get out of the dark', () => {
+    const b = dark('18:30'), fine = dark('09:00');
+    return b.day.leave_earlier?.minutes === 60 && b.day.leave_earlier.start === '17:30' && fine.day.leave_earlier === null ? '' : JSON.stringify(b.day.leave_earlier);
+  });
+  test('verdict: before sunrise counts as dark too', () => {
+    const r = dark('05:00', { sunrise: '06:00' });   // 05:00 to 07:20, an hour of it before sunrise
+    return r.legs[0].dark_driving_min === 60 && r.day.verdict === 'too much' && r.day.predawn_drive_hrs === 1 ? '' : JSON.stringify(r.day);
+  });
+  test('verdict: slack decides when there is no dark driving (same rule as plan-day), and the worse of the checks wins', () => {
+    const tight = day([leg(44, 'hill')], { start: '08:00', daylight_hrs: 7, activity_hrs: 4 });      // 2 hrs of driving + 0.3 for stops + 4 = 6.3 hrs, slack 0.7
+    const much = day([leg(44, 'hill')], { start: '08:00', daylight_hrs: 6, activity_hrs: 4 });
+    const both = day([leg(44, 'hill', { after_dark: 'avoid' })], { start: '18:00', daylight_hrs: 6, activity_hrs: 4 });
+    const s = slack({ daylight: 7, drive: tight.day.drive_hrs, activity: 4 });
+    return tight.day.verdict === 'tight' && tight.day.slack.verdict === s.verdict && tight.day.slack.slack_hrs === s.slack_hrs && much.day.verdict === 'too much'
+      && both.day.verdict === 'too much' && both.day.reasons.length === 2 ? '' : JSON.stringify([tight.day, much.day, both.day]);
+  });
+  test('verdict: a day that ends over an hour after sunset away from an evening base is tight; a closed road is too much', () => {
+    const late = (end, bases) => day([leg(44, 'hill')], { start: '16:30', sunset: '17:30', evening_base_end: bases, daylight_hrs: 14 });
+    const closed = day([leg(44, 'hill', { blocked: 'landslide, road closed' })]);
+    return late(0, false).day.verdict === 'tight' && late(0, true).day.verdict === 'ok' && late(0, undefined).day.verdict === 'ok'
+      && closed.day.verdict === 'too much' && /landslide/.test(closed.day.reasons[0].text) ? '' : JSON.stringify([late(0, false).day, closed.day]);
+  });
+  test('travel: the command line reads an input file and prints JSON; a bad file gives a plain error', () => {
+    const f = path.join(TMP, 'day-input.json');
+    fs.writeFileSync(f, JSON.stringify({ start: '08:00', sunset: '20:00', daylight_hrs: 14, activity_hrs: 2, legs: [leg(44, 'hill', { map_hrs: 1.5 })] }));
+    const ok = run(TRAVEL, ['check', '--input', f, '--vault', portugal]), bad = run(TRAVEL, ['check', '--input', path.join(TMP, 'nope.json'), '--vault', portugal]);
+    const j = JSON.parse(ok.out);
+    return ok.code === 0 && j.settings.vehicle_class === 'group' && j.legs[0].range.text === '1.5–2 hrs' && j.day.verdict === 'ok' && bad.code === 2 && /can't read/.test(bad.out) ? '' : ok.out + bad.out;
+  });
+
+  // The made-up checked Day note (Portugal): valid in a vault made by trip-init, and its numbers come from the script.
+  test('review-travel-times: the checked example Day note passes the checker with no errors or warnings about it', () => {
+    const r = check(dayVault), mine = r.out.split('\n').filter(l => /Day 05|Cork Oak|Day Plan/.test(l));
+    return r.code === 0 && !mine.length ? '' : r.out;
+  });
+  test('review-travel-times: the numbers in the checked example match the script, the sun script and the slack rule', () => {
+    const text = fs.readFileSync(path.join(CHECKED, 'checked-example.md'), 'utf8');
+    const input = JSON.parse(fs.readFileSync(path.join(CHECKED, 'checked-example-input.json'), 'utf8'));
+    const out = JSON.parse(run(TRAVEL, ['check', '--input', path.join(CHECKED, 'checked-example-input.json'), '--vault', portugal]).out);
+    const get = k => text.match(new RegExp(`^${k}: "?([^"\\n]*)"?$`, 'm'))[1];
+    const sun = sunTimes(get('date'), 37.10, -8.67, tzOffsetMinutes('Europe/Lisbon', 2027, 6, 10));
+    const bad = [];
+    if (sun.sunrise !== input.sunrise || sun.sunset !== input.sunset || sun.daylight_hrs !== input.daylight_hrs) bad.push(`sun: ${JSON.stringify(sun)}`);
+    for (const k of ['sunrise', 'sunset']) if (get(k) !== input[k]) bad.push(`${k} differs from the input`);
+    if (Number(get('daylight_hrs')) !== input.daylight_hrs || Number(get('activity_hrs')) !== input.activity_hrs) bad.push('daylight or activity differs from the input');
+    if (Number(get('drive_hrs')) !== out.day.drive_hrs) bad.push(`drive_hrs should be ${out.day.drive_hrs}`);
+    if (get('travel_verdict') !== out.day.verdict) bad.push(`travel_verdict should be ${out.day.verdict}`);
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(get('travel_checked'))) bad.push('travel_checked should be a date');
+    for (const l of out.legs) if (!text.includes(`| ${l.from} | ${l.to} | ~${l.km} | ${l.range.text} |`)) bad.push(`Legs row for ${l.from} to ${l.to} should say ${l.range.text} and ~${l.km} km`);
+    if (!text.includes(`Drive ${out.day.drive_hrs} (${out.day.drive_legs_hrs} of driving and ${out.day.buffer_hrs} for stops) + activity ${input.activity_hrs} = ${out.day.slack.daytime_load_hrs} hrs in daylight. Slack ${out.day.slack.slack_hrs} hrs: **${out.day.slack.verdict}**`)) bad.push('the Daylight and slack line does not match the script');
+    if (!text.includes(`Stops add ${out.day.buffer_hrs} hrs`)) bad.push('the basis line should give the stops buffer');
+    const slow = out.legs.find(l => l.slower_than_map_min >= 15);
+    if (!slow || !text.includes(`| ${slow.from} | ${slow.to} |`) || !/Slower than the map shows/.test(text)) bad.push('one leg should be slower than the map and say so');
+    if (out.legs.some(l => l.depart > out.day.ends_at)) bad.push('timeline order');
+    return bad.join('; ');
+  });
+}
+{
+  // The checker's travel_verdict rules, on the made-up Day 05 (slack 5.4, verdict ok)
+  const make = (name, edit) => {
+    const v = path.join(TMP, 'travel-' + name);
+    fs.cpSync(dayVault, v, { recursive: true });
+    const f = path.join(v, 'Itinerary/Day 05.md');
+    fs.writeFileSync(f, edit(fs.readFileSync(f, 'utf8')));
+    return check(v).out;
+  };
+  const longDay = t => t.replace('drive_hrs: 4.8', 'drive_hrs: 6.5').replace('activity_hrs: 4.5', 'activity_hrs: 8');   // slack 0.2 hrs: tight
+  const tooMuch = t => t.replace('drive_hrs: 4.8', 'drive_hrs: 9').replace('activity_hrs: 4.5', 'activity_hrs: 9');  // slack -3.3: too much
+  const stale = out => warnLine(out, 'Day 05.md', 'travel_verdict is "ok", but the day\'s slack');
+  test('checker: travel_verdict ok on a day whose slack is tight is flagged as out of date', () => {
+    const o = make('tight', longDay); return stale(o) && warnLine(o, 'Day 05.md', 'gives "tight"') ? '' : o;
+  });
+  test('checker: travel_verdict ok on a day whose slack is too much is flagged', () => {
+    const o = make('toomuch', tooMuch); return warnLine(o, 'Day 05.md', 'gives "too much"') ? '' : o;
+  });
+  test('checker: travel_verdict that is as bad as, or worse than, the slack verdict is not flagged', () => {
+    const same = make('same', t => longDay(t).replace('travel_verdict: ok', 'travel_verdict: tight'));
+    const worse = make('worse', t => t.replace('travel_verdict: ok', 'travel_verdict: too much'));
+    const much = make('muchmuch', t => tooMuch(t).replace('travel_verdict: ok', 'travel_verdict: too much'));
+    return [same, worse, much].some(o => warnLine(o, 'Day 05.md', 'travel_verdict is')) ? same + worse + much : '';
+  });
+  test('checker: a day with no travel check (both properties empty) is not flagged', () => {
+    const o = make('none', t => longDay(t).replace('travel_verdict: ok', 'travel_verdict:').replace('travel_checked: 2026-11-02', 'travel_checked:'));
+    return warnLine(o, 'Day 05.md', 'travel_') ? o : '';
+  });
+  test('checker: a verdict without a check date, and a check date without a verdict, are flagged', () => {
+    const a = make('nodate', t => t.replace('travel_checked: 2026-11-02', 'travel_checked:')), b = make('noverdict', t => t.replace('travel_verdict: ok', 'travel_verdict:'));
+    return warnLine(a, 'Day 05.md', 'travel_verdict is set but travel_checked is empty') && warnLine(b, 'Day 05.md', 'travel_checked is set but travel_verdict is empty') ? '' : a + b;
+  });
+  test('checker: travel_verdict must be ok, tight or too much, and travel_checked a date', () => {
+    const a = make('badverdict', t => t.replace('travel_verdict: ok', 'travel_verdict: fine')), b = make('baddate', t => t.replace('travel_checked: 2026-11-02', 'travel_checked: yesterday'));
+    return warnLine(a, 'Day 05.md', 'travel_verdict "fine" is not one of: ok | tight | too much') && b.split('ERRORS')[1].split('WARNINGS')[0].includes('travel_checked must be a date') ? '' : a + b;
+  });
+  test('checker: the reference plan-day note (travel properties empty) is not flagged for them', () => {
+    const o = check(dayVault).out; return warnLine(o, 'Day 04.md', 'travel_') ? o : '';
+  });
+}
+{
+  // trip-init and the travel settings
+  const answers = JSON.parse(fs.readFileSync(path.join(ANSWERS, 'portugal-answers.json'), 'utf8'));
+  const tryInit = (name, edit, extraArgs = []) => {
+    const a = path.join(TMP, name + '.json');
+    fs.writeFileSync(a, JSON.stringify(edit({ ...answers })));
+    return { a, v: path.join(TMP, name) };
+  };
+  test('trip-init: road_speeds and stop_buffer in the answers are written to trip.md, and a bad road type is refused', () => {
+    const ok = tryInit('travel-ok', x => ({ ...x, stop_buffer: { min_per_hour: 12, min_per_stop: 20 }, road_speeds: { hill: { group: 18 }, motorway: { car: 90, group: 80 } } }));
+    const made = run(INIT, ['--answers', ok.a, '--vault', ok.v]);
+    const t = fs.readFileSync(path.join(ok.v, 'trip.md'), 'utf8');
+    const s = loadSettings(ok.v);
+    const bad = tryInit('travel-bad', x => ({ ...x, road_speeds: { hil: { car: 20 } }, stop_buffer: { min_per_hour: 'ten' } }));
+    const refused = run(INIT, ['--answers', bad.a, '--vault', bad.v]);
+    return made.code === 0 && t.includes('road_speeds: {hill: {group: 18}, motorway: {car: 90, group: 80}}') && t.includes('stop_buffer: {min_per_hour: 12, min_per_stop: 20}')
+      && s.speeds_kmh.hill === 18 && s.stop_buffer.min_per_stop === 20 && counts(check(ok.v).out).errors === 0
+      && refused.code === 1 && /"hil" is not a road type/.test(refused.out) && /min_per_hour/.test(refused.out) && !fs.existsSync(path.join(bad.v, 'trip.md')) ? '' : made.out + refused.out + t;
+  });
+  test('trip-init: reconfigure keeps road_speeds and stop_buffer when the answers leave them out, and replaces them when given', () => {
+    const v = path.join(TMP, 'travel-keep');
+    fs.cpSync(portugal, v, { recursive: true });
+    const f = path.join(v, 'trip.md');
+    fs.writeFileSync(f, fs.readFileSync(f, 'utf8').replace(/^(road_speeds:.*)$/m, '$1\nstop_buffer: {min_per_stop: 25}'));
+    const none = path.join(TMP, 'travel-keep-none.json');
+    const { road_speeds, ...rest } = answers;
+    fs.writeFileSync(none, JSON.stringify(rest));
+    const kept = run(INIT, ['--answers', none, '--vault', v, '--reconfigure']);
+    const t = fs.readFileSync(f, 'utf8');
+    const given = tryInit('travel-new', x => ({ ...x, road_speeds: { city: { car: 18 } } }));
+    const re = run(INIT, ['--answers', given.a, '--vault', v, '--reconfigure']);
+    const t2 = fs.readFileSync(f, 'utf8');
+    return kept.code === 0 && /road_speeds: \{motorway: \{car: 90, group: 80\}\}/.test(t) && t.includes('stop_buffer: {min_per_stop: 25}')
+      && re.code === 0 && t2.includes('road_speeds: {city: {car: 18}}') && !t2.includes('motorway: {car: 90') && t2.includes('stop_buffer: {min_per_stop: 25}') ? '' : kept.out + t + re.out + t2;
+  });
+  test('trip-init: a new vault gets the Day Plan template with the travel properties, in the same order as the checked example', () => {
+    const keys = text => (text.match(/^---\n([\s\S]*?)\n---/)[1].match(/^[a-z_]+(?=:)/gm) || []).join();
+    const tpl = fs.readFileSync(path.join(portugal, 'Templates/Day Plan.md'), 'utf8');
+    return /rule_bends,travel_checked,travel_verdict,tags/.test(keys(tpl)) && keys(tpl) === keys(fs.readFileSync(path.join(CHECKED, 'checked-example.md'), 'utf8')) ? '' : keys(tpl);
+  });
+}
+test('plugin: both manifests have the same version, and it is 0.7.0', () => {
+  const a = JSON.parse(fs.readFileSync(path.join(ROOT, '.claude-plugin/plugin.json'), 'utf8')).version;
+  const b = JSON.parse(fs.readFileSync(path.join(ROOT, '.claude-plugin/marketplace.json'), 'utf8')).plugins[0].version;
+  return a === b && a === '0.7.0' ? '' : `plugin.json ${a}, marketplace.json ${b}`;
+});
+test('vaults: the Day Plan template, trip.md notes and Home pointer agree between vault-template and example-vault', () => {
+  const rd = (v, f) => fs.readFileSync(path.join(ROOT, v, f), 'utf8');
+  // the three per-trip lines (slots S1 to S3) may differ; everything else in the template must be identical
+  const mask = t => t.replace(/^daylight_hrs:.*$/m, 'daylight_hrs: X').replace(/^\| \d{2}:\d{2} \| Breakfast.*$/m, 'START').replace(/^\| \d{2}:\d{2} \| Sunset.*$/m, 'SUNSET');
+  const bullet = t => t.split('\n').find(l => l.startsWith('- Optional, for the `review-travel-times` skill')) || '';
+  const bad = [];
+  if (mask(rd('vault-template', 'Templates/Day Plan.md')) !== mask(rd('example-vault', 'Templates/Day Plan.md'))) bad.push('Day Plan template');
+  if (!bullet(rd('vault-template', 'trip.md')) || bullet(rd('vault-template', 'trip.md')) !== bullet(rd('example-vault', 'trip.md'))) bad.push('trip.md travel bullet');
+  for (const v of ['vault-template', 'example-vault']) if (!rd(v, '00 Home.md').includes('review-travel-times')) bad.push(`${v} Home pointer`);
+  return bad.length ? `differs or missing: ${bad.join(', ')}` : '';
+});
+
 {
   // Migration: make a vault that looks like it was made before 0.6.0, then migrate it.
   const MIGRATE = path.join(ROOT, 'skills/add-place/scripts/migrate-after-dark.mjs');

@@ -49,5 +49,8 @@
   "field_packs": [
     "kids",
     "self-drive"
-  ]
+  ],
+  "road_speeds": {
+    "motorway": { "car": 90, "group": 80 }
+  }
 }

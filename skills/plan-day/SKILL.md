@@ -92,7 +92,7 @@ Apply the fix when the user asked you to plan the day, then recompute. Keep a dr
 
 ## 7. Write the Day note
 File: `Itinerary/Day 03.md` (the folder is `folders.day` in `trip.md`, default `Itinerary`). Start from the template: every property in template order, the FIELD GUIDE comment block kept, `{{title}}` replaced.
-- **Properties:** `day` (number), `date`, `start_base`, `end_base`, `stay: "[[Stay note]]"`, `locations` (quoted wikilinks), `early_start`, `sunrise`, `sunset` (quoted `"HH:MM"`), `daylight_hrs`, `drive_hrs`, `activity_hrs`, `predawn_hrs`, `total_walk_km`, `rule_bends` (the number of lines under *Choices that bend the rules*; 0 if none). Plain numbers only, no units. Leave unknowns blank. `tags` keeps `day`.
+- **Properties:** `day` (number), `date`, `start_base`, `end_base`, `stay: "[[Stay note]]"`, `locations` (quoted wikilinks), `early_start`, `sunrise`, `sunset` (quoted `"HH:MM"`), `daylight_hrs`, `drive_hrs`, `activity_hrs`, `predawn_hrs`, `total_walk_km`, `rule_bends` (the number of lines under *Choices that bend the rules*; 0 if none), and `travel_checked` and `travel_verdict`. Leave those last two empty: only the `review-travel-times` skill fills them. **If you change the legs or drive times of a day that has them filled, clear both**, because the check no longer describes the day, and say in the report that the day needs a new travel-time check. Plain numbers only, no units. Leave unknowns blank. `tags` keeps `day`.
 - **Heading:** `# Day 03 · Thu 17 Jun · <the day in a few words>` (the weekday comes from the script).
 - Under it, one line on the shape of the day and a link to the Route (or itinerary) note it belongs to.
 - **Daylight and slack:** `sunrise …, sunset …, … hrs of daylight (computed for <base>, <time zone>). Drive … + activity … − … hrs before sunrise = … hrs. Slack … hrs: **ok**.` For the fallback case say `(trip.md defaults, not worked out for this date)`.
@@ -119,3 +119,4 @@ Lead with the plan and why it looks that way, not with data. Keep it short:
 - The numbers (sun times, drive, slack) belong in the table and are not repeated in prose.
 - Book-ahead items, places left off and why, and the stay still to choose.
 - Anything you changed in Home's open questions.
+- That the drive times are still estimates, and that the `review-travel-times` skill can check them against map times, the kind of road and local reports, with time for stops. Offer it in one line, once.

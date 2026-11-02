@@ -93,6 +93,8 @@
     "daylight_hrs": "number",
     "total_walk_km": "number",
     "rule_bends": "number",
+    "travel_checked": "date",
+    "travel_verdict": "text",
     "cuisine": "text",
     "veg_options": "text",
     "price_band": "text",

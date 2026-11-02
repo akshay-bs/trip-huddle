@@ -14,6 +14,7 @@
 //   trip.md (optional) map_box, regions, decision_values, and folders (a map of note type to folder).
 import fs from 'node:fs';
 import path from 'node:path';
+import { TIGHT_BELOW_HRS, TOO_MUCH_BELOW_HRS } from '../skills/plan-day/scripts/sun.mjs';   // the slack verdict thresholds
 
 // ---------- arguments ----------
 const argv = process.argv.slice(2);
@@ -327,7 +328,27 @@ function dayChecks(f, d, body = '') {
     const slack = Number(d.daylight_hrs) - (num(d.drive_hrs) + num(d.activity_hrs) - num(d.predawn_hrs));
     if (slack < -0.05) warn(f, `drive_hrs + activity_hrs are ${(-slack).toFixed(1)} hrs more than the daylight. Cut or move something, or split the day (verdict: too much)`);
   }
+  travelChecks(f, d);
   afterDarkChecks(f, d, body, times.sunset);
+}
+
+// The travel-time check (review-travel-times). Its verdict allows for stops, road types and local reports, so it should
+// never be kinder than the slack verdict, which the Itinerary base computes from the same drive_hrs. If it is, the check
+// is out of date (the day changed after it) or was written wrong.
+function travelChecks(f, d) {
+  const has = v => v !== null && v !== undefined && v !== '';
+  if (has(d.travel_verdict) && !has(d.travel_checked)) warn(f, 'travel_verdict is set but travel_checked is empty. Say on which date the drive times were checked');
+  if (has(d.travel_checked) && !has(d.travel_verdict)) warn(f, 'travel_checked is set but travel_verdict is empty');
+  if (!has(d.travel_verdict) || !d.daylight_hrs) return;
+  const rank = { ok: 0, tight: 1, 'too much': 2 };
+  if (!(String(d.travel_verdict) in rank)) return;   // a bad value is reported by the value-list check
+  const n = v => (has(v) ? Number(v) : 0);
+  const slack = Math.round((Number(d.daylight_hrs) - (n(d.drive_hrs) + n(d.activity_hrs) - n(d.predawn_hrs))) * 10) / 10;
+  if (!Number.isFinite(slack)) return;
+  const slackVerdict = slack < TOO_MUCH_BELOW_HRS ? 'too much' : slack < TIGHT_BELOW_HRS ? 'tight' : 'ok';
+  if (rank[d.travel_verdict] < rank[slackVerdict]) {
+    warn(f, `travel_verdict is "${d.travel_verdict}", but the day's slack (${slack} hrs) gives "${slackVerdict}". The travel check is out of date: the day changed after it, or the drive times were not updated. Run the travel-time check again`);
+  }
 }
 
 // After dark. The Schedule says when things happen; the Legs table says which roads are bad at night.

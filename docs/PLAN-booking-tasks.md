@@ -1,6 +1,6 @@
 # Plan: the booking list, built from what the group selected
 
-Status: planned (v0.11.0).
+Status: built (v0.11.0).
 
 ## The problem
 In the `booking` stage the group has things to close before it travels: the stays, a vehicle for the whole trip, a jeep safari, tickets or permits for a few places, flights or trains, insurance. Today only stays have booking fields, the vehicle has a `booking_status` and nothing else, and places have none. Nothing says what is booked, what was paid, what is still owed, or where the confirmation is, and nothing ties a booking to the Decision it fixes.

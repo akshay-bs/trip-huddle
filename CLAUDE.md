@@ -4,6 +4,7 @@ trip-huddle is a Claude plugin (Cowork and Claude Code) plus an Obsidian vault l
 
 ## Layout
 - `.claude-plugin/plugin.json` and `marketplace.json`: keep the version numbers in sync.
+- `docs/PLAN-*.md`: design notes for features, with a status line at the top.
 - `scripts/`: shared Node scripts (`validate.mjs`, the checker; `test.mjs`). `skills/add-place/scripts/validate.mjs` is only a wrapper that runs the shared one.
 - `skills/<name>/SKILL.md`: plugin skills. Refer to bundled files as `${CLAUDE_PLUGIN_ROOT}/skills/<name>/...`. Skills run with the user's vault as the working directory.
 - `vault-template/`: the empty starter vault.
@@ -15,7 +16,7 @@ After any change to templates, Bases, `types.json`, `trip-init`, its field packs
 ```bash
 node scripts/test.mjs
 ```
-It must end with "All tests passed". It checks that the example vault has 0 errors, that `trip-init --reconfigure` leaves the example vault unchanged ("Nothing changed"), that a new vault made from the Portugal answers passes the checker and gets `Route.md` and `Transport.md`, and that a deliberately broken copy of the example has every problem reported. It works on temporary copies and leaves the repo alone.
+It must end with "All tests passed". It checks that the example vault has 0 errors, that `trip-init --reconfigure` leaves the example vault unchanged ("Nothing changed"), that a new vault made from the Portugal answers passes the checker and gets `Route.md` and `Transport.md`, that the `plan-day` sun script (`skills/plan-day/scripts/sun.mjs`) gives known sunrise and sunset times and the same slack verdicts as the Itinerary base, that the made-up Day note in `skills/plan-day/references/` passes the checker, that the after-dark value lists and the Day note warning (an `after_dark: avoid` place or leg after sunset while `rule_bends` is 0) work, that `skills/add-place/scripts/migrate-after-dark.mjs` brings a pre-0.6 copy of the example to what the starter vault has and does nothing the second time, and that a deliberately broken copy of the example has every problem reported. It works on temporary copies and leaves the repo alone.
 
 The shared checker is `scripts/validate.mjs` (it reads the vault's own `Templates/`, so a template change changes what is checked). Run it by hand with `cd example-vault && node ../scripts/validate.mjs`.
 

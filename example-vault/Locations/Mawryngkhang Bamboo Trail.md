@@ -30,7 +30,9 @@ steps_or_climb: Up and down a gorge, with bamboo walkways tied to the cliff face
 difficulty: strenuous
 group_fit: poor
 time_needed_hrs: 4.5
-best_time_of_day: Start by 9 AM
+best_time_of_day: [morning]
+after_dark:
+after_dark_note:
 opening_hours:
 closed_days:
 last_mile: Wahkhen village (map pin is the village trailhead, not the rock), about 45 km (1.5–2 hrs) from Shillong; about 60 km (2–2.5 hrs) from Sohra via Pynursla
@@ -104,6 +106,7 @@ Dry season, so the bamboo is less slippery and the river is low and clear. Short
 ## Tips
 - Not a match for the group's "no long treks" rule. If kept, make it optional for the teens and keen adults with a guide.
 - Easier alternatives with bamboo bridges: [[Garden of Caves]] and the zipline at [[Mawkdok Dympep Valley Viewpoint]].
+- Best time, as first written: Start by 9 AM
 
 ## Nearby / combine with
 - [[Mawkdok Dympep Valley Viewpoint]] (same day in the plan), [[Conara Resort]] (Pynursla side)

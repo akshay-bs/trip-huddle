@@ -30,7 +30,9 @@ steps_or_climb: Flat paved paths
 difficulty: easy
 group_fit: good
 time_needed_hrs: 1.5
-best_time_of_day: Late afternoon, into the evening show
+best_time_of_day: [afternoon, evening]
+after_dark:
+after_dark_note:
 opening_hours: Until about 5 pm (confirm the show time)
 closed_days:
 last_mile: On the main road at Kohora; any vehicle
@@ -104,6 +106,7 @@ Few orchids flower in December (the main season is March–May), so the garden i
 
 ## Tips
 - Entry about ₹100 per person. The park closes about 5 pm; ask what time the cultural programme starts that day.
+- Best time, as first written: Late afternoon, into the evening show
 
 ## Nearby / combine with
 - [[Kaziranga National Park]] (Central Range), Airavat Hotel

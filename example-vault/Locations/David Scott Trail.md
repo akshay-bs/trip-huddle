@@ -29,7 +29,9 @@ steps_or_climb: "Point-to-point, not a loop. Mawphlang → Lad Mawphlang: about 
 difficulty: moderate
 group_fit: poor
 time_needed_hrs: 6
-best_time_of_day: Start by 8:30–9:00 AM from Mawphlang
+best_time_of_day: [morning]
+after_dark:
+after_dark_note:
 opening_hours: Daylight only
 closed_days:
 last_mile: "Starts near Mawphlang (about 25 km / 1 hr from Shillong)."
@@ -104,6 +106,7 @@ Weather-wise December is one of the best months. But the full trail takes the wh
 - **Not a good fit for this group** as a whole (low-trek preference). Consider only the short taster from Mawphlang, combined with the sacred forest.
 - Always walk Mawphlang → Lad Mawphlang, never the reverse.
 - Carry lunch, 2 litres of water each, a light jacket, and a torch just in case.
+- Best time, as first written: Start by 8:30–9:00 AM from Mawphlang
 
 ## Nearby / combine with
 - [[Mawphlang Sacred Forest]]: at the start point

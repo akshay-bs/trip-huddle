@@ -30,7 +30,9 @@ steps_or_climb: Stone steps down a wooded slope to the stream and back up. Count
 difficulty: easy
 group_fit: good
 time_needed_hrs: 1
-best_time_of_day: Early morning (8–10:30 AM) before the day tours arrive
+best_time_of_day: [morning]
+after_dark:
+after_dark_note:
 opening_hours: About 8 AM – 5 PM (some listings say until 6–7 PM)
 closed_days:
 last_mile: Paved village road from the Mawlynnong approach to a small car park at Riwai. Tempo traveller OK. The parking area is tight at peak hours
@@ -113,6 +115,7 @@ This is a single-decker living root bridge over a small forest stream at Riwai, 
 - One-way foot traffic on the bridge at busy times. Be patient and keep groups small on the bridge.
 - Carry cash for entry, camera and parking.
 - Don't pull or stand on young roots, and don't carve anything. The bridge is alive.
+- Best time, as first written: Early morning (8–10:30 AM) before the day tours arrive
 
 ## Nearby / combine with
 - [[Mawlynnong Village]] (2–3 km, same visit)

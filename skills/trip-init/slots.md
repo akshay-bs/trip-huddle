@@ -17,21 +17,21 @@ How to use this file:
 - File: `Templates/Day Plan.md` (frontmatter)
 - Template text: `daylight_hrs: 10`
 - Example text: `daylight_hrs: 9.5`
-- Meaning: default usable daylight hours for a day. The Itinerary base computes slack from it.
+- Meaning: default usable daylight hours for a day. It is only a fallback: the `plan-day` skill works out real sunrise, sunset and `daylight_hrs` for each date and place, and uses this number only when it has no coordinates. The Itinerary base computes slack from `daylight_hrs`.
 - From: `daylight_hrs`
 
 ### S2. Day Plan: day start
 - File: `Templates/Day Plan.md` (Schedule table)
 - Template text: `| 08:00 | Breakfast / depart |  |`
 - Example text: `| 07:00 | Breakfast / depart |  |`
-- Meaning: usual start of the day.
+- Meaning: usual start of the day. `plan-day` replaces it with the day's real start.
 - From: `day_start`. Keep the `HH:MM` format.
 
 ### S3. Day Plan: sunset
 - File: `Templates/Day Plan.md` (Schedule table)
 - Template text: `| 18:00 | Sunset |  |`
 - Example text: `| 16:30 | Sunset |  |`
-- Meaning: sunset time in the travel season.
+- Meaning: sunset time in the travel season. `plan-day` replaces it with the sunset it works out for the date, and falls back to this value (with `daylight_hrs`) when it has no coordinates.
 - From: `sunset`. Keep the `HH:MM` format.
 
 ### S4. Location: region list

@@ -31,7 +31,9 @@ steps_or_climb: About 45–60 min each way through forest on rocky, narrow paths
 difficulty: strenuous
 group_fit: poor
 time_needed_hrs: 3
-best_time_of_day: Start the trek by 10 am; be back at the road by 3:30 pm
+best_time_of_day: [midday]
+after_dark:
+after_dark_note:
 opening_hours: Google lists 8 am opening (no gate reported)
 closed_days:
 last_mile: NH-6 via Khliehriat to Saipung and Sakhain (Plus Code 7FP5+3F, Tangsko), about 140 km / 4–5 hrs from Shillong. The last stretch is a bad road; a 4x4 can get closer, otherwise it adds walking. A tempo traveller is unlikely to manage; confirm with the driver
@@ -112,6 +114,7 @@ No freely licensed photos were found on Wikimedia Commons. Google Maps has [143+
 - Trekking shoes with grip, water, snacks and a change of clothes. Nothing is sold there.
 - Download offline maps; mobile signal is likely to be poor.
 - Leave from a Khliehriat or Jowai stay rather than Shillong to cut the driving.
+- Best time, as first written: Start the trek by 10 am; be back at the road by 3:30 pm
 
 ## Nearby / combine with
 - [[Krem Chympe Falls]] is about 13 km south (straight line) on the same remote side of East Jaintia Hills; both need guides and local 4x4s.

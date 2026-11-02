@@ -30,7 +30,9 @@ steps_or_climb: The roadside viewpoint needs almost no walking. The water sports
 difficulty: easy
 group_fit: good
 time_needed_hrs: 1
-best_time_of_day: Late morning to afternoon for clear light. Sunset is also popular
+best_time_of_day: [morning, midday, afternoon, sunset]
+after_dark:
+after_dark_note:
 opening_hours: The viewpoint is roadside and open anytime. Water sports run about 9:00 AM – 5:00 PM
 closed_days:
 last_mile: Directly on NH-6 (Guwahati–Shillong highway) at Barapani, about 15–17 km north of Shillong. Tempo traveller OK, with roadside and complex parking
@@ -117,6 +119,7 @@ Umiam Lake, locally called Barapani, is a large reservoir created by damming the
 - The [[Brahmaputra Sunset Cruise]] leaves around 4 PM in winter, so Guwahati traffic makes timing tight.
 - Water sports prices change often, and older blog lists (₹20–200) are out of date. Ask for the full rate card at the counter and confirm per-person vs per-boat pricing.
 - Carry cash. Some stalls don't take UPI when the network is weak.
+- Best time, as first written: Late morning to afternoon for clear light. Sunset is also popular
 
 ## Nearby / combine with
 - [[Shillong Peak]], [[Elephant Falls]], [[Ward's Lake]], [[Police Bazaar]] (Shillong, 30–45 min further)

@@ -28,7 +28,9 @@ steps_or_climb: The full Tyrna → Nongriat descent (about 3,000–3,500 steps) 
 difficulty: strenuous
 group_fit: poor
 time_needed_hrs: 7
-best_time_of_day: Late morning, when the sun is on the water
+best_time_of_day: [morning]
+after_dark:
+after_dark_note:
 opening_hours: Daylight only
 closed_days:
 last_mile: Same as the [[Double Decker Living Root Bridge]]: Sohra → Tyrna by road (about 12 km), then on foot via Nongriat
@@ -111,6 +113,7 @@ No freely licensed photos found.
 - Same rules as the Double Decker trek: not a fit for the group's "no long treks" rule; optional for the fittest members only.
 - Bring a towel and a change of clothes if swimming.
 - Ask a Tyrna guide or Nongriat locals for the "Blue Lagoon" turn-off.
+- Best time, as first written: Late morning, when the sun is on the water
 
 ## Nearby / combine with
 - [[Double Decker Living Root Bridge]] (30 min back) and [[Rainbow Falls]] (further along the same trail) are all one trek.

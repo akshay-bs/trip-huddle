@@ -16,6 +16,7 @@ Never skip the dedupe or validate steps.
   - **Additions stay open for the group.** Add everything the user mentions, even if it's off-route, and leave it `considering`.
 - Every file you create stays inside the vault. Scratch files go in `.claude/scratch/` and get deleted at the end.
 - Read the current templates: `Templates/Location.md` and `Templates/Stay.md`. **The template is the schema:** use its property list, property order and FIELD GUIDE values. If the template has changed, follow the template, not this skill.
+- If the vault's `Templates/Location.md` has no `after_dark` field (the vault is older than 0.6.0), run `node "${CLAUDE_PLUGIN_ROOT}/skills/add-place/scripts/migrate-after-dark.mjs"` from the vault root first. It adds the new fields empty and turns `best_time_of_day` into a list; run it with `--dry-run` to see what it would do.
 
 ## 1. Identify the source
 Every addition must be traceable to a note in `Sources/`.
@@ -60,6 +61,12 @@ Before creating anything, search for the place or stay. The user's spelling is o
 - **Judging fit:**
   - `season_verdict`, `difficulty` and `group_fit` are honest judgements for the group in Trip facts (ages, fitness, how much walking and how many steps they accept, vehicle size). `season_verdict` is about the travel season in Trip facts: weather, water levels, daylight, closures and crowds on those dates.
   - Walk distance and duration are **round trip**.
+- **Time of day and after dark** (research these, don't leave them blank when sources exist):
+  - `best_time_of_day` is a **list** from the template's values (`sunrise | morning | midday | afternoon | sunset | evening | night | any`), e.g. `[sunrise]` or `[evening, night]`. Details such as "before the tour buses arrive" go in the body.
+  - `after_dark` is `good` (worth visiting after dark: lights, night market, festival), `fine` (no problem, nothing special) or `avoid` (closes, is unsafe or pointless after dark, or the way back is a bad night drive). Judge the road back as well as the place, using `last_mile` and the distance to the nearest `evening_base` in `trip.md`.
+  - `after_dark_note` is the reason in a few words ("lit up for the festival", "no lights, forest road back").
+  - When the reason depends on the season (a festival, the monsoon, short winter days), also say so in `season_note`.
+  - **Mark guesses honestly.** If you could not find evidence, leave `after_dark` blank (blank means unknown) or write the value and start the note with "Guess:", and say why in the body. Never present a guess as researched.
 - **Stays:**
   - Size `room_config` and `rooms_needed` for the group in Trip facts.
   - Seasonal essentials (`heating`, `hot_water`, `power_backup` for a cold-season trip) come from reviews, or are `unknown`.

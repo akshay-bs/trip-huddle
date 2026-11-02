@@ -32,7 +32,7 @@ const DEFAULTS = {
   schema_version: '0.2', trip_name: '', destination: '', start_date: '', end_date: '', dates_fixed: false,
   arrival: '', departure: '', travellers: '', cost_split_units: 1, cost_split_label: 'person',
   traveller_notes: '', pace: '', food_needs: '', group_vehicle: '', currency: '', currency_symbol: '',
-  season: '', daylight_hrs: 10, day_start: '08:00', sunset: '18:00', regions: [], bases: [],
+  season: '', daylight_hrs: 10, day_start: '08:00', sunset: '18:00', regions: [], bases: [], evening_bases: [],
   categories: ['viewpoint', 'nature', 'old-town', 'museum', 'market', 'food', 'activity', 'beach', 'hike'],
   map_box: null, field_packs: [],
 };
@@ -49,7 +49,11 @@ if (!isTime(A.sunset)) problems.push('sunset must look like "18:00"');
 if (!isDate(A.start_date) || !isDate(A.end_date)) problems.push('dates must look like 2027-06-05, or be ""');
 if (!(Number(A.cost_split_units) >= 1)) problems.push('cost_split_units must be a number, 1 or more');
 if (!(Number(A.daylight_hrs) > 0 && Number(A.daylight_hrs) <= 24)) problems.push('daylight_hrs must be a number between 0 and 24');
-for (const k of ['regions', 'bases', 'categories', 'field_packs']) if (!Array.isArray(A[k])) problems.push(`${k} must be a list`);
+for (const k of ['regions', 'bases', 'evening_bases', 'categories', 'field_packs']) if (!Array.isArray(A[k])) problems.push(`${k} must be a list`);
+if (Array.isArray(A.evening_bases) && Array.isArray(A.bases)) {
+  const stray = A.evening_bases.filter(b => !A.bases.includes(b));
+  if (stray.length) problems.push(`evening_bases must be towns from bases (not in bases: ${stray.join(', ')})`);
+}
 if (A.map_box) {
   const b = A.map_box, ks = ['lat_min', 'lat_max', 'lng_min', 'lng_max'];
   if (!ks.every(k => typeof b[k] === 'number')) problems.push('map_box needs numbers lat_min, lat_max, lng_min, lng_max');

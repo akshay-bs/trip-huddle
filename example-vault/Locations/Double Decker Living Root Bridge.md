@@ -30,7 +30,9 @@ steps_or_climb: About 3,000–3,500 concrete steps down from Tyrna into the vall
 difficulty: strenuous
 group_fit: poor
 time_needed_hrs: 6
-best_time_of_day: Start from Tyrna by 8 am; begin the climb back by 1 pm to be out before dark (sunset about 4:30 pm)
+best_time_of_day: [morning, midday]
+after_dark:
+after_dark_note:
 opening_hours: Daylight hours; start early
 closed_days:
 last_mile: Sohra → Tyrna village, about 12 km (30–40 min) on a paved road. Tempo traveller OK to the Tyrna parking area; everything after that is on foot
@@ -112,6 +114,7 @@ The best season for the trek. The steps are dry, the air is cool (comfortable fo
 - Carry cash for fees, snacks and a guide.
 - Anyone with knee problems should not attempt it; the descent is as hard on knees as the climb is on lungs.
 - Easier alternative: [[Riwai Living Root Bridge]] near Mawlynnong is a short walk and gives most of the root-bridge experience. [[Rangthylliang Living Root Bridge]] is another option already on the list.
+- Best time, as first written: Start from Tyrna by 8 am; begin the climb back by 1 pm to be out before dark (sunset about 4:30 pm)
 
 ## Nearby / combine with
 - Further along the same trail: [[Blue Lagoon (Nongriat)]] (about 30 min) and [[Rainbow Falls]] (about 1–1.5 hrs each way).

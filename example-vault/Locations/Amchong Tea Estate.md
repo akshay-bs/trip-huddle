@@ -29,7 +29,9 @@ steps_or_climb: Guided walk on estate paths over gentle tea-garden slopes; a sho
 difficulty: easy
 group_fit: good
 time_needed_hrs: 2.5
-best_time_of_day: Early afternoon (lunch at Steep House, then the walk while the light is good; sunset is about 4:30 pm)
+best_time_of_day: [afternoon]
+after_dark:
+after_dark_note:
 opening_hours: Amchong Leaf about 9 AM – 6 PM (the website also says 10 AM – 7 PM for the shop); Steep House restaurant from 10 AM
 closed_days:
 last_mile: About 48 km from Guwahati airport (about 1.5 hrs through city traffic). Take NH-27 east to Sonapur, then the Sonapur–Digaru road into the estate. Tempo traveller OK (paved estate road; confirm parking)
@@ -111,6 +113,7 @@ No openly licensed photos found. See the estate's own photos at [amchongtea.com]
 - Phone numbers are on the site's contact page.
 - **Pure-veg group:** Steep House serves meat. Ask for a vegetarian set menu when booking. The PDF's "Club Nirvana Pure Veg (Sonapur)" was not verified.
 - That leaves about 1 hr of driving to Pobitora, finishing around dusk.
+- Best time, as first written: Early afternoon (lunch at Steep House, then the walk while the light is good; sunset is about 4:30 pm)
 
 ## Nearby / combine with
 - Guwahati sights ([[Kamakhya Temple]], [[Umananda Temple]]) are at the other end of the trip.

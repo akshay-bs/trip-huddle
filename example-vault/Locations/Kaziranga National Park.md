@@ -29,7 +29,9 @@ steps_or_climb: None. You stay in the jeep or on the elephant. Mounting the elep
 difficulty: easy
 group_fit: good
 time_needed_hrs: 2
-best_time_of_day: Early morning (elephant safari 5:30 AM, first jeep slot about 7:00–7:30 AM) or the 1:30 PM afternoon jeep slot
+best_time_of_day: [morning, afternoon]
+after_dark:
+after_dark_note:
 opening_hours: Jeep safari slots about 7:30–9:30 AM, 9:30–11:30 AM, 1:30–3:30 PM, 2:30–4:30 PM (varies by range). Elephant safari about 5:00/5:30–7:30 AM, plus an afternoon slot when allotted
 closed_days: Park closed to tourists roughly May–October (monsoon)
 last_mile: Central (Kohora) Range gate is about 2 km from Kohora on NH-715. Safari jeeps are hired at the gate or through the hotel; a tempo traveller cannot enter the park
@@ -110,6 +112,7 @@ December is one of the best months. The park is open, grass is shorter after bur
 - Plus 5% GST.
 - Elephant-safari slots are allotted by the Forest Department and can't be guaranteed, so have a backup jeep slot.
 - Wear muted colours; carry binoculars, a warm jacket, and a dust scarf for the jeep.
+- Best time, as first written: Early morning (elephant safari 5:30 AM, first jeep slot about 7:00–7:30 AM) or the 1:30 PM afternoon jeep slot
 
 ## Nearby / combine with
 - Red River Retreat: the proposed hotel, about 5 min from the Central Range gate

@@ -30,7 +30,9 @@ steps_or_climb:
 difficulty: easy
 group_fit: good
 time_needed_hrs: 0.33
-best_time_of_day: With the Dawki river visit
+best_time_of_day: []
+after_dark:
+after_dark_note:
 opening_hours: About 06:00–18:00
 closed_days:
 last_mile: Dawki–Tamabil road past the bridge; truck queues, tight parking
@@ -102,6 +104,7 @@ Dry and clear. The Dawki road and bridge jam badly in Christmas week (see [[Umng
 ## Tips
 - Follow the BSF's instructions on photography and where you can stand. Carry ID.
 - Open about 6 am – 6 pm. Ask the driver whether a ceremony is held that day.
+- Best time, as first written: With the Dawki river visit
 
 ## Nearby / combine with
 - [[Umngot River (Dawki)]] (boating), [[Shnongpdeng]], [[Mawlynnong Village]]

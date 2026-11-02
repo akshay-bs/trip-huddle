@@ -28,7 +28,9 @@ steps_or_climb: Short walk from the terminal or ghat along a floating jetty and 
 difficulty: easy
 group_fit: good
 time_needed_hrs: 1.5
-best_time_of_day: The sunset sailing, about 4:00–5:00 PM in December (report 30 min early)
+best_time_of_day: [sunset]
+after_dark:
+after_dark_note:
 opening_hours: Daily sailings. The Alfresco Grand sunset cruise leaves around 4:00 PM in winter (60 min). Evening and dinner cruises run later
 closed_days: May be cancelled in bad weather or high water (mainly in the monsoon)
 last_mile: City road to the riverfront on MG Road (Panbazar/Fancy Bazar). City traffic is heavy in the evening, so allow 45–60 min. The tempo traveller drops at the terminal or ghat
@@ -118,6 +120,7 @@ This is a 1-hour sunset cruise on the Brahmaputra from Guwahati's riverfront (MG
 - The upper deck is worth the extra ₹150 for the sunset view.
 - Teens aged 14–16 will almost certainly pay the adult fare. Confirm each operator's child age limit.
 - Carry a jacket or shawl for the open deck.
+- Best time, as first written: The sunset sailing, about 4:00–5:00 PM in December (report 30 min early)
 
 ## Nearby / combine with
 - [[Kamakhya Temple]]

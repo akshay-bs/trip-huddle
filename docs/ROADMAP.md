@@ -25,7 +25,7 @@ These are still specific to the original trip:
 | `Templates/Location.md` FIELD GUIDE | `state: Assam \| Meghalaya`, the `nearest_base` and `category` lists | Values read from Trip facts, or open lists |
 | `Templates/Stay.md`, `Stays.base`, `types.json` | `parking_for_tempo_traveller` | `parking_for_group_vehicle` |
 | `Bases/Stays.base` | `cost_per_family = est_total_inr / 4` | Divide by a number of cost-sharing units from Trip facts. Bases formulas can't read another note, so this may need a per-vault value set at setup |
-| `Templates/Day Plan.md`, `Itinerary.base` | `daylight_hrs: 9.5`, Meghalaya sunrise and sunset times | Set from the destination and dates at setup |
+| `Templates/Day Plan.md`, `Itinerary.base` | `daylight_hrs: 9.5`, Meghalaya sunrise and sunset times | Set from the destination and dates at setup. `plan-day` now works sunrise, sunset and `daylight_hrs` out per date and place; the `trip.md` values are only its fallback |
 | `validate.mjs` | Coordinates must be inside an Assam/Meghalaya box (lat 24–28.5, lng 89–97) | A bounding box from Trip facts, or skip the check when none is set |
 | `Templates/Stay.md` | `_inr` property names, ₹ in Bases | A currency set at setup, or keep `_inr` and document it |
 | `SKILL.md` | December-specific advice (thin waterfalls, fog, Christmas crowds) | Seasonal guidance written from Trip facts |
@@ -39,7 +39,8 @@ These were done by hand on the original trip and could each become a skill:
 - [x] (v0.4.0) **`add-source`**: take in an itinerary, agency quote or hotel list, create the Source note, then hand each item to `add-place`. The checker also warns when a Source note is `processed` with unticked checklist lines.
 - **`compare-itineraries`**: a side-by-side note with nights by base, day by day, places, pace and effort, cost, a bottom line, and what to confirm.
 - **`review-travel-times`**: check each leg of a route against maps and local reports, and give a verdict on whether each day is realistic before sunset.
-- **`plan-day`**: build Day notes (legs, schedule, meals, backup plan) and work out the slack between daylight, driving and activity time.
+- [x] (v0.5.0) **`plan-day`**: build Day notes (legs, schedule, meals, backup plan) with real sunrise and sunset worked out for the date and place (`skills/plan-day/scripts/sun.mjs`), pre-dawn starts counted separately, and the slack between daylight, driving and activity time with an ok / tight / too much verdict. Drive times are written as researched estimates with their basis; they are not verified on the road (see the open item on unverified values in Phase 1).
+- [x] (v0.6.0) **After dark** (see [PLAN-after-dark.md](PLAN-after-dark.md)): places get `best_time_of_day` (a list), `after_dark` and `after_dark_note`; `trip.md` gets `evening_bases`; Day notes get an After dark column on the legs, a *Choices that bend the rules* section and `rule_bends`. `plan-day` uses them as guidelines and asks before breaking one for a `must` place; the checker warns when a Day breaks one without recording it. The 60 example places have the fields empty: filling them in is a research job for `add-place`.
 - **`driver-brief`**: a printable brief or PDF of the route, with the questions for the driver.
 - **`group-decisions`**: keep the home page's open questions current and summarize what the group still has to decide.
 

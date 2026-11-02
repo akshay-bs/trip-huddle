@@ -26,7 +26,9 @@ steps_or_climb: Short uphill walk (about 10–15 min each way) from the village/
 difficulty: easy
 group_fit: good
 time_needed_hrs: 2.5
-best_time_of_day: Pre-dawn to about 8 AM (be at the top by 5:30 AM)
+best_time_of_day: [sunrise, morning]
+after_dark:
+after_dark_note:
 opening_hours: Open access; visited pre-dawn
 closed_days:
 last_mile: Village roads beyond Mawkynrew; narrow in places, final stretch reported as rough. Tempo traveller is used by groups, but confirm with the driver
@@ -109,6 +111,7 @@ Only one freely licensed photo of Nongjrong could be found on Wikimedia Commons.
 - The entry fee is unclear. A 2026 guide says ₹30 per person plus parking, while other blogs say there is no official fee but a contribution may be asked. Carry small cash.
 - The mobile network may be weak, so download offline maps.
 - If the morning is fully fogged in, wait until about 7:30 AM. The fog often breaks and the cloud layer appears below as the sun warms it.
+- Best time, as first written: Pre-dawn to about 8 AM (be at the top by 5:30 AM)
 
 ## Nearby / combine with
 - [[Laitlum Canyons]]: on the same side of Shillong (south-east, via Smit). It pairs naturally the same day, in the afternoon when Laitlum's fog has cleared.

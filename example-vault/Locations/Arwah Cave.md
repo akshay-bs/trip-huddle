@@ -29,7 +29,9 @@ steps_or_climb: Paved forest walkway with some steps and a cliff-side bridge fro
 difficulty: easy
 group_fit: good
 time_needed_hrs: 1.5
-best_time_of_day: Morning (9–11 am), before tour groups arrive
+best_time_of_day: [morning]
+after_dark:
+after_dark_note:
 opening_hours: About 9:00 am – 5:00 pm (verify locally)
 closed_days:
 last_mile: Paved road from Sohra town (about 3.5 km) to parking at Lumshynna; tempo traveller OK
@@ -109,6 +111,7 @@ December is a good time to go. The cave and path are drier and less slippery tha
 - Go early. Afternoon light fades fast in December (sunset about 4:30 pm).
 - Anyone claustrophobic can see the big entrance chamber and turn back; the tight bits are further in.
 - Optional local guides at the gate point out fossils you would otherwise miss.
+- Best time, as first written: Morning (9–11 am), before tour groups arrive
 
 ## Nearby / combine with
 - [[Nohkalikai Falls]] and [[Wei Sawdong Falls]] are on the same (west) side of Sohra.

@@ -19,7 +19,7 @@ Ask in small groups, one group per message. Offer a sensible default for every q
 1. **Basics:** trip name; destination; dates, and whether they're fixed (flights booked) or flexible; where the trip starts and ends.
 2. **People:** how many people; how costs are split (per family, per couple, per person) and how many shares; ages or mobility needs that affect walking and pace; food needs.
 3. **Getting around:** self-drive car, hired van with driver, public transport, or on foot. This decides the parking field and the travel-time notes.
-4. **Place and season:** regions or states; likely base towns; the season in a word or two (e.g. "December", "monsoon", "summer"). **You suggest** daylight hours, a usual day start, sunset time, and a map box around the regions (rounded to half a degree, a little wider than the regions). The user confirms or corrects them. Say they are estimates.
+4. **Place and season:** regions or states; likely base towns, and which of those bases are good for evenings out (lit streets, food open late, short trips back to the stay; small villages and forest stays are not) — ask "Which of your bases are good for evenings out?" and leave it empty if they don't know; the season in a word or two (e.g. "December", "monsoon", "summer"). **You suggest** daylight hours, a usual day start, sunset time, and a map box around the regions (rounded to half a degree, a little wider than the regions). The user confirms or corrects them. Say they are estimates.
 5. **Money:** currency code and symbol. Suggest from the destination.
 6. **What to track:** suggest place categories that fit the destination, and the field packs that fit the answers so far (see `${CLAUDE_PLUGIN_ROOT}/skills/trip-init/field-packs/`, one JSON file per pack, each with a `description` and `suggest_when`). The user picks.
 
@@ -31,7 +31,7 @@ Show one short summary of all answers, grouped as above, with the estimates mark
 ## 3. Write the answers
 Write the answers as JSON to `.claude/scratch/trip-answers.json` inside the target folder (create the folder). Use exactly the property names in `${CLAUDE_PLUGIN_ROOT}/vault-template/trip.md`. Rules:
 - Dates as `YYYY-MM-DD`; times as `"HH:MM"`; `daylight_hrs`, `travellers` and `cost_split_units` as numbers.
-- `regions`, `bases`, `categories`, `field_packs` as lists. Categories in lowercase with hyphens (`lake-river`).
+- `regions`, `bases`, `evening_bases`, `categories`, `field_packs` as lists. `evening_bases` holds only towns that are also in `bases`. Categories in lowercase with hyphens (`lake-river`).
 - `map_box` as `{"lat_min":…, "lat_max":…, "lng_min":…, "lng_max":…}`, or `null`.
 - `cost_split_label` singular and lowercase: `family`, `couple`, `person`.
 - Unknown values: `""` (or `[]` for lists).

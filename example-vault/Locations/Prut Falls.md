@@ -28,7 +28,9 @@ steps_or_climb: Paved footpath (15–30 min each way), downhill steps in the las
 difficulty: easy
 group_fit: good
 time_needed_hrs: 1.5
-best_time_of_day: Late morning to midday
+best_time_of_day: [morning, midday]
+after_dark:
+after_dark_note:
 opening_hours: 07:00–18:00
 closed_days:
 last_mile: Road to the car park at Laitduh / Laitlyndop village (Plus Code 8M7R+8MV); confirm big-vehicle parking with the driver
@@ -107,6 +109,7 @@ No still photo is on Commons; this is a frame from a Dec 2025 video ([watch it](
 - Entry ₹50. Open 7 am – 6 pm. Washrooms at the entrance. Carry cash.
 - Shoes with grip for the wet rock behind the falls.
 - Easy to pair with [[Janailar Falls]] (about 1 km east) and [[Lyngksiar Falls]] on the same morning.
+- Best time, as first written: Late morning to midday
 
 ## Nearby / combine with
 - The waterfall chain: [[Mawsawa Falls]], [[Lyngksiar Falls]], [[Janailar Falls]], [[Dainthlen Falls]]

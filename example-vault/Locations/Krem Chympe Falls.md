@@ -30,7 +30,9 @@ steps_or_climb: Forest trail with a suspension bridge, boulder crossings and som
 difficulty: strenuous
 group_fit: poor
 time_needed_hrs: 5
-best_time_of_day: Start very early (leave Khliehriat about 6:30 am) and be out of the forest well before 4 pm
+best_time_of_day: [morning, midday]
+after_dark:
+after_dark_note:
 opening_hours: No fixed hours; go with a guide in daylight
 closed_days: Closed in the monsoon (about Jun–Sep) because of flash floods
 last_mile: NH-6 to Lumshnong, then about 7 km on a rough dirt road to Brichyrnot (Brishyrnot) village. A tempo traveller is unlikely to manage this; use local 4x4s or pickups (about ₹1,500–5,000 round trip). Not on Google Maps; a guide is needed
@@ -111,6 +113,7 @@ No freely licensed photos were found on Wikimedia Commons. See the photos in [Ou
 - Check the weather: if it has rained in the previous days, the 4x4 track may be shut and the walk doubles.
 - Anyone with knee problems or a fear of deep water should stop at the falls viewpoint.
 - **Driving after dark:** local drivers told the group (3 Oct 2026) that they don't drive in this area after 4:30 pm. That rules out a day trip from Shillong or Mawlynnong, but not a trip from a Jowai or Khliehriat base that is back by 15:00–16:00.
+- Best time, as first written: Start very early (leave Khliehriat about 6:30 am) and be out of the forest well before 4 pm
 
 ## Nearby / combine with
 - It is far east of every other place on the list. It would take a full day from Jowai, or an overnight in Khliehriat.

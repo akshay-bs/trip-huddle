@@ -23,7 +23,9 @@ steps_or_climb:
 difficulty: easy
 group_fit: good
 time_needed_hrs: 1
-best_time_of_day: Late morning, after the Umananda ferry
+best_time_of_day: [morning]
+after_dark:
+after_dark_note:
 opening_hours: Not verified (government showroom; usually about 10 AM – 7 PM). Confirm before the day
 closed_days: "Not verified; may be closed on Sundays"
 last_mile: GNB Road, Ambari, by the Assam Textile Institute, about 1 km from Kachari / Umananda Ghat and next to Panbazar. Tempo traveller drop-off on GNB Road; parking is tight
@@ -96,6 +98,7 @@ No openly licensed photos found.
 ## Tips
 - Check the opening hours a day ahead; they are not published online.
 - Carry a card or UPI for big silk purchases, and ask for the silk-mark certificate on muga or pat silk.
+- Best time, as first written: Late morning, after the Umananda ferry
 
 ## Nearby / combine with
 - [[Umananda Temple]]: ferry from Kachari / Umananda Ghat, about 1 km away

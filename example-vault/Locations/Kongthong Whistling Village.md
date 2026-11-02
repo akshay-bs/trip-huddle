@@ -29,7 +29,9 @@ steps_or_climb: Village lanes on a hillside slope with some steps down from the 
 difficulty: easy
 group_fit: ok
 time_needed_hrs: 4
-best_time_of_day: Early morning or late afternoon/evening, when villagers are at home
+best_time_of_day: [morning, afternoon, evening]
+after_dark:
+after_dark_note:
 opening_hours: Village; no fixed hours (daylight for day visitors)
 closed_days:
 last_mile: About 25 km of narrow, partly rough/rocky road via the Khatarshnong road off the Shillong–Sohra side (turn near Mawjrong). Tempo traveller probably possible but slow; confirm with the driver
@@ -110,6 +112,7 @@ December is a good month. The dry, clear weather means long views over the Khata
 - Carry cash, snacks and water. Mobile network is weak.
 - Be respectful: ask before photographing people and homes, and a small contribution to the host family is appreciated.
 - Motion-sickness tablets for anyone prone to it; the road is winding and bumpy.
+- Best time, as first written: Early morning or late afternoon/evening, when villagers are at home
 
 ## Nearby / combine with
 - The drive passes through the Khatarshnong ridge country. It can be paired on the same side of the hills with [[Mawkdok Dympep Valley Viewpoint]] (on the Shillong–Sohra road) if the timing works.

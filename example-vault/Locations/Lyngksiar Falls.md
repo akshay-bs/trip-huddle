@@ -28,7 +28,9 @@ steps_or_climb: Paved trail, some steps down in the last part (and back up)
 difficulty: easy
 group_fit: good
 time_needed_hrs: 1.5
-best_time_of_day: Late morning to midday
+best_time_of_day: [morning, midday]
+after_dark:
+after_dark_note:
 opening_hours: 07:00–18:00 (Google shows 9:30 am opening; verify)
 closed_days:
 last_mile: Road to the entrance; confirm big-vehicle parking
@@ -106,6 +108,7 @@ Flow is lower, but the pool is clear. Swimming is allowed with a life jacket; th
 - Entry ₹50. Open 7 am – 6 pm per Polo Hotels, but Google Maps shows a 9:30 am opening; confirm before planning an early start. Washrooms at the entrance.
 - Swimmers: carry a towel and warm layers.
 - Wear shoes with grip.
+- Best time, as first written: Late morning to midday
 
 ## Nearby / combine with
 - [[Janailar Falls]] (close by), [[Prut Falls]] (about 1.5 km west), [[Mawsawa Falls]], [[Dainthlen Falls]], [[Wei Sawdong Falls]], [[Garden of Caves]]

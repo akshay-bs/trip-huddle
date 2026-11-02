@@ -28,7 +28,9 @@ steps_or_climb: Uneven natural trail from the road; details unknown
 difficulty: moderate
 group_fit: ok
 time_needed_hrs: 1
-best_time_of_day: Late morning
+best_time_of_day: [morning]
+after_dark:
+after_dark_note:
 opening_hours:
 closed_days:
 last_mile: Local road near Mawkma; confirm with the driver
@@ -102,6 +104,7 @@ Thin flow, but clear water. The trail is dry. Details are scarce, so treat it as
 
 ## Tips
 - Only with a local guide or a driver who knows the trail.
+- Best time, as first written: Late morning
 
 ## Nearby / combine with
 - [[Lyngksiar Falls]] (close by), [[Mawsawa Falls]], [[Dainthlen Falls]], [[Wei Sawdong Falls]]

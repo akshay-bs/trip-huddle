@@ -28,7 +28,9 @@ steps_or_climb: About 1.5 km each way through forest. Mostly flat, then a near-v
 difficulty: moderate
 group_fit: poor
 time_needed_hrs: 5
-best_time_of_day: Be at the river by 9–10 am; the boats stop at 2 pm
+best_time_of_day: [morning]
+after_dark:
+after_dark_note:
 opening_hours: 8 am – 2 pm (boating)
 closed_days: Closed Apr–Oct (monsoon water levels)
 last_mile: Emangre village is 36 km from Baghmara and 7–9 hrs by road from Guwahati (about 231 km) or Shillong (about 272 km, via Nongstoin). From Emangre, about 15 km of very bad off-road track (45–55 min) to the trailhead needs local 4x4s; the tempo traveller cannot do it
@@ -113,6 +115,7 @@ December is the best time to go. The canyon is closed April–October because th
 - Carry a waterproof phone pouch, water and snacks, plus a dry change of clothes and a warm layer.
 - Homestays in Emangre are very basic. Baghmara (36 km away) has slightly better options, and there's a homestay at Siju.
 - Be off the river by 2 pm and back on the road before dark.
+- Best time, as first written: Be at the river by 9–10 am; the boats stop at 2 pm
 
 ## Nearby / combine with
 - Siju Caves (Siju, on the Simsang) and Balpakram National Park are in the same district; Muddie Trails' package combines Wari Chora with Siju Caves. Neither is in the vault.

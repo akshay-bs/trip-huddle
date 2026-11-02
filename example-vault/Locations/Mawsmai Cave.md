@@ -27,7 +27,9 @@ steps_or_climb: Short walk past stalls from parking; about 150 m lit one-way rou
 difficulty: easy
 group_fit: ok
 time_needed_hrs: 1
-best_time_of_day: Right at opening (about 9 am), before tour buses
+best_time_of_day: [morning]
+after_dark:
+after_dark_note:
 opening_hours: About 9:00 am – 5:00 pm (some sources say 9:30 am – 5:30 pm)
 closed_days:
 last_mile: Paved road via Mawsmai village, about 6 km south of Sohra town; tempo traveller OK
@@ -107,6 +109,7 @@ December is a good time: the passages are drier, with less dripping water and mu
 - Keep phones on a wrist strap or in a zipped pocket in the squeezes.
 - Brief the group beforehand that it is one-way with tight spots, so anyone unsure opts out at the entrance.
 - If the group prefers fewer crowds and more space, [[Arwah Cave]] is the calmer alternative. Doing both is usually overkill.
+- Best time, as first written: Right at opening (about 9 am), before tour buses
 
 ## Nearby / combine with
 - [[Seven Sisters Falls]]: the viewpoint is minutes away on the same road.

@@ -130,6 +130,7 @@ const mapBox = (() => {
   const n = ['lat_min', 'lat_max', 'lng_min', 'lng_max'].map(k => Number(b[k]));
   return n.every(Number.isFinite) && b.lat_min !== '' ? { latMin: n[0], latMax: n[1], lngMin: n[2], lngMax: n[3] } : null;
 })();
+const eveningBases = Array.isArray(trip.evening_bases) ? trip.evening_bases.map(String) : [];
 const regions = Array.isArray(trip.regions) && trip.regions.length ? trip.regions.map(String) : null;
 const decisionValues = Array.isArray(trip.decision_values) && trip.decision_values.length
   ? trip.decision_values.map(String) : ['considering', 'selected', 'backup', 'dropped'];
@@ -161,6 +162,8 @@ const wikilinks = s => [...s.replace(/<!--[\s\S]*?-->/g, '').matchAll(/\[\[([^\]
 const errors = [], warnings = [], droppedNoReason = [];
 const err = (f, msg) => errors.push(`${rel(f)}: ${msg}`);
 const warn = (f, msg) => warnings.push(`${rel(f)}: ${msg}`);
+const strayEvening = Array.isArray(trip.bases) ? eveningBases.filter(x => !trip.bases.map(String).includes(x)) : [];
+if (strayEvening.length) warnings.push(`trip.md: evening_bases has towns that are not in bases: ${strayEvening.join(', ')}. Use the same spelling as in bases`);
 
 const isTripNoteSpot = p => {
   const r = rel(p);
@@ -224,9 +227,12 @@ for (const f of targets) {
   // closed value lists from the template's FIELD GUIDE
   for (const [k, allowed] of Object.entries(t.enums)) {
     const v = fm.data[k];
-    if (v === null || v === undefined || Array.isArray(v) || typeof v === 'object' || k === 'decision') continue;
+    if (v === null || v === undefined || (typeof v === 'object' && !Array.isArray(v)) || k === 'decision') continue;
     if (k === 'state' && regions) continue;   // checked against the trip.md regions below
-    if (!allowed.has(String(v))) warn(f, `${k} "${v}" is not one of: ${[...allowed].join(' | ')}. Use one of these, or add the new value to the list in ${t.file}.`);
+    // A list property (like best_time_of_day: [sunrise, evening]) is checked item by item.
+    for (const item of Array.isArray(v) ? v : [v]) {
+      if (!allowed.has(String(item))) warn(f, `${k} "${item}" is not one of: ${[...allowed].join(' | ')}. Use one of these, or add the new value to the list in ${t.file}.`);
+    }
   }
   if (regions && fm.data.state && !regions.some(r => r.toLowerCase() === String(fm.data.state).toLowerCase())) {
     warn(f, `state "${fm.data.state}" is not one of the trip regions in trip.md: ${regions.join(' | ')}`);
@@ -282,6 +288,7 @@ for (const f of targets) {
     if (Number.isFinite(maxHrs) && maxHrs > 0 && Number(fm.data.drive_hrs) > maxHrs) {
       warn(f, `drive_hrs ${fm.data.drive_hrs} is over the daily limit of ${maxHrs} hours in the Transport note`);
     }
+    dayChecks(f, fm.data, fm.body);
   }
   if (type === 'source' && String(fm.data.processed) === 'true') {
     for (const l of new Set(wikilinks(fm.body))) if (!resolves(l)) warn(f, `marked processed, but [[${l}]] has no note yet`);
@@ -296,6 +303,96 @@ for (const f of targets) {
   if (!/^# .+/m.test(fm.body)) warn(f, 'no H1 heading (a line starting with "# ")');
   else if (!fm.body.match(/^# (.+)$/m)[1].includes(name.replace(/\s*\(.*\)$/, ''))) warn(f, 'the H1 heading does not match the file name');
   if (/\{\{(title|date|time)\}\}/.test(text)) err(f, 'a template placeholder like {{title}} was not replaced with real text');
+}
+
+// Day notes: sun times and the daylight arithmetic must agree with each other.
+function dayChecks(f, d, body = '') {
+  const clock = v => /^\d{1,2}:\d{2}$/.test(String(v)) ? Number(String(v).split(':')[0]) * 60 + Number(String(v).split(':')[1]) : null;
+  const times = {};
+  for (const k of ['early_start', 'sunrise', 'sunset']) {
+    if (d[k] == null || d[k] === '') continue;
+    times[k] = clock(d[k]);
+    if (times[k] === null) warn(f, `${k} "${d[k]}" should be a local time like "06:30" (in quotes)`);
+  }
+  if (times.early_start != null && times.sunrise != null && times.early_start >= times.sunrise) {
+    warn(f, `early_start ${d.early_start} is not before sunrise ${d.sunrise}. Leave early_start empty on a day that starts after sunrise`);
+  }
+  if (Number(d.predawn_hrs) > 0 && !d.early_start) warn(f, 'predawn_hrs is set but early_start is empty. Say when the day starts');
+  if (times.sunrise != null && times.sunset != null && d.daylight_hrs && times.sunset > times.sunrise
+      && Math.abs((times.sunset - times.sunrise) / 60 - Number(d.daylight_hrs)) > 0.3) {
+    warn(f, `daylight_hrs ${d.daylight_hrs} does not match sunrise ${d.sunrise} to sunset ${d.sunset}. daylight_hrs is real daylight, not the length of the day`);
+  }
+  const num = v => (v === null || v === undefined || v === '' ? 0 : Number(v));
+  if (d.daylight_hrs && Number.isFinite(num(d.drive_hrs) + num(d.activity_hrs) + num(d.predawn_hrs))) {
+    const slack = Number(d.daylight_hrs) - (num(d.drive_hrs) + num(d.activity_hrs) - num(d.predawn_hrs));
+    if (slack < -0.05) warn(f, `drive_hrs + activity_hrs are ${(-slack).toFixed(1)} hrs more than the daylight. Cut or move something, or split the day (verdict: too much)`);
+  }
+  afterDarkChecks(f, d, body, times.sunset);
+}
+
+// After dark. The Schedule says when things happen; the Legs table says which roads are bad at night.
+// Only what can be read reliably is checked: Schedule rows that START after sunset (a row's time is the first
+// cell, "HH:MM"). A leg has no time of its own, so an `avoid` leg counts as after sunset only when a Schedule row
+// after sunset mentions a driving word (drive, leave, depart, return, transfer) and the leg's From or To town.
+// A stay that starts before sunset and runs past it is not caught.
+function afterDarkChecks(f, d, body, sunset) {
+  const section = title => {
+    const m = body.replace(/<!--[\s\S]*?-->/g, '').match(new RegExp(`^## ${title}[^\\n]*\\n([\\s\\S]*?)(?=^## |(?![\\s\\S]))`, 'm'));
+    return m ? m[1] : null;
+  };
+  const rows = text => (text || '').split(/\r?\n/).filter(l => /^\s*\|/.test(l))
+    .map(l => l.trim().replace(/^\||\|$/g, '').split(/(?<!\\)\|/).map(c => c.trim()))
+    .filter(r => !r.every(c => /^:?-+:?$/.test(c)));
+  const plain = s => s.replace(/\[\[([^\]|]*\|)?([^\]]*)\]\]/g, '$2').trim();
+
+  const legs = rows(section('Legs'));
+  const head = (legs[0] || []).map(c => c.toLowerCase());
+  const darkCol = head.indexOf('after dark'), fromCol = head.indexOf('from'), toCol = head.indexOf('to');
+  const avoidLegs = [];
+  if (darkCol >= 0) {
+    for (const r of legs.slice(1)) {
+      const v = (r[darkCol] || '').toLowerCase();
+      if (v && v !== 'ok' && v !== 'avoid') warn(f, `Legs table: After dark "${r[darkCol]}" should be ok or avoid`);
+      if (v === 'avoid') avoidLegs.push({ from: plain(r[fromCol] || ''), to: plain(r[toCol] || '') });
+    }
+  }
+
+  const bends = Number(d.rule_bends);
+  const listed = (section('Choices that bend the rules') || '').split(/\r?\n/).filter(l => /^\s*- \*\*/.test(l)).length;
+  if (d.rule_bends !== null && d.rule_bends !== undefined && d.rule_bends !== '' && Number.isFinite(bends) && bends !== listed) {
+    warn(f, `rule_bends is ${d.rule_bends} but "Choices that bend the rules" lists ${listed}. Make them match`);
+  }
+
+  const sunsetMin = sunset;
+  if (sunsetMin == null || bends > 0) return;
+  const toMin = s => { const m = String(s).match(/^(\d{1,2}):(\d{2})/); return m ? Number(m[1]) * 60 + Number(m[2]) : null; };
+  const hits = new Set();
+  for (const r of rows(section('Schedule')).slice(1)) {
+    const at = toMin(r[0]);
+    if (at == null || at <= sunsetMin) continue;
+    const text = r.slice(1).join(' ');
+    for (const l of wikilinks(text)) {
+      const loc = locationNote(l);
+      if (loc?.data.after_dark === 'avoid') hits.add(`[[${l}]] is scheduled at ${r[0]}, after sunset (${d.sunset}), but it is marked after_dark: avoid`);
+    }
+    if (/\b(driv\w*|leav\w*|depart\w*|return\w*|transfer\w*)\b/i.test(text)) {
+      for (const leg of avoidLegs) {
+        const lower = plain(text).toLowerCase();
+        if ([leg.from, leg.to].some(n => n && lower.includes(n.toLowerCase()))) {
+          hits.add(`the leg ${leg.from} to ${leg.to} is marked After dark: avoid, and the Schedule has a drive at ${r[0]}, after sunset (${d.sunset})`);
+        }
+      }
+    }
+  }
+  for (const h of hits) warn(f, `${h}, and rule_bends is ${Number.isFinite(bends) ? bends : 0}. Move it before sunset, or if the group chooses it, write it under "Choices that bend the rules" and set rule_bends`);
+}
+function locationNote(name) {
+  locationNote.cache ||= new Map();
+  if (!locationNote.cache.has(name)) {
+    const p = (byBase.get(name) || []).find(x => x.endsWith('.md') && rel(x).startsWith(FOLDERS.location + '/'));
+    locationNote.cache.set(name, p ? parseFrontmatter(read(p)) : null);
+  }
+  return locationNote.cache.get(name);
 }
 
 function transportLimit(key) {

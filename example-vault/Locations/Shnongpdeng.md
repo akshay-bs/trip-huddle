@@ -27,7 +27,9 @@ steps_or_climb: A short but fairly steep path or steps from the road and parking
 difficulty: easy
 group_fit: good
 time_needed_hrs: 3.5
-best_time_of_day: Morning (9 AM – 1 PM). Scuba slots usually run about 10 AM – 1 PM, the light on the water is best before early afternoon, and it is less crowded
+best_time_of_day: [morning, midday]
+after_dark:
+after_dark_note:
 opening_hours: Activities about 8–10 AM to 4–6 PM, depending on operator and light
 closed_days:
 last_mile: About 8 km upstream of Dawki by a narrow, winding village road off the Shillong–Dawki highway. Tempo traveller OK with care. Parking near the top of the village is limited on peak days
@@ -124,6 +126,7 @@ Indicative 2024–26 prices from several operators and guides. Rates vary by ope
 - Bring towels, a change of warm clothes and sandals for the pebbly bank.
 - Cliff jumping from about 8 m or 14 m into cold water is a real risk. Consider limiting it to the lowest point, or skip it.
 - Scuba (3–4 hrs) plus Dawki boating plus that drive is a very long day.
+- Best time, as first written: Morning (9 AM – 1 PM). Scuba slots usually run about 10 AM – 1 PM, the light on the water is best before early afternoon, and it is less crowded
 
 ## Nearby / combine with
 - [[Umngot River (Dawki)]] (8 km downstream: classic boat ride, Dawki suspension bridge, border view)

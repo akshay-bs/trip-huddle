@@ -15,6 +15,8 @@ You are adding notes to an Obsidian trip-planning vault at <absolute vault path>
 
 **Your task:** research each item on the web and create one note per item, at the exact path given. Use WebSearch and WebFetch with sources such as Wikipedia, OpenStreetMap/Nominatim, official tourism and hotel sites, OTAs, and reviews from the last 2–3 years. Don't edit any other file.
 
+For every place, also research **when to go and whether it works after dark**: `best_time_of_day` (a list from the template, e.g. `[sunrise]` or `[evening, night]`), `after_dark` (good | fine | avoid, judging the road back as well as the place) and `after_dark_note` (the reason in a few words). If the reason depends on the season, put it in `season_note` too. If you couldn't find evidence, leave `after_dark` blank or start `after_dark_note` with "Guess:". Don't present a guess as researched.
+
 - Source: "[[<Source note name>]]"
 - Source tag: `<SourceTag>`
 - Added on: <YYYY-MM-DD>
@@ -26,5 +28,5 @@ Items:
 Other notes that already exist and that you may cross-link to with [[wikilinks]]: <comma-separated list of Locations/ and Stays/ note names, or "see the Locations/ and Stays/ folders">.
 
 **When you're done,** reply with:
-- A table: note | coordinates (and their source) | season_verdict | difficulty | group_fit | #photos.
+- A table: note | coordinates (and their source) | season_verdict | difficulty | group_fit | best_time_of_day | after_dark (researched or guess) | #photos.
 - Your doubts: assumed identity, conflicting fees, unverified pins, and anything the group must know.

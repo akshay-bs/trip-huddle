@@ -29,7 +29,9 @@ steps_or_climb: Stone steps and bamboo bridges on an up-and-down loop
 difficulty: easy
 group_fit: good
 time_needed_hrs: 1.5
-best_time_of_day: Late morning
+best_time_of_day: [morning]
+after_dark:
+after_dark_note:
 opening_hours: 08:30–17:30 (confirm)
 closed_days: Probably open daily (Capture A Trip lists Sundays about 09:00–17:00); one older source says Mon–Sat only. Confirm
 last_mile: Short side road off the Shillong–Sohra road at Laitmawsiang
@@ -103,6 +105,7 @@ The flow is much lower than after the monsoon, so the waterfalls are thin stream
 - Entry reports vary (₹20 plus ₹20 for a phone camera, up to ₹100). Carry cash.
 - One source says it's open Mon–Sat only (08:30–17:30), but a newer one ([Capture A Trip](https://www.captureatrip.com/blog/garden-of-caves)) lists Sunday hours of about 09:00–17:00. Confirm before relying on a Sunday visit.
 - Wear shoes with grip.
+- Best time, as first written: Late morning
 
 ## Nearby / combine with
 - On the Shillong → Sohra drive, near [[Mawkdok Dympep Valley Viewpoint]]

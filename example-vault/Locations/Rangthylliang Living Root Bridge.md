@@ -29,7 +29,9 @@ steps_or_climb: About 1,500 well-built stone steps down from Rangthylliang to th
 difficulty: strenuous
 group_fit: poor
 time_needed_hrs: 3
-best_time_of_day:
+best_time_of_day: []
+after_dark:
+after_dark_note:
 opening_hours:
 closed_days:
 last_mile: Trailhead in Rangthylliang village, on the Pynursla–Dawki road, close to [[Conara Resort]] (whose address is listed as Rangthylliang)

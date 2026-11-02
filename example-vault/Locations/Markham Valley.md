@@ -30,7 +30,9 @@ steps_or_climb: Short walk from parking to the viewpoint; optional scrambles up 
 difficulty: easy
 group_fit: ok
 time_needed_hrs: 1.5
-best_time_of_day: Sunrise / early morning for mist; otherwise late morning to early afternoon
+best_time_of_day: [sunrise, morning, midday, afternoon]
+after_dark:
+after_dark_note:
 opening_hours: Daylight hours
 closed_days:
 last_mile: About 52 km on the Shillong–Mairang–Nongstoin road (NH-106) to Shyrwang, then 10–15 km of narrow village road (gravel/stone patches, poor signage). Confirm tempo traveller access with the driver
@@ -115,6 +117,7 @@ Only one Commons image was found. Its description says only "Popular tourist spo
 - Download offline maps. Signage is poor, and the drivers from Shillong may not know the village road.
 - Carry snacks and water. There are only small shops.
 - **Coordinates are moderately uncertain.** They come from the map pin on the official district tourism page, not a field-verified GPS point. Double-check in Google Maps ("Dommurok View Point" / "Markham Valley") before the trip.
+- Best time, as first written: Sunrise / early morning for mist; otherwise late morning to early afternoon
 
 ## Nearby / combine with
 - None of this trip's other locations are close. Everything else is east or south of Shillong.

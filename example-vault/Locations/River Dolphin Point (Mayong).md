@@ -26,7 +26,9 @@ steps_or_climb: Riverbank; none expected
 difficulty: easy
 group_fit: good
 time_needed_hrs: 1
-best_time_of_day: Early morning, when the river is calm
+best_time_of_day: [morning]
+after_dark:
+after_dark_note:
 opening_hours:
 closed_days:
 last_mile: Exact spot not confirmed (map pin is Mayong village, approximate). Described as about 1 km from Mayong village, at a river confluence near Pobitora
@@ -100,6 +102,7 @@ After the monsoon (Sept–Oct) is best. By December the water is lower and sight
 ## Tips
 - Go early, keep quiet, and bring binoculars.
 - Give it a fixed 45–60 minutes.
+- Best time, as first written: Early morning, when the river is calm
 
 ## Nearby / combine with
 - [[Pobitora Wildlife Sanctuary]], Mayong Villa, Mystique Mayong Eco Resort

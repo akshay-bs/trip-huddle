@@ -29,7 +29,9 @@ steps_or_climb: Short walk from the riverside car park to the boat ghat, over un
 difficulty: easy
 group_fit: good
 time_needed_hrs: 2
-best_time_of_day: Early morning (7–10 AM) for fewer boats, a calmer road and good light. Late morning sun overhead gives the strongest see-through effect
+best_time_of_day: [morning, midday]
+after_dark:
+after_dark_note:
 opening_hours: Boats run about 7–8 AM to 4–5 PM (daylight, weather permitting)
 closed_days:
 last_mile: On the Shillong–Dawki highway (NH-206, old NH-40), about 80–90 km from Shillong. Tempo traveller can reach the riverside parking below the bridge, but the approach road and bridge jam badly in peak season
@@ -116,6 +118,7 @@ The Umngot (also called Wah Umngot or the Dawki River) flows out of the Khasi–
 - Choose Dawki *or* Shnongpdeng for the long boat ride. Dawki has the bridge and border view, while Shnongpdeng is calmer and has the activities. With a long drive afterwards, a short Dawki ride plus a photo from the bridge may be enough.
 - Before travelling, ask the driver or hotel about road-work closures on the Shillong–Dawki highway. Stoppages are sometimes announced at short notice.
 - Don't swim at the Dawki ghat. The current and boat traffic make it unsafe. Swim only in designated areas at Shnongpdeng with a life jacket.
+- Best time, as first written: Early morning (7–10 AM) for fewer boats, a calmer road and good light. Late morning sun overhead gives the strongest see-through effect
 
 ## Nearby / combine with
 - [[Shnongpdeng]] (8 km upstream: scuba, snorkelling, kayaking, zipline, camping)

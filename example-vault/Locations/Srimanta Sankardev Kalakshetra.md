@@ -28,7 +28,9 @@ steps_or_climb: Flat, paved campus with a few steps into galleries
 difficulty: easy
 group_fit: good
 time_needed_hrs: 1.5
-best_time_of_day: Morning or early afternoon
+best_time_of_day: [morning, afternoon]
+after_dark:
+after_dark_note:
 opening_hours: About 10:00 AM – 7:00 PM (galleries may close earlier, around 4:30–5 PM)
 closed_days: Monday
 last_mile: On the Panjabari road in east Guwahati, about 5–6 km from GS Road; parking on site. Tempo traveller OK
@@ -107,6 +109,7 @@ Good any time in December. Mild and dry. Check for special cultural events or fa
 ## Tips
 - With a 5–6 hr drive to Kaziranga still ahead, only stop if you land by late morning.
 - Fees vary a little between sources (₹20–30 adult). Carry cash.
+- Best time, as first written: Morning or early afternoon
 
 ## Nearby / combine with
 - [[Assam State Museum]]: the other big museum, in the city centre

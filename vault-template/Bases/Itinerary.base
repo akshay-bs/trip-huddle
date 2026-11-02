@@ -3,10 +3,21 @@ filters:
     - type == "day"
     - '!file.inFolder("Templates")'
 formulas:
-  slack_hrs: if(daylight_hrs, daylight_hrs - (if(drive_hrs, drive_hrs, 0) + if(activity_hrs, activity_hrs, 0)), "")
+  slack_hrs: if(daylight_hrs, (daylight_hrs - (if(drive_hrs, drive_hrs, 0) + if(activity_hrs, activity_hrs, 0) - if(predawn_hrs, predawn_hrs, 0))).round(1), "")
+  verdict: if(formula.slack_hrs == "", "", if(formula.slack_hrs < 0, "too much", if(formula.slack_hrs < 1.5, "tight", "ok")) + if(rule_bends, " (" + rule_bends.toString() + " rule bend" + if(rule_bends > 1, "s", "") + ")", ""))
 properties:
   formula.slack_hrs:
     displayName: Slack hrs
+  formula.verdict:
+    displayName: Verdict
+  early_start:
+    displayName: Early start
+  daylight_hrs:
+    displayName: Daylight hrs
+  predawn_hrs:
+    displayName: Pre-dawn hrs
+  rule_bends:
+    displayName: Rule bends
 views:
   - type: table
     name: Days
@@ -17,10 +28,17 @@ views:
       - end_base
       - stay
       - locations
+      - early_start
+      - sunrise
+      - sunset
+      - daylight_hrs
       - drive_hrs
       - activity_hrs
+      - predawn_hrs
       - formula.slack_hrs
+      - formula.verdict
       - total_walk_km
+      - rule_bends
     sort:
       - property: day
         direction: ASC

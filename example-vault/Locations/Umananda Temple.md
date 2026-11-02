@@ -29,7 +29,9 @@ steps_or_climb: A steep flight of stone steps up from the island landing to the 
 difficulty: moderate
 group_fit: ok
 time_needed_hrs: 2
-best_time_of_day: Morning (9–11 AM), to catch government ferries both ways
+best_time_of_day: [morning]
+after_dark:
+after_dark_note:
 opening_hours: Temple about 5:30 AM – 6:00 PM. Government ferries from Umananda/Kachari Ghat about 9:00 AM – 2:00 PM (returns until about 2:40 PM), roughly every 1 hr 15 min; private boats about 8:30 AM – 5:00 PM
 closed_days:
 last_mile: Ferry from Umananda Ghat / Kachari Ghat on MG Road (opposite the Kamrup DC office), about 8–10 min crossing. Tempo traveller drops at the ghat
@@ -107,6 +109,7 @@ Low, calm water and clear weather make the crossing easy. The main constraint is
 - Check the latest ferry times on the day (the Assam Inland Water Transport app or at the ghat).
 - For a big group, a private boat for the whole group may be simpler than waiting for the government ferry.
 - Dress modestly; remove shoes at the temple.
+- Best time, as first written: Morning (9–11 AM), to catch government ferries both ways
 
 ## Nearby / combine with
 - [[Assam State Museum]]: about 1 km from the ghat

@@ -30,7 +30,9 @@ steps_or_climb: Split Rock / crevice walk is about 40–60 min with ladders insi
 difficulty: moderate
 group_fit: ok
 time_needed_hrs: 4
-best_time_of_day: Walks and treks in the morning; water activities around midday/early afternoon (warmest)
+best_time_of_day: [morning, midday, afternoon]
+after_dark:
+after_dark_note:
 opening_hours: Activities by prior booking, daylight only
 closed_days:
 last_mile: Shillong → Mawsynram → Mawlyngbna (about 75–80 km, 2–2.5 hrs from Shillong). The last stretch is narrow but motorable; tempo traveller should manage (confirm)
@@ -113,6 +115,7 @@ No verifiable Wikimedia Commons (or other openly licensed) images of Mawlyngbna 
 - Carry cash (no ATMs; nearest in Mawsynram), quick-dry clothes, towels, a warm layer and water shoes.
 - Adults with knee or back issues should stick to kayaking and the short crevice walk.
 - Contact numbers on mawlyngbna.com: +91 85753 79583 / +91 84138 70338 (WhatsApp). Verify before relying on them.
+- Best time, as first written: Walks and treks in the morning; water activities around midday/early afternoon (warmest)
 
 ## Nearby / combine with
 - [[Umkhakoi Lake]] is the activity hub for the village; do both together.

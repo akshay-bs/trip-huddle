@@ -27,7 +27,9 @@ steps_or_climb: Steep descent on uneven stone/concrete steps, mud slopes and one
 difficulty: moderate
 group_fit: poor
 time_needed_hrs: 2
-best_time_of_day: Late morning (about 10 am – 1 pm) when sun reaches the pools
+best_time_of_day: []
+after_dark:
+after_dark_note:
 opening_hours: About 8:00 am – 5:00 pm (verify locally)
 closed_days:
 last_mile: Paved road from Sohra toward Dainthlen, then a short side road to the trailhead parking; tempo traveller OK (verify the final stretch)
@@ -106,6 +108,7 @@ Dry season. Flow is far thinner than in Oct–Nov, and by late December each tie
 - Carry water. There is nothing at the bottom.
 - Go before 1 pm. The gorge gets dark early in December, and you do not want to climb out in fading light.
 - Anyone with knee problems should skip it; the steep descent is harder on knees than the climb.
+- Best time, as first written: Late morning (about 10 am – 1 pm) when sun reaches the pools
 
 ## Nearby / combine with
 - [[Nohkalikai Falls]] and [[Arwah Cave]] are on the same (west) side of Sohra.

@@ -27,7 +27,9 @@ steps_or_climb: Short paved path to the park viewpoints
 difficulty: easy
 group_fit: good
 time_needed_hrs: 0.5
-best_time_of_day: Morning (clearer before the haze and fog)
+best_time_of_day: []
+after_dark:
+after_dark_note:
 opening_hours:
 closed_days:
 last_mile: On the Sohra–Laitkynsew road; any vehicle
@@ -99,6 +101,7 @@ Monsoon-fed. **In December it is usually very thin or dry**, like [[Seven Sister
 ## Tips
 - Park entry is about ₹10–30.
 - In December, treat it as a 20-minute stop, not a destination.
+- Best time, as first written: Morning (clearer before the haze and fog)
 
 ## Nearby / combine with
 - Cherrapunjee Holiday Resort (Laitkynsew), [[David Scott Trail]]

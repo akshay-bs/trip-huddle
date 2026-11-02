@@ -1,6 +1,6 @@
 # Plan: day trips, evenings, and rules the group bends
 
-Status: proposal, not built yet.
+Status: built (v0.6.0).
 
 ## The problem
 plan-day uses one rule: leave outdoor places before sunset, and keep the last drive short after dark. Real groups plan more finely than that:
@@ -71,7 +71,7 @@ A new section after Backup plan:
 
 ```markdown
 ## Choices that bend the rules
-- **Staying late at City cathedral (till 19:30).** Why: it's lit up for the festival. Cost: the drive back is 15 min on city streets (ok after dark). Agreed by: the group, on <date>.
+- **Staying late at City cathedral (till 19:30).** Why: it's lit up for the festival. Cost: 15 min on city streets after dark (ok).
 ```
 
 One new property, so the Itinerary base can show it:
@@ -95,11 +95,7 @@ When a plan only works by breaking a rule:
 
 ## 5. Checker
 - `after_dark` must be good, fine or avoid. `best_time_of_day` values must be from its list.
-- Warning (not error): a Day schedules an `after_dark: avoid` place after sunset, or has an `avoid` leg after sunset, and `rule_bends` is 0.
+- Warning (not error): a Day schedules an `after_dark: avoid` place after sunset, or has an `avoid` leg after sunset, and `rule_bends` is 0. It reads the Schedule rows that start after sunset; an `avoid` leg counts when such a row mentions a drive and the leg's From or To. A stay that starts before sunset and runs past it is not caught.
 
 ## 6. Existing notes
-The example vault's 60 places get the new fields. A script adds them empty, so they pass the checker. Filling them is a research job for add-place, done later or on request.
-
-## Open questions
-1. Is `evening_bases` in trip.md enough, or do you also want to mark single stays as "evening-friendly" (e.g. a resort with its own restaurant and grounds)?
-2. Should *Agreed by* stay in the bend note, or is that too formal?
+The example vault's 60 places get the new fields. The script `skills/add-place/scripts/migrate-after-dark.mjs` adds them empty, so they pass the checker. It turns an old text `best_time_of_day` into a list only when every word is already a value from the list; any other text is kept as a bullet under *Tips* and the list is left empty. Filling them is a research job for add-place, done later or on request.

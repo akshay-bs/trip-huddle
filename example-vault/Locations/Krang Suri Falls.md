@@ -29,7 +29,9 @@ steps_or_climb: About 200–250 stone steps down a paved path (10–15 min down,
 difficulty: moderate
 group_fit: good
 time_needed_hrs: 2
-best_time_of_day: Late morning to early afternoon (sun on the pool brings out the colour)
+best_time_of_day: []
+after_dark:
+after_dark_note:
 opening_hours: About 7:00 am – 6:00 pm (one source) or 9:00 am – 5:00 pm (Muddie Trails); verify locally and don't plan to arrive before 9:00
 closed_days:
 last_mile: Jowai → Amlarem road, then a short road to the parking area; paved. Tempo traveller OK (confirm)
@@ -109,6 +111,7 @@ The best season for the colour. The flow is lower and calmer than in the monsoon
 - Swimmers: carry a towel, a change of clothes and a warm layer; use the changing rooms. Life jackets on at all times; swim only in the permitted zone.
 - Shoes with grip for the steps and rocks.
 - Go before 2 pm; the valley loses sun early in December.
+- Best time, as first written: Late morning to early afternoon (sun on the pool brings out the colour)
 
 ## Nearby / combine with
 - [[Phe Phe Falls]] is about 8 km away in a straight line (further by road) in the same Amlarem area.

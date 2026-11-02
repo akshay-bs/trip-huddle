@@ -27,7 +27,9 @@ steps_or_climb: Galleries over two floors; stairs between floors (no lift confir
 difficulty: easy
 group_fit: good
 time_needed_hrs: 1.5
-best_time_of_day: Late morning; tickets sold only until 4 PM
+best_time_of_day: []
+after_dark:
+after_dark_note:
 opening_hours: 10:00 AM – 5:00 PM (last ticket 4:00 PM)
 closed_days: Monday, 2nd and 4th Saturday, government holidays
 last_mile: At the south end of Dighalipukhuri tank, GNB Road, central Guwahati (near Pan Bazar); drop-off at the gate. Tempo traveller OK for drop and pick-up
@@ -105,6 +107,7 @@ No seasonal issues. Just check the closure days: Mondays, 2nd and 4th Saturdays 
 - Last ticket at 4 PM.
 - Photography may be restricted or charged in some galleries.
 - One museum may be enough: if time is short, choose between this and [[Srimanta Sankardev Kalakshetra]]. This one is more history; Kalakshetra is more culture and open space.
+- Best time, as first written: Late morning; tickets sold only until 4 PM
 
 ## Nearby / combine with
 - [[Umananda Temple]]: ferry ghat about 1 km away

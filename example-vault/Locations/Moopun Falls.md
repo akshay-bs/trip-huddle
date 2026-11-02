@@ -30,7 +30,9 @@ steps_or_climb: A short, slightly steep, well-kept path. About 5 min from the pa
 difficulty: easy
 group_fit: good
 time_needed_hrs: 1.5
-best_time_of_day: Late morning to early afternoon (sun on the pool and the sand)
+best_time_of_day: []
+after_dark:
+after_dark_note:
 opening_hours: Open access (no gate reported); go in daylight
 closed_days:
 last_mile: From NH-6 (old NH-44) at Kongong junction, about 10 km on a paved rural road via Pynthorsale and Mukhaialong to Mutong village, then 300 m to the top of the falls. Tempo traveller should manage (confirm with driver). Signboards from the highway are poor, so ask locals
@@ -111,6 +113,7 @@ No freely licensed photos were found on Wikimedia Commons. See the [East Jaintia
 - Bring a towel and a warm layer if anyone plans to swim; no changing rooms are reported.
 - Sports shoes with grip for the path and the rocks.
 - Download offline maps; the turn-off from the highway is easy to miss.
+- Best time, as first written: Late morning to early afternoon (sun on the pool and the sand)
 
 ## Nearby / combine with
 - **Jowai** is 25 km away. It fits a Jowai day with [[Nartiang Monoliths]], or a return to Shillong via Jowai.

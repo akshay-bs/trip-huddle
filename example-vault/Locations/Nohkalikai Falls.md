@@ -28,7 +28,9 @@ steps_or_climb: Short paved path with some steps from parking to the viewing pla
 difficulty: easy
 group_fit: good
 time_needed_hrs: 1
-best_time_of_day: Late morning to early afternoon (fog usually lifts; sun lights the pool)
+best_time_of_day: []
+after_dark:
+after_dark_note:
 opening_hours: About 9:00 am – 5:00 pm
 closed_days:
 last_mile: Paved road from Sohra town (about 5 km) to the viewpoint parking; tempo traveller OK
@@ -112,6 +114,7 @@ India's tallest plunge waterfall. It drops about 340 m (1,115 ft) off the Sohra 
 - Go before noon in Christmas week to beat the parking queue.
 - Carry cash for entry, camera, parking and toilets.
 - Do not let anyone start down the bottom-pool trail casually. It is a half-day trek, not a stroll.
+- Best time, as first written: Late morning to early afternoon (fog usually lifts; sun lights the pool)
 
 ## Nearby / combine with
 - [[Wei Sawdong Falls]] and [[Arwah Cave]] are on the same (west) side of Sohra.

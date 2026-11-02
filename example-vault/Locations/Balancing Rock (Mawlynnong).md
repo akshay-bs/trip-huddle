@@ -29,7 +29,9 @@ steps_or_climb: About 50 steps or a short path from the ticket point to the rock
 difficulty: easy
 group_fit: good
 time_needed_hrs: 0.25
-best_time_of_day: Any daylight time. Combine with the early-morning root bridge visit
+best_time_of_day: []
+after_dark:
+after_dark_note:
 opening_hours: About 6 AM – 5 PM
 closed_days:
 last_mile: Village road between Mawlynnong and Riwai/Nohwet. Tempo traveller OK, with roadside or small-lot parking
@@ -106,6 +108,7 @@ Only one freely licensed photo of this rock could be found on Wikimedia Commons,
 - Visit it in the same loop as the root bridge. Ask the driver to stop on the way to or from Riwai.
 - Don't climb on or lean against the rock or the fence.
 - Keep small change for the ₹10–20 ticket.
+- Best time, as first written: Any daylight time. Combine with the early-morning root bridge visit
 
 ## Nearby / combine with
 - [[Mawlynnong Village]] (about 1 km)

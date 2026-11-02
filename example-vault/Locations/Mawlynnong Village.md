@@ -28,7 +28,9 @@ steps_or_climb: The village lanes are flat, paved and gentle. The optional Sky V
 difficulty: easy
 group_fit: good
 time_needed_hrs: 1.5
-best_time_of_day: Early morning (before 10 AM) or late afternoon, when the day-trippers have left. Staying overnight is the best way to see it
+best_time_of_day: []
+after_dark:
+after_dark_note:
 opening_hours: Village open in daylight. Sky View about 8 AM – 5 PM
 closed_days:
 last_mile: Paved road from the Shillong–Dawki road via Pynursla, then the Mawlynnong turn-off. Tempo traveller reaches the village car park at the entrance
@@ -113,6 +115,7 @@ Mawlynnong is a small Khasi village of a few hundred people in the Pynursla bloc
 - Homestays are simple (roughly ₹1,500–3,000 per room, often with meals) and small. a big group will usually need 2–3 homestays or a larger guesthouse. Book early for the week before Christmas.
 - Arrive before 10 AM, or after 3:30 PM if staying the night, to avoid the day-tour rush.
 - Fees here change often and sources disagree, so confirm at the gate.
+- Best time, as first written: Early morning (before 10 AM) or late afternoon, when the day-trippers have left. Staying overnight is the best way to see it
 
 ## Nearby / combine with
 - [[Riwai Living Root Bridge]] (about 2–3 km, the easiest root bridge in Meghalaya)

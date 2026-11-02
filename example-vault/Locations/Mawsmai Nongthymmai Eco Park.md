@@ -29,7 +29,9 @@ steps_or_climb: Flat to gently sloping paved paths and small bridges across stre
 difficulty: easy
 group_fit: good
 time_needed_hrs: 1
-best_time_of_day: Late morning to early afternoon (after the fog lifts)
+best_time_of_day: []
+after_dark:
+after_dark_note:
 opening_hours: About 8:00 AM – 5:00 PM
 closed_days:
 last_mile: On the Sohra–Mawsmai road near the top of Seven Sisters Falls; parking at the gate. Tempo traveller OK
@@ -106,6 +108,7 @@ Views are good on clear days, but the streams and the falls below are low in the
 ## Tips
 - Combine with the Seven Sisters Falls viewpoint and Mawsmai Cave in one stop cluster; they are all within a couple of km.
 - The fee is small (₹20 per person reported); carry cash.
+- Best time, as first written: Late morning to early afternoon (after the fog lifts)
 
 ## Nearby / combine with
 - [[Seven Sisters Falls]]: right below the park

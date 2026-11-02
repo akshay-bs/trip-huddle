@@ -29,7 +29,9 @@ steps_or_climb: Short walk from the road to the lakeside platforms; uneven rock 
 difficulty: easy
 group_fit: good
 time_needed_hrs: 2
-best_time_of_day: Late morning to early afternoon (warmest, best light)
+best_time_of_day: []
+after_dark:
+after_dark_note:
 opening_hours: About 9:00 am – 5:00 pm
 closed_days:
 last_mile: Via Mawsynram road to Mawlyngbna; the final stretch is narrow but motorable. Tempo traveller should be OK (confirm)
@@ -108,6 +110,7 @@ No verifiable Wikimedia Commons (or other openly licensed) images of Umkhakoi La
 - Carry quick-dry clothes, a towel and a warm layer for after the water. There are no ATMs in the village, so carry cash (nearest ATM is in Mawsynram).
 - Life jackets for everyone on the water, including strong swimmers.
 - Grippy sandals or old sneakers for the rocks.
+- Best time, as first written: Late morning to early afternoon (warmest, best light)
 
 ## Nearby / combine with
 - It is part of the [[Mawlyngbna]] visit, on the same half-day as the village activities (canyoning, split rock, fossil trail). Do the lake in the afternoon and the walks in the morning.

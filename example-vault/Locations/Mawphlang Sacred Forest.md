@@ -30,7 +30,9 @@ steps_or_climb: Short guided loop about 30–40 min (long loop about 90 min, 3�
 difficulty: easy
 group_fit: good
 time_needed_hrs: 2
-best_time_of_day: Late morning to early afternoon
+best_time_of_day: []
+after_dark:
+after_dark_note:
 opening_hours: Sacred Forest about 9:00 AM – 4:30 PM; Khasi Heritage Village about 8:00 AM – 6:00 PM
 closed_days:
 last_mile: About 25 km (about 1 hr) from Shillong via the Mawphlang road; parking at the entrance. Tempo traveller OK
@@ -110,6 +112,7 @@ A good time to visit: dry paths, clear skies, crisp air. Mawphlang is higher and
 - Book guides at the entrance counter; with a big group, ask whether one guide can take the whole group.
 - Carry cash for fees. Fee amounts come from 2024–25 blogs and may have gone up.
 - Leave Shillong by about 9–9:30 am so the forest walk is done by early afternoon.
+- Best time, as first written: Late morning to early afternoon
 
 ## Nearby / combine with
 - [[David Scott Trail]]: starts right here

@@ -29,7 +29,9 @@ steps_or_climb: Rim walk is near-level grassy ridge (a few minutes from parking)
 difficulty: easy
 group_fit: good
 time_needed_hrs: 1.5
-best_time_of_day: Early to mid afternoon (fog usually lifted; aim to arrive by 2:30 PM)
+best_time_of_day: []
+after_dark:
+after_dark_note:
 opening_hours: About 6 AM – 5 PM
 closed_days:
 last_mile: Via Smit; paved but narrow hill road to the parking at the canyon top. Tempo traveller OK
@@ -115,6 +117,7 @@ Laitlum ("end of the hills") is a grassy ridge on the edge of a deep, forested g
 - If it is fogged in, wait 20–30 min, because the fog moves quickly.
 - Carry water and snacks. Facilities are minimal, and toilets are basic or absent.
 - Wear shoes with grip. Sneakers are fine for the rim.
+- Best time, as first written: Early to mid afternoon (fog usually lifted; aim to arrive by 2:30 PM)
 
 ## Nearby / combine with
 - [[Nongjrong Viewpoint]]: same south-east side of Shillong. Nongjrong at sunrise followed by Laitlum in the afternoon is a sensible pairing.

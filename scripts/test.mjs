@@ -226,6 +226,130 @@ test('plan-day: the numbers in the reference example match the sun script and th
   });
 }
 
+// ---- after dark: value lists, the Day note warning, and the migration
+const exLoc = 'Locations/Arwah Cave.md';
+const warnLine = (out, file, text) => out.split('\n').some(l => l.includes(file) && l.includes(text));
+{
+  const v = path.join(TMP, 'after-dark-values');
+  fs.cpSync(path.join(ROOT, 'example-vault'), v, { recursive: true });
+  const f = path.join(v, exLoc), orig = fs.readFileSync(f, 'utf8');
+  const withValues = (bt, ad) => fs.writeFileSync(f, orig.replace('best_time_of_day: []', bt).replace('after_dark:\n', ad));
+  withValues('best_time_of_day: [sunrise, evening, night, any]', 'after_dark: good\n');
+  let r = check(v);
+  test('after dark: valid best_time_of_day list and after_dark value pass', () => r.code === 0 && !warnLine(r.out, 'Arwah Cave', 'not one of') ? '' : r.out);
+  withValues('best_time_of_day: [dusk]', 'after_dark: dangerous\n');
+  r = check(v);
+  test('after dark: a best_time_of_day item outside the list is flagged', () => warnLine(r.out, 'Arwah Cave', 'best_time_of_day "dusk" is not one of') ? '' : r.out);
+  test('after dark: an after_dark value outside good | fine | avoid is flagged', () => warnLine(r.out, 'Arwah Cave', 'after_dark "dangerous" is not one of: good | fine | avoid') ? '' : r.out);
+  withValues('best_time_of_day: Morning', 'after_dark:\n');
+  r = check(v);
+  test('after dark: best_time_of_day as plain text (not a list) is flagged', () => warnLine(r.out, 'Arwah Cave', 'best_time_of_day should be a list') ? '' : r.out);
+}
+{
+  // Day note warning. Start from the reference Day note (rule_bends 1, one bend written down) in the Portugal vault.
+  const dayFile = 'Itinerary/Day 04.md', walk = 'Locations/Old Town Walk (Example).md';
+  const make = (name, { place, leg, bends, schedule }) => {
+    const v = path.join(TMP, 'dark-' + name);
+    fs.cpSync(dayVault, v, { recursive: true });
+    const d = path.join(v, dayFile), l = path.join(v, walk);
+    let text = fs.readFileSync(d, 'utf8');
+    if (schedule) text = text.replace(...schedule);
+    if (leg) text = text.replace('| Fishing Harbour | Lagos | ~25 | 0.6–0.75 hrs | ok |', '| Fishing Harbour | Lagos | ~25 | 0.6–0.75 hrs | avoid |');
+    if (bends !== undefined) text = text.replace('rule_bends: 1', `rule_bends: ${bends}`);
+    if (bends === 0) text = text.replace(/\n- \*\*Driving the coast road[^\n]*/, '\n- None.');
+    fs.writeFileSync(d, text);
+    if (place) fs.writeFileSync(l, fs.readFileSync(l, 'utf8').replace('after_dark:\n', `after_dark: ${place}\n`));
+    return check(v).out;
+  };
+  const night = ['| 19:30 | Dinner in the old town | |', '| 21:30 | Night walk: [[Old Town Walk (Example)]] | |'];
+  const drive = ['| 19:30 | Dinner in the old town | |', '| 21:15 | Drive back to Lagos from the harbour | |'];
+  const placeWarn = out => warnLine(out, 'Day 04.md', 'Old Town Walk (Example)') && warnLine(out, 'Day 04.md', 'after_dark: avoid');
+  const legWarn = out => warnLine(out, 'Day 04.md', 'Fishing Harbour to Lagos is marked After dark: avoid');
+  test('after dark: the reference Day note (a recorded bend, ok legs after sunset) has no after-dark warning', () => {
+    const out = make('ref', {}); return warnLine(out, 'Day 04.md', 'after sunset') ? out : '';
+  });
+  test('after dark: warning fires for an avoid place scheduled after sunset when rule_bends is 0', () => {
+    const out = make('place0', { place: 'avoid', bends: 0, schedule: night }); return placeWarn(out) ? '' : out;
+  });
+  test('after dark: the same day is silent when rule_bends is 1 and the bend is written down', () => {
+    const out = make('place1', { place: 'avoid', schedule: night }); return warnLine(out, 'Day 04.md', 'after sunset') ? out : '';
+  });
+  test('after dark: an after_dark: good place after sunset is not flagged', () => {
+    const out = make('good', { place: 'good', bends: 0, schedule: night }); return warnLine(out, 'Day 04.md', 'after sunset') ? out : '';
+  });
+  test('after dark: a drive on an avoid leg after sunset warns when rule_bends is 0, and is silent when it is 1', () => {
+    const a = make('leg0', { leg: true, bends: 0, schedule: drive }), b = make('leg1', { leg: true, schedule: drive });
+    return legWarn(a) && !warnLine(b, 'Day 04.md', 'after sunset') ? '' : a + b;
+  });
+  test('after dark: an avoid leg that is only driven by day does not warn', () => {
+    const out = make('legday', { leg: true, bends: 0 }); return warnLine(out, 'Day 04.md', 'after sunset') ? out : '';
+  });
+  test('after dark: rule_bends that does not match the written bends is flagged', () => {
+    const out = make('count', { bends: 2 }); return warnLine(out, 'Day 04.md', 'rule_bends is 2 but') ? '' : out;
+  });
+  test('after dark: an After dark cell other than ok or avoid is flagged', () => {
+    const v = path.join(TMP, 'dark-cell');
+    fs.cpSync(dayVault, v, { recursive: true });
+    const d = path.join(v, dayFile);
+    fs.writeFileSync(d, fs.readFileSync(d, 'utf8').replace('| 0.6–0.75 hrs | ok |', '| 0.6–0.75 hrs | maybe |'));
+    return warnLine(check(v).out, 'Day 04.md', 'After dark "maybe" should be ok or avoid') ? '' : 'not flagged';
+  });
+  test('trip.md: evening_bases that are not in bases are flagged', () => {
+    const v = path.join(TMP, 'dark-evening');
+    fs.cpSync(dayVault, v, { recursive: true });
+    const tf = path.join(v, 'trip.md');
+    fs.writeFileSync(tf, fs.readFileSync(tf, 'utf8').replace(/^evening_bases:.*$/m, 'evening_bases: [Atlantis]'));
+    return warnLine(check(v).out, 'trip.md', 'evening_bases has towns that are not in bases: Atlantis') ? '' : 'not flagged';
+  });
+}
+{
+  // Migration: make a vault that looks like it was made before 0.6.0, then migrate it.
+  const MIGRATE = path.join(ROOT, 'skills/add-place/scripts/migrate-after-dark.mjs');
+  const old = path.join(TMP, 'pre-0.6');
+  fs.cpSync(path.join(ROOT, 'example-vault'), old, { recursive: true });
+  const rw = (rel, fn) => { const p = path.join(old, rel); fs.writeFileSync(p, fn(fs.readFileSync(p, 'utf8'))); };
+  rw('Templates/Location.md', s => s.replace('best_time_of_day: []\nafter_dark:\nafter_dark_note:\n', 'best_time_of_day:\n')
+    .replace(/^(best_time_of_day|after_dark|after_dark_note): .*\|.*\n/gm, ''));
+  rw('.obsidian/types.json', s => s.replace('"best_time_of_day": "multitext"', '"best_time_of_day": "text"').replace(/\s*"after_dark(_note)?": "text",/g, '').replace(/\s*"rule_bends": "number",/, ''));
+  rw('trip.md', s => s.replace('evening_bases: []\n', ''));
+  for (const f of fs.readdirSync(path.join(old, 'Locations'))) {
+    rw(`Locations/${f}`, s => s.replace('best_time_of_day: []\nafter_dark:\nafter_dark_note:\n', 'best_time_of_day: Late morning to early afternoon\n'));
+  }
+  rw(exLoc, s => s.replace('best_time_of_day: Late morning to early afternoon', 'best_time_of_day: Morning, evening'));
+  rw('Locations/Kynrem Falls.md', s => s.replace('best_time_of_day: Late morning to early afternoon', 'best_time_of_day:\n  - sunrise'));
+  const snapshot = () => {
+    const out = {};
+    (function walk(d) { for (const f of fs.readdirSync(d)) { const p = path.join(d, f); fs.statSync(p).isDirectory() ? walk(p) : out[path.relative(old, p)] = fs.readFileSync(p, 'utf8'); } })(old);
+    return JSON.stringify(out);
+  };
+  const migrate = (...a) => run(MIGRATE, a, old);
+  const before = snapshot();
+  test('migrate-after-dark: --dry-run changes nothing', () => {
+    const r = migrate('--dry-run');
+    return r.code === 0 && snapshot() === before && /would change/.test(r.out) ? '' : r.out;
+  });
+  const first = migrate();
+  const after = JSON.parse(snapshot());
+  test('migrate-after-dark: adds the fields in template order, and brings the template, types and trip.md to what vault-template has', () => {
+    const cur = rel => fs.readFileSync(path.join(ROOT, 'example-vault', rel), 'utf8');
+    const bad = [];
+    if (first.code !== 0) bad.push(first.out);
+    for (const rel of ['Templates/Location.md', '.obsidian/types.json', 'trip.md']) if (after[rel] !== cur(rel)) bad.push(`${rel} is not what the starter vault has`);
+    if (!/best_time_of_day:\n {2}- morning\n {2}- evening\nafter_dark:\nafter_dark_note:\nopening_hours:/.test(after[exLoc])) bad.push('Arwah Cave: expected [morning, evening] then the two new fields');
+    if (!/best_time_of_day:\n {2}- sunrise\nafter_dark:\nafter_dark_note:\n/.test(after['Locations/Kynrem Falls.md'])) bad.push('Kynrem Falls: a list should be kept as it is');
+    return bad.join('\n');
+  });
+  test('migrate-after-dark: text that is not a value is not guessed at, and is kept under Tips', () => {
+    const n = after['Locations/Elephant Falls.md'];
+    return /best_time_of_day: \[\]\nafter_dark:\nafter_dark_note:\n/.test(n) && /## Tips\n[\s\S]*- Best time, as first written: Late morning to early afternoon\n/.test(n) ? '' : n;
+  });
+  test('migrate-after-dark: the migrated vault has no value warnings, and a second run changes nothing', () => {
+    const r = check(old), again = migrate(), snap = snapshot();
+    return r.code === 0 && !/not one of|should be a list/.test(r.out) && again.code === 0 && /Nothing to do/.test(again.out)
+      && snap === JSON.stringify(after) ? '' : r.out + again.out;
+  });
+}
+
 // ---- (d) a broken vault: every problem must be reported
 const broken = path.join(TMP, 'broken');
 fs.cpSync(path.join(ROOT, 'example-vault'), broken, { recursive: true });

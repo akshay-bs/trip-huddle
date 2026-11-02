@@ -28,7 +28,9 @@ steps_or_climb: Flat cobbled path around the lake, with a gentle slope at the en
 difficulty: easy
 group_fit: good
 time_needed_hrs: 1
-best_time_of_day: Afternoon (around 2–4 pm), well before closing
+best_time_of_day: []
+after_dark:
+after_dark_note:
 opening_hours: About 8:30–17:30 in winter (Nov–Feb); about 8:30–19:00 in summer
 closed_days: Tuesday
 last_mile: In central Shillong near Raj Bhavan, a short walk from Police Bazaar; city traffic; drop-off at the gate
@@ -107,6 +109,7 @@ The weather is fine: sunny afternoons and cold in the shade. Fewer flowers are i
 - **Closed on Tuesday.** Winter hours are roughly 8:30 am–5:30 pm. Arrive by 4 pm to have time for boating.
 - **Entry fee:** sources differ between ₹10 and ₹20 for adults, with a reduced rate for children and seniors. Paddle-boat rates were not verified, so carry cash.
 - Pair it with the Police Bazaar walk: do the lake first, then shop and eat as the lights come on.
+- Best time, as first written: Afternoon (around 2–4 pm), well before closing
 
 ## Nearby / combine with
 - [[Police Bazaar]]: a short walk away, for shopping and dinner

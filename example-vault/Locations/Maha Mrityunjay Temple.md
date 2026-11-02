@@ -29,7 +29,9 @@ steps_or_climb:
 difficulty: easy
 group_fit: good
 time_needed_hrs: 0.75
-best_time_of_day: Afternoon, en route
+best_time_of_day: []
+after_dark:
+after_dark_note:
 opening_hours:
 closed_days:
 last_mile: Just off the Guwahati–Kaziranga highway; any vehicle OK
@@ -101,6 +103,7 @@ Dry, pleasant weather; no seasonal issues. Only useful if the route goes to Kazi
 ## Tips
 - Dress modestly; shoes off inside. Entry is free (donations welcome). Confirm the timings locally.
 - Keep it to 30–45 min to reach Kaziranga before dark.
+- Best time, as first written: Afternoon, en route
 
 ## Nearby / combine with
 - On the way to [[Kaziranga National Park]] and Airavat Hotel

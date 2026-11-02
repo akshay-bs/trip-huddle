@@ -8,6 +8,12 @@ formulas:
 properties:
   formula.sources:
     displayName: "# Sources"
+  best_time_of_day:
+    displayName: Best time
+  after_dark:
+    displayName: After dark
+  after_dark_note:
+    displayName: After dark, why
   season_verdict:
     displayName: Season verdict
   time_needed_hrs:
@@ -88,6 +94,23 @@ views:
       - difficulty
       - decision
   - type: table
+    name: After dark
+    filters:
+      or:
+        - after_dark == "good"
+        - after_dark == "avoid"
+    order:
+      - file.name
+      - nearest_base
+      - best_time_of_day
+      - after_dark
+      - after_dark_note
+      - season_note
+      - decision
+    sort:
+      - property: after_dark
+        direction: ASC
+  - type: table
     name: By base town
     filters:
       and:
@@ -114,6 +137,7 @@ views:
       - scheduled_day
       - time_needed_hrs
       - best_time_of_day
+      - after_dark
   - type: table
     name: Selected but unscheduled
     filters:

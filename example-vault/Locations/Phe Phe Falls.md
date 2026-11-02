@@ -28,7 +28,9 @@ steps_or_climb: Boat or kayak crossing of the river, 7–10 min across meadows, 
 difficulty: moderate
 group_fit: ok
 time_needed_hrs: 2
-best_time_of_day: Late morning to early afternoon (sun on the pool; back up well before 4 pm)
+best_time_of_day: []
+after_dark:
+after_dark_note:
 opening_hours: About 8:00 am – 5:00 pm (verify locally)
 closed_days:
 last_mile: Jowai–Amlarem/Dawki side road to the Paradise Adventure Camp area near Shkentalang village; paved (tempo traveller OK, confirm the final stretch)
@@ -109,6 +111,7 @@ Only one verifiable Commons photo was found (there is also a short video: [Phe P
 - Split the group: the fitter members do the full descent, the rest stay at the campsite or the first viewpoint.
 - Anyone with knee problems should skip the full descent.
 - Keep cash for the boat, life jackets and entry.
+- Best time, as first written: Late morning to early afternoon (sun on the pool; back up well before 4 pm)
 
 ## Nearby / combine with
 - [[Krang Suri Falls]] is about 8 km away in a straight line (further by road) in the same Amlarem area; If time or energy is short, choose Krang Suri (more famous, fewer boat logistics).

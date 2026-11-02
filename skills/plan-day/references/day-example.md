@@ -17,6 +17,7 @@ drive_hrs: 2.3
 activity_hrs: 10
 predawn_hrs: 1.3
 total_walk_km: 5
+rule_bends: 1
 tags:
   - day
 ---
@@ -30,6 +31,8 @@ sunrise, sunset: local time "HH:MM" on this date at the day's base (the plan-day
 daylight_hrs: real daylight, sunset − sunrise. It is not the length of your day. If the sun times are unknown, the default from trip.md is used
 drive_hrs: sum of the legs below, using the upper end of each range;  activity_hrs: time at the day's locations (time_needed_hrs) + meals and rests. Leave out after-dark activities
 predawn_hrs: the part of drive_hrs + activity_hrs that happens before sunrise (empty if none). It is counted separately and does not use up daylight
+rule_bends: how many choices are listed under "Choices that bend the rules" (0 if none)
+Legs table, After dark column: ok = lit highway or city streets; avoid = unlit, forest, hill or bad surface
 Slack = daylight_hrs − (drive_hrs + activity_hrs − predawn_hrs), computed in the Itinerary base. Verdict: ok = 1.5 hrs or more, tight = 0 to 1.5 hrs, too much = below 0
 -->
 
@@ -40,14 +43,14 @@ Slack = daylight_hrs − (drive_hrs + activity_hrs − predawn_hrs), computed in
 
 A loop from Lagos with the one early start of the trip, for sunrise at the cliff. Then a boat trip, a long lunch and an easy evening walk that ends before sunset. Part of [[Route]].
 
-**Daylight and slack:** sunrise 06:14, sunset 20:54, so 14.7 hrs of daylight (computed for Lagos, time zone Europe/Lisbon). Drive 2.3 + activity 10 − 1.3 hrs before sunrise = 11 hrs in daylight. Slack 3.7 hrs: **ok**.
+**Daylight and slack:** sunrise 06:14, sunset 20:54, so 14.7 hrs of daylight (computed for Lagos, time zone Europe/Lisbon). Drive 2.3 + activity 10 − 1.3 hrs before sunrise = 11 hrs in daylight. Slack 3.7 hrs: **ok**, with 1 rule bend (see below).
 
 ## Legs
-| From | To | km | Drive time (estimate) | Road notes |
-| ---- | -- | -- | --------------------- | ---------- |
-| Lagos | Cliff Viewpoint | ~30 | 0.7–0.8 hrs | In the dark, quiet coast road. Fine for the hired 7-seat van. Last 2 km is a gravel track: go slowly |
-| Cliff Viewpoint | Fishing Harbour | ~20 | 0.5–0.7 hrs | Paved, a few villages. Van OK |
-| Fishing Harbour | Lagos | ~25 | 0.6–0.75 hrs | Main road, busier in the late afternoon |
+| From | To | km | Drive time (estimate) | After dark | Road notes |
+| ---- | -- | -- | --------------------- | ---------- | ---------- |
+| Lagos | Cliff Viewpoint | ~30 | 0.7–0.8 hrs | avoid | Quiet coast road, no lights. Fine for the hired 7-seat van. Last 2 km is a gravel track: go slowly |
+| Cliff Viewpoint | Fishing Harbour | ~20 | 0.5–0.7 hrs | avoid | Paved, a few villages, no street lights. Van OK |
+| Fishing Harbour | Lagos | ~25 | 0.6–0.75 hrs | ok | Main road, lit near Lagos. Busier in the late afternoon |
 
 *Drive times are researched estimates, not checked on the road. Basis: a routing site's free-flow time with 25% added for villages and traffic. Ask the driver to confirm the gravel track.*
 
@@ -76,6 +79,9 @@ A loop from Lagos with the one early start of the trip, for sunrise at the cliff
 - **Cloud at sunrise:** wait 30 minutes, then go on to the harbour and keep the boat trip.
 - **Boat trip cancelled (sea too rough):** swap in a long lunch and spend the afternoon at the old town. Move the walk to 15:00.
 - **Running late in the morning:** drop the café breakfast and eat at the harbour.
+
+## Choices that bend the rules
+- **Driving the coast road and the gravel track in the dark before sunrise.** Why: sunrise at the cliff is the reason for the early start, and it is the one early start of the trip. Cost: about 45 minutes on an unlit road, the last 2 km on gravel, so the driver goes slowly. The way back is in daylight.
 
 ## Notes
 - **Stay tonight:** [[Example Guesthouse Lagos]] (same as last night).

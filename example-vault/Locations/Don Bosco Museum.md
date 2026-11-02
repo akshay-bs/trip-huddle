@@ -34,7 +34,10 @@ steps_or_climb: Seven floors; lift available, some stairs
 difficulty: easy
 group_fit: good
 time_needed_hrs: 2
-best_time_of_day: Morning
+best_time_of_day:
+  - morning
+after_dark:
+after_dark_note:
 opening_hours: Mon–Sat 09:30–16:30 (Dec–Jan)
 closed_days: Sundays; 22–26 Dec; 31 Dec; 1, 26 and 31 Jan
 last_mile: In town; any vehicle

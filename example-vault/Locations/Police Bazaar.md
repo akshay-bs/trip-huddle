@@ -29,7 +29,9 @@ steps_or_climb: Flat to gently sloping streets; no steps
 difficulty: easy
 group_fit: good
 time_needed_hrs: 2
-best_time_of_day: About 4–8 pm (lights on, street food out, before shops shut)
+best_time_of_day: []
+after_dark:
+after_dark_note:
 opening_hours: Shops about 10:00–20:00; street food stalls mostly in the evening
 closed_days: Sunday (many shops and eateries shut or keep short hours; varies by shop)
 last_mile: City centre; one-way streets and heavy traffic. Drop off at Police Point and walk; parking is very limited for a tempo traveller.
@@ -120,6 +122,7 @@ This is the best time of year to visit. Shillong is strongly Christian, and the 
 - Carry some cash. Most shops take UPI, but small stalls may not.
 - Keep the group together, or agree on a meeting point such as the Police Point junction. It gets very crowded before Christmas.
 - The restaurants named here come from travel guides and reviews. Check current hours and ratings closer to the trip.
+- Best time, as first written: About 4–8 pm (lights on, street food out, before shops shut)
 
 ## Nearby / combine with
 - [[Ward's Lake]]: about a 10-minute walk away. Do it earlier in the afternoon, since it closes around 5–5:30 pm in winter.

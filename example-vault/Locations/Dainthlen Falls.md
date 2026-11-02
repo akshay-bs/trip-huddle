@@ -29,7 +29,9 @@ steps_or_climb: Flat rock shelves near the parking; no climb
 difficulty: easy
 group_fit: good
 time_needed_hrs: 0.75
-best_time_of_day: Morning to midday
+best_time_of_day: []
+after_dark:
+after_dark_note:
 opening_hours:
 closed_days:
 last_mile: Paved road from Sohra (same road as the Wei Sawdong turn-off)
@@ -103,6 +105,7 @@ Flow is much thinner. The wide rock shelves are dry and easy to walk on, but the
 
 ## Tips
 - Combine with [[Wei Sawdong Falls]] on the same road (Wei Sawdong has a hard climb; part of the group can wait here instead).
+- Best time, as first written: Morning to midday
 
 ## Nearby / combine with
 - [[Wei Sawdong Falls]], [[Mawsawa Falls]], [[Lyngksiar Falls]], [[Janailar Falls]]

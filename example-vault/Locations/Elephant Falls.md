@@ -27,7 +27,9 @@ steps_or_climb: About 100–150 concrete steps down to the lowest (third) fall, 
 difficulty: moderate
 group_fit: ok
 time_needed_hrs: 1
-best_time_of_day: Morning to early afternoon (sun on the falls, fewer tour groups)
+best_time_of_day: []
+after_dark:
+after_dark_note:
 opening_hours: About 9:00/10:00–17:00 (varies by source)
 closed_days:
 last_mile: Paved road via Upper Shillong (Shillong–Sohra road side); parking at the gate; tempo traveller OK
@@ -106,6 +108,7 @@ December is the dry season, so the falls are **thin**. Water still flows, but it
 - Swimming and climbing on the rocks are not allowed. Stay on the paths.
 - Holidify lists it as closed on Sundays, but other sources say it is open daily. Treat this as unverified.
 - Combine it with Shillong Peak in the same Upper Shillong loop.
+- Best time, as first written: Morning to early afternoon (sun on the falls, fewer tour groups)
 
 ## Nearby / combine with
 - [[Shillong Peak]]: a few km away on the same Upper Shillong road

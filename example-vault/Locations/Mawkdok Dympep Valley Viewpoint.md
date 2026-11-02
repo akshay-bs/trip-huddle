@@ -30,7 +30,9 @@ steps_or_climb: Short flight of Forest Department steps down from the road to th
 difficulty: easy
 group_fit: good
 time_needed_hrs: 0.75
-best_time_of_day: Morning (clearer, fewer queues for the zipline)
+best_time_of_day: []
+after_dark:
+after_dark_note:
 opening_hours: About 6 AM – 6 PM
 closed_days:
 last_mile: Directly on the Shillong–Sohra road; roadside parking. Tempo traveller OK
@@ -120,6 +122,7 @@ A roadside viewpoint on the Shillong–Sohra (Cherrapunji) road, about 30 km fro
 - If several people want the zipline, phone Pioneer the day before to check it is running and whether there is a group price.
 - Carry cash for the zipline and stalls, and check whether UPI works on the day.
 - The entry fee was not verified. It is generally reported as free or nominal, plus parking.
+- Best time, as first written: Morning (clearer, fewer queues for the zipline)
 
 ## Nearby / combine with
 - [[Elephant Falls]] and [[Shillong Peak]]: both on the Shillong end of the same road, so they can be combined on the drive out.

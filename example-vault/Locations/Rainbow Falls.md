@@ -28,7 +28,9 @@ steps_or_climb: The full Tyrna → Nongriat descent (about 3,000–3,500 steps) 
 difficulty: strenuous
 group_fit: poor
 time_needed_hrs: 9
-best_time_of_day: Reach the falls between about 10 am and noon for the rainbow; that means leaving Tyrna by 6:30–7 am
+best_time_of_day: []
+after_dark:
+after_dark_note:
 opening_hours: About 6:00 am – 5:00 pm (one source); in practice, daylight only
 closed_days:
 last_mile: Same as the [[Double Decker Living Root Bridge]]: Sohra → Tyrna by road (about 12 km), then on foot via Nongriat
@@ -107,6 +109,7 @@ Good trekking season: dry paths, cool air and clear water. The flow is thinner t
 - Leave Tyrna by 7 am at the latest, and turn back by 1 pm wherever you are.
 - Carry water, snacks, a head torch and a warm layer; shops thin out after the Double Decker.
 - Shoes with good grip.
+- Best time, as first written: Reach the falls between about 10 am and noon for the rainbow; that means leaving Tyrna by 6:30–7 am
 
 ## Nearby / combine with
 - [[Double Decker Living Root Bridge]] and [[Blue Lagoon (Nongriat)]] are on the same trail; all three are one trek.

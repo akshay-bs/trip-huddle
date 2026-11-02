@@ -29,7 +29,9 @@ steps_or_climb: Level roadside viewpoint a few steps from parking
 difficulty: easy
 group_fit: good
 time_needed_hrs: 0.5
-best_time_of_day: Morning on a clear day (cliff lit, less haze)
+best_time_of_day: []
+after_dark:
+after_dark_note:
 opening_hours: Daylight hours (roadside); eco-park gate roughly 8 am – 5 pm
 closed_days:
 last_mile: On the paved Sohra–Mawsmai road; tempo traveller can pull over at the roadside parking
@@ -107,6 +109,7 @@ Be honest with the group: **there is little or no waterfall to see in December.*
 - Combine it with Mawsmai Cave: same road, 5–10 min apart.
 - Stop on the way back only if the sky is clear; if it is foggy there is nothing to see.
 - Show the teens the monsoon photo so they know what the cliff looks like in full flow.
+- Best time, as first written: Morning on a clear day (cliff lit, less haze)
 
 ## Nearby / combine with
 - [[Mawsmai Cave]]: same road, minutes away.

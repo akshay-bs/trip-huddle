@@ -18,7 +18,9 @@ steps_or_climb:
 difficulty:
 group_fit:
 time_needed_hrs:
-best_time_of_day:
+best_time_of_day: []
+after_dark:
+after_dark_note:
 opening_hours:
 closed_days:
 last_mile:
@@ -51,6 +53,9 @@ walk_distance_km / walk_duration_min: ROUND TRIP
 difficulty: easy | moderate | strenuous
 group_fit: good | ok | poor   (for the group described in 00 Home → Trip facts)
 time_needed_hrs: time AT the place incl. walk, excluding drive
+best_time_of_day: sunrise | morning | midday | afternoon | sunset | evening | night | any   (when to be there; a list, e.g. [sunrise] or [evening, night])
+after_dark: good | fine | avoid   (good = worth visiting after dark: lights, night market, festival; fine = no problem, nothing special; avoid = closes, is unsafe or pointless after dark, or the way back is a bad night drive)
+after_dark_note: the reason, in a few words, e.g. "lit up for the festival", "no lights, forest road back"
 crowd_level: low | medium | high
 decision: considering | selected | backup | dropped   (+ decision_reason, decided_on)
 priority: must | should | maybe

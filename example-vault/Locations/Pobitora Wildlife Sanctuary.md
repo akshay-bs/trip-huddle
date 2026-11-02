@@ -27,7 +27,9 @@ steps_or_climb: Flat. Only a short walk from parking to the jeep or elephant boa
 difficulty: easy
 group_fit: good
 time_needed_hrs: 2
-best_time_of_day: First morning slot (about 7–8:30 AM) for animals and soft light. The afternoon slots (1–3 PM) suit a same-day arrival from Guwahati
+best_time_of_day: []
+after_dark:
+after_dark_note:
 opening_hours: About 7:00 AM – 4:00 PM. Jeep slots run about 7:00 AM – 3:00 PM and elephant rides about 6:00–8:00 AM (sources differ, so confirm when booking)
 closed_days: Closed for the monsoon (roughly May/June to October). Open daily in season
 last_mile: About 45–50 km east of Guwahati (1.5 hrs) via Jagiroad/Mayong roads. The rural road is fine for a tempo traveller
@@ -116,6 +118,7 @@ Pobitora is a small (about 39 km²) grassland and wetland sanctuary on the south
 - Wear layers and a cap. Open jeeps are cold and dusty in the morning.
 - Stay seated and quiet near rhinos, and don't get out of the jeep.
 - Carry cash. The network is patchy.
+- Best time, as first written: First morning slot (about 7–8:30 AM) for animals and soft light. The afternoon slots (1–3 PM) suit a same-day arrival from Guwahati
 
 ## Nearby / combine with
 - Mayong village (Black Magic and Witchcraft Museum) is close by.

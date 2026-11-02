@@ -28,7 +28,9 @@ steps_or_climb: 5–10 min downhill on a forest trail, then back up
 difficulty: easy
 group_fit: good
 time_needed_hrs: 1
-best_time_of_day: Late morning
+best_time_of_day: []
+after_dark:
+after_dark_note:
 opening_hours:
 closed_days:
 last_mile: Local road near Sohra; confirm big-vehicle parking
@@ -102,6 +104,7 @@ Lower flow, but the pools are at their clearest and the trail is dry. October–
 
 ## Tips
 - Go with a local driver who knows the parking spot; signage is limited.
+- Best time, as first written: Late morning
 
 ## Nearby / combine with
 - [[Janailar Falls]], [[Lyngksiar Falls]], [[Dainthlen Falls]], [[Wei Sawdong Falls]], [[Garden of Caves]]

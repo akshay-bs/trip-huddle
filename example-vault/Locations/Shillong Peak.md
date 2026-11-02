@@ -28,7 +28,9 @@ steps_or_climb: A few steps up to the viewing deck and telescope tower; otherwis
 difficulty: easy
 group_fit: good
 time_needed_hrs: 1
-best_time_of_day: Morning (about 9–11 am), when it is clearest, before the afternoon haze
+best_time_of_day: []
+after_dark:
+after_dark_note:
 opening_hours: About 9:00–15:30 (last entry; timings set by the Air Force)
 closed_days: Wednesday (reported by several sources; confirm locally)
 last_mile: Paved road via Upper Shillong into the Indian Air Force station, with a security check at the gate; tempo traveller OK
@@ -111,6 +113,7 @@ December is one of the best months for visibility because the air is dry and the
 - Older guides say cameras must be deposited at the gate. Recent visitors say phones and cameras are allowed, but only at the viewpoint. Follow the guards' instructions, and do not fly a drone.
 - Reported closed on **Wednesday**.
 - Go early in the day for the clearest view.
+- Best time, as first written: Morning (about 9–11 am), when it is clearest, before the afternoon haze
 
 ## Nearby / combine with
 - [[Elephant Falls]]: on the same Upper Shillong road, a few km away. The two are usually visited together.

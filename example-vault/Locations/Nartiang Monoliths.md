@@ -29,7 +29,10 @@ steps_or_climb: Flat paths and grass
 difficulty: easy
 group_fit: good
 time_needed_hrs: 1
-best_time_of_day: Morning
+best_time_of_day:
+  - morning
+after_dark:
+after_dark_note:
 opening_hours: 06:00–18:00
 closed_days:
 last_mile: Village road near Jowai; any vehicle

@@ -1,32 +1,93 @@
 # trip-huddle
-Tired of losing great trip ideas in a 200-message group chat? Trip-Huddle turns Claude into your group’s travel assistant — it collects every link, suggestion, and stay, tracks who recommended what, and gives everyone one clean view of what’s decided and what’s still up for debate.
 
-> **Status: v0.1 seed.** This is the setup from one real group trip (Assam and Meghalaya, December), with the private details removed. Some trip-specific parts still need generalizing. See [docs/ROADMAP.md](docs/ROADMAP.md).
+**Every group trip has one person holding it together.\
+If you're reading this, it's probably you.**
+
+> *Meghalaya trip 🏔️ · 412 unread*\
+> **Rohan:** guys what was that waterfall Priya sent?\
+> **Priya:** scroll up 😅\
+> **Anita:** is it Laboon or Labon\
+> **Rohan:** also is the hotel booked or not??\
+> **Anita:** @you
+
+You scroll up. You find three versions of the plan, two agency PDFs, a voice note and a good-morning sticker. You open a new spreadsheet. Again.
+
+**trip-huddle** turns Claude into your group's trip assistant. You paste in the chaos. Claude keeps one tidy notebook (an [Obsidian](https://obsidian.md) vault) that the whole group can open, and it carries the trip from the first idea to the last payment.
+
+![The trip in five stages: Choose, Agree the route, Book, Travel, Come home. The road is solid through the stages trip-huddle covers today and dotted through the ones coming next.](docs/trip-journey.svg)
+
+> **Status:** early, and growing. It was built on one real group trip to Assam and Meghalaya, with the private details removed. The solid road works today; the dotted road is on the [roadmap](docs/ROADMAP.md).
+
+## 1. Choose
+
+*Where we go, where we sleep, how we get there, and when.*
+
+| What goes wrong | What trip-huddle does |
+|---|---|
+| **The buried link.** Priya's link from three weeks ago is under 300 messages and a good-morning sticker. | Paste any message, quote or link. Every place, stay and café gets its own note with the name of whoever suggested it, and duplicates are caught even when they're spelled differently. |
+| **The "easy walk".** The "easy walk" to the root bridge is 3,000 steps down. And 3,000 back up. With grandparents. | Each place notes how hard the walk is and whether it suits your group. |
+| **Wrong season.** The waterfall everyone voted for is a trickle in December. | Each place is checked for the season you travel in. |
+
+## 2. Agree the route
+
+*Turn the choices into one plan the group signs off on, before anyone books.*
+
+| What goes wrong | What trip-huddle does |
+|---|---|
+| **4:38 pm.** The map says two hours. With hairpin bends, fog and photo stops it's closer to four. In December the sun sets at 4:38 pm in Sohra. | Every drive is checked three ways (a map, the kind of road, recent local reports) against that date's real sunset. Each day comes back ok, tight or too much, with fixes to choose from. |
+| **Eleven days of must-sees.** Every family has a must-see. Together they need eleven days. You have seven. | Agency quotes and your own draft are compared side by side: which must-sees each covers, nights, hours in the car, driving after dark, cost per family. A plain recommendation, and no scores. |
+| **Booked before agreed.** Someone books a hotel before the route is agreed. Now the whole route bends around it. | *Coming next:* a warning before anyone books ahead of the agreed route. |
+| **The zig-zag.** The plan goes Shillong, Dawki, Sohra, then back to Dawki. Nobody looked at a map. | *Coming next:* a first route built from what the group chose, with the places in a sensible order. |
+
+## 3. Book
+
+*One list, and one name on every task.*
+
+| What goes wrong | What trip-huddle does |
+|---|---|
+| **Did anyone pay the hotel?** Two people each think the other one paid. | One booking list, made from what the group chose: what's booked, what's paid, what's still owed, and where the voucher is. Once something is booked it's locked, and nothing gets planned against it. |
+| **"Someone should book the van."** Everyone agrees someone should book the van. Nobody is someone. | *Coming next:* a person named on every task. |
+| **Sold out at the gate.** Nobody pre-booked the boat ride. It's sold out the morning you arrive. | Places that need tickets land on the booking list by themselves. |
+
+## 4. Travel
+
+*When the plan meets the road.*
+
+| What goes wrong | What trip-huddle does |
+|---|---|
+| **"What time are we leaving?"** Asked twenty times before breakfast. | *Coming next:* a plan for today, with leave times. |
+| **Two hours behind.** Which stop do you drop? | *Coming next:* a quick re-plan of the rest of the trip that keeps the must-sees and everything already booked. |
+| **"I'll get this one."** Six people each said it over three days. | *Coming next:* an expense log as you go. |
+
+## 5. Come home
+
+*Settle up, and remember.*
+
+| What goes wrong | What trip-huddle does |
+|---|---|
+| **Gentle reminder.** Three months later: "gentle reminder re: van money 🙏". | *Coming next:* a settle-up per family that closes the books. |
+| **"Did the fuel count?"** "I paid for fuel on day four. Did that count?" Nobody knows. | *Coming next:* who paid what, kept as you go. |
+| **"Can you send your itinerary?"** A friend asks for your itinerary. You forward forty messages. | The vault already is the itinerary. Share the folder. |
+
+**You'll still argue about the hotel. You'll just argue about it once.**
 
 ## How it works
-Trip-Huddle is a Claude plugin (for Cowork and Claude Code) plus an Obsidian vault layout:
 
-1. **Every suggestion has a source.** A friend's message, an agency quote or a hotel list becomes a note in `Sources/`. Every place, stay, restaurant and cafe links back to the sources that recommended it (`recommended_by`).
-2. **No duplicates.** Before adding anything, Claude searches names and aliases, so "laboon falls" finds the existing *Labon Falls* note and just adds the new source to it.
-3. **The template is the schema.** `Templates/Location.md`, `Templates/Stay.md` and `Templates/Food Spot.md` define every property, its order and its allowed values (the FIELD GUIDE comment). A validator checks every note against them.
-4. **Honest research.** Coordinates are checked against OpenStreetMap or Wikipedia, and each note gets a seasonal verdict, walk difficulty, group fit and openly licensed photos.
-5. **The group decides.** New items go in as `considering` and are listed under "Open questions" on the home page. Obsidian Bases views show what's pending, the booking list with cost per family, and a map.
-6. **Book from what was chosen.** Once the group selects a stay, a vehicle or a place that needs tickets, it shows on the booking list by itself. The status, the amounts and a link to the voucher sit on its own note, and booking it locks the decision.
+- **A Claude plugin** (for Cowork and Claude Code) with seven skills. You never call them by name; you just talk:
 
-## What's in the repo
-| Path | What it is |
-|---|---|
-| `.claude-plugin/` | Plugin manifest, plus a marketplace file so this repo can be added as a marketplace |
-| `skills/add-source/` | The skill that takes in a pasted itinerary, quote, hotel list, link or friend's suggestions: it writes the Source note, lists what is new and what is already in the vault, hands the items (places, stays, restaurants and cafes) to `add-place`, and keeps the Home inbox up to date |
-| `skills/plan-day/` | The skill that builds Day notes: legs with drive-time ranges, a schedule, meals, a backup plan, real sunrise and sunset for the date (`scripts/sun.mjs`, no dependencies), and the slack between daylight and the day's driving and activities, with an ok / tight / too much verdict. It plans around each place's `after_dark` and `best_time_of_day`, each leg's After dark column and the trip's `evening_bases`, and writes down any rule the group chose to bend. It prefers the group's selected restaurants and cafes near each day's route for meals (otherwise it only suggests some), and sets `scheduled_day` on the places and food spots it uses |
-| `skills/review-travel-times/` | The skill that checks drive times and answers "can we really do this before dark?" for each day, on Day notes or on an agency's or friend's itinerary in a Source note. Each leg gets three estimates (a map time, a typical speed for the kind of road, recent local reports), the slowest credible one is kept, time is added for stops, and the day gets an ok / tight / too much verdict that is never kinder than the slack verdict. `scripts/travel.mjs` (Node, no dependencies) does the arithmetic, reading optional `road_speeds` and `stop_buffer` from `trip.md`. The limits it and `plan-day` judge by (`planning_limits` in `trip.md`: hours of slack for an "ok" day, minutes of dark driving, late finish, driving hours a day) are defaults the group changes as it plans. It never rewrites a day: it offers fixes, asks, and hands the choice to `plan-day` |
-| `skills/compare-itineraries/` | The skill that compares two or more itineraries (agency quotes, a friend's plan, the group's own draft) and writes a short Comparison note in `Sources/`: a side-by-side table (nights, must-see places covered, driving, after-dark driving, stays, cost per cost-sharing unit, what the option doesn't say), a bottom line with reasons, the trade-offs, and the questions to ask before deciding. It reuses the travel-time check and the sun times for the driving, and never scores or weights the options. When the group decides it marks the chosen Route note `agreed` (or makes one from the chosen Source) and offers `plan-day`; it never changes a place decision or rewrites a day |
-| `skills/group-decisions/` | The skill that keeps track of what the group still has to decide and what it has fixed. It gathers the open questions from the vault, writes Decision notes in `Decisions/` (open, decided or locked), refreshes the home page's open questions and budget snapshot (per cost-sharing unit), and summarises by deadline. A **locked** decision ("flights booked", "van booked") is a hard rule: `plan-day`, `review-travel-times`, `compare-itineraries`, `add-place` and `add-source` read it first, never plan against it, and ask before anything breaks it. `trip.md` has a `stage` (planning, booking, travelling, after). It also keeps the **booking list** (`Bases/Bookings.base`): every selected stay, the selected vehicle and selected places with `needs_booking`, plus small notes in `Bookings/` for flights, trains, permits and insurance. Each has `booking_status`, `cost_agreed`, `advance_paid`, `balance_pending` and a `confirmation` link to a voucher in `Confirmations/`. Booking something locks its decision; a booking that falls through sends the group back to pick again. `scripts/migrate-bookings.mjs` adds the new fields to an older vault's notes. It never decides for the group and asks before unlocking |
-| `skills/add-place/` | The skill that adds places, stays, restaurants and cafes: the pipeline and a subagent prompt for researching many items in parallel, including when to go and whether the place works after dark. `scripts/migrate-after-dark.mjs` brings an older vault's places up to the 0.6.0 fields |
-| `skills/trip-init/` | The skill that sets up a vault for your trip: a short interview, then `init.mjs` (Node, no dependencies) writes `trip.md` and fills the templates and Bases. Optional field sets live in `field-packs/`. `--reconfigure --add-food` brings a vault made before 0.9.0 up to the restaurants-and-cafes category, and `--reconfigure --add-bookings` a vault made before 0.11.0 up to the booking list |
-| `scripts/` | `validate.mjs`, the checker every skill calls (Node, no dependencies): it reads the vault's own `Templates/` folder, so fields added at setup are checked too. `trip-settings.mjs` is the shared reader for `trip.md` and the planning limits. `test.mjs` runs all the repo's checks |
-| `vault-template/` | An empty starter vault: templates, Bases views (Locations, Stays, Food, Itinerary, Decisions, Bookings), Obsidian property types, a home page with a **Trip facts** section, and vault rules for Claude |
-| `example-vault/` | A filled example: 60 places, 6 stays and 3 restaurants and cafes in Assam and Meghalaya, researched for a December trip |
+  | You say | Skill |
+  |---|---|
+  | "Set up a vault for our December trip." | `trip-init` |
+  | "Here's what Priya sent." | `add-source`, then `add-place` |
+  | "Compare the two agency quotes with our plan." | `compare-itineraries` |
+  | "Plan day 3, Shillong to Sohra." | `plan-day` |
+  | "Can we really do this before dark?" | `review-travel-times` |
+  | "What do we still have to decide?" / "We paid the advance." | `group-decisions` |
+
+- **An Obsidian vault layout.** Places, stays, cafés, days, decisions and bookings are each a note. Obsidian's Bases views show the open questions, the booking list with the cost per family, and a map.
+- **Nothing is decided for you.** New ideas go in as *considering*. The group picks. Claude never chooses for you, and never plans against something already booked.
+
+For every skill, script and folder in detail, see [docs/SKILLS.md](docs/SKILLS.md).
 
 ## Quick start
 1. **Install the plugin.**

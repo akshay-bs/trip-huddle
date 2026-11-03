@@ -48,7 +48,7 @@ From the target folder:
 ```bash
 node "${CLAUDE_PLUGIN_ROOT}/skills/trip-init/scripts/init.mjs" --answers .claude/scratch/trip-answers.json
 ```
-Add `--reconfigure` in the change-settings mode (and `--add-food`, `--add-bookings` or `--add-itinerary` as well, if the user said yes to the Food category, the booking list or the itinerary building above). The script:
+Add `--reconfigure` in the change-settings mode (and `--add-food`, `--add-bookings`, `--add-itinerary` or `--add-deadlines` as well, if the user said yes to the Food category, the booking list, the itinerary building or booking deadlines above). The script:
 - copies the empty vault (including the hidden `.obsidian/` and `.claude/` folders, and the `Food/` folder and Food Base) when the folder is new,
 - writes `trip.md`,
 - fills the per-trip values into the templates and Bases (cost split, currency symbol, value lists, day defaults, and `slack_ok_hrs` into the Itinerary base, which cannot read `trip.md`),
@@ -57,6 +57,7 @@ Add `--reconfigure` in the change-settings mode (and `--add-food`, `--add-bookin
 - with `--add-food`: adds the `Food/` folder, `Bases/Food.base`, the new Food Spot template (with the price band set again), the food checklist in the Source template, the `kind` and `meal` types and the "Food to decide" section on the home page, and leaves anything already there as it is,
 - with `--add-bookings`: adds the `Bookings/` and `Confirmations/` folders, `Bases/Bookings.base` (with the cost split filled in), the Booking template, the booking fields in the Stay, Transport and Location templates, their types, the *Bookings* section and budget line on the home page and the bookings rule in `.claude/CLAUDE.md`, and leaves anything already there as it is,
 - with `--add-itinerary`: adds the *Day by day* table and the three lists to the Route template, `start_time`, `backtrack_km` and *Along the way* to the Day Plan template, `needs_night_nearby` to the Location template, the Trip Itinerary and Operator Brief templates, their types, the new columns in the Itinerary and Locations Bases and the route step of the home page, and leaves anything already there as it is,
+- with `--add-deadlines`: adds `payment_due` and `cancel_by` to the Booking, Stay and Transport templates, updates the Location FIELD GUIDE, adds the types, adds the *By date* view to the Bookings base and the *Deadlines coming up* section to the home page, and leaves anything already there as it is,
 - and prints every file it changed.
 
 If it stops with an error, show the user the error in plain words and fix the answers file. Don't edit the vault by hand to work around it.

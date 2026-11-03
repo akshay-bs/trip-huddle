@@ -35,6 +35,7 @@ after_dark_note:
 opening_hours: Jeep safari slots about 7:30–9:30 AM, 9:30–11:30 AM, 1:30–3:30 PM, 2:30–4:30 PM (varies by range). Elephant safari about 5:00/5:30–7:30 AM, plus an afternoon slot when allotted
 closed_days: Park closed to tourists roughly May–October (monsoon)
 last_mile: Central (Kohora) Range gate is about 2 km from Kohora on NH-715. Safari jeeps are hired at the gate or through the hotel; a tempo traveller cannot enter the park
+needs_night_nearby:
 permits: "Safari permits are issued by the Forest Department per slot."
 needs_booking: true
 booking_status: not-contacted

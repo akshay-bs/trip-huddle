@@ -35,6 +35,7 @@ after_dark_note:
 opening_hours: Daylight only
 closed_days:
 last_mile: "Starts near Mawphlang (about 25 km / 1 hr from Shillong)."
+needs_night_nearby:
 permits: Local guide recommended (required by most operators)
 needs_booking: false
 entry_fee: 150

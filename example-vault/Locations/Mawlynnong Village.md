@@ -34,6 +34,7 @@ after_dark_note:
 opening_hours: Village open in daylight. Sky View about 8 AM – 5 PM
 closed_days:
 last_mile: Paved road from the Shillong–Dawki road via Pynursla, then the Mawlynnong turn-off. Tempo traveller reaches the village car park at the entrance
+needs_night_nearby:
 permits: None
 needs_booking: false
 entry_fee: 50

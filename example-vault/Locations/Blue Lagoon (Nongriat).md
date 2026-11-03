@@ -34,6 +34,7 @@ after_dark_note:
 opening_hours: Daylight only
 closed_days:
 last_mile: Same as the [[Double Decker Living Root Bridge]]: Sohra → Tyrna by road (about 12 km), then on foot via Nongriat
+needs_night_nearby:
 permits: None
 needs_booking: false
 entry_fee: 0

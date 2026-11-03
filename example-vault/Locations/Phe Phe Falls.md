@@ -34,6 +34,7 @@ after_dark_note:
 opening_hours: About 8:00 am – 5:00 pm (verify locally)
 closed_days:
 last_mile: Jowai–Amlarem/Dawki side road to the Paradise Adventure Camp area near Shkentalang village; paved (tempo traveller OK, confirm the final stretch)
+needs_night_nearby:
 permits: None
 needs_booking: false
 entry_fee: 50

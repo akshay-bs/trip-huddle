@@ -36,6 +36,7 @@ after_dark_note:
 opening_hours: Sacred Forest about 9:00 AM – 4:30 PM; Khasi Heritage Village about 8:00 AM – 6:00 PM
 closed_days:
 last_mile: About 25 km (about 1 hr) from Shillong via the Mawphlang road; parking at the entrance. Tempo traveller OK
+needs_night_nearby:
 permits: A local guide is compulsory for the forest
 needs_booking: false
 entry_fee: 20

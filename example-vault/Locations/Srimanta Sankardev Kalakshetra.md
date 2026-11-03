@@ -34,6 +34,7 @@ after_dark_note:
 opening_hours: About 10:00 AM – 7:00 PM (galleries may close earlier, around 4:30–5 PM)
 closed_days: Monday
 last_mile: On the Panjabari road in east Guwahati, about 5–6 km from GS Road; parking on site. Tempo traveller OK
+needs_night_nearby:
 permits: None
 needs_booking: false
 entry_fee: 30

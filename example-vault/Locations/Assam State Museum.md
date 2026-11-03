@@ -33,6 +33,7 @@ after_dark_note:
 opening_hours: 10:00 AM – 5:00 PM (last ticket 4:00 PM)
 closed_days: Monday, 2nd and 4th Saturday, government holidays
 last_mile: At the south end of Dighalipukhuri tank, GNB Road, central Guwahati (near Pan Bazar); drop-off at the gate. Tempo traveller OK for drop and pick-up
+needs_night_nearby:
 permits: None
 needs_booking: false
 entry_fee: 5

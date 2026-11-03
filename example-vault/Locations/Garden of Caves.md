@@ -35,6 +35,7 @@ after_dark_note:
 opening_hours: 08:30–17:30 (confirm)
 closed_days: Probably open daily (Capture A Trip lists Sundays about 09:00–17:00); one older source says Mon–Sat only. Confirm
 last_mile: Short side road off the Shillong–Sohra road at Laitmawsiang
+needs_night_nearby:
 permits: None
 needs_booking: false
 entry_fee: 20

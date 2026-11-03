@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // trip-init: set up a trip-huddle vault from an answers file, or update an existing vault's settings.
 //
-//   node init.mjs --answers <file.json> [--vault <folder>] [--reconfigure [--add-food] [--add-bookings]]
+//   node init.mjs --answers <file.json> [--vault <folder>] [--reconfigure [--add-food] [--add-bookings] [--add-itinerary]]
 //
 // New vault (default): copies vault-template into the folder (empty or missing), then fills it in.
 // --reconfigure: the folder already has trip.md. Rewrites trip.md, the per-trip values in Templates
@@ -13,13 +13,19 @@
 // folders, Bases/Bookings.base, the Booking template, the booking fields in the Stay, Transport and Location templates, the
 // types, the Bookings section of 00 Home.md and the bookings rule in .claude/CLAUDE.md. Notes are never touched: the
 // group-decisions skill's scripts/migrate-bookings.mjs adds the new fields to existing notes.
+// --add-itinerary (with --reconfigure, for a vault made before 0.12.0): adds what the build-itinerary skill needs: the Day by
+// day table and the three lists in the Route template, start_time, backtrack_km and the Along the way section in the Day Plan
+// template, needs_night_nearby in the Location template, the Trip Itinerary and Operator Brief templates, the types, the new
+// columns in the Itinerary and Locations Bases and the route step of 00 Home.md. Notes are never touched: the build-itinerary
+// skill's scripts/migrate-itinerary.mjs adds the new fields to existing notes. (road_cutoffs and planning_limits.on_the_way_min
+// come with every --reconfigure, like the other trip.md settings.)
 // The per-trip values ("slots") are listed in ../slots.md.
 
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { settingsProblems } from '../../review-travel-times/scripts/travel.mjs';
-import { tripSetting, PLANNING_LIMIT_DEFAULTS, planningLimitsProblems, STAGES, DEFAULT_STAGE, stageProblems } from '../../../scripts/trip-settings.mjs';
+import { tripSetting, PLANNING_LIMIT_DEFAULTS, planningLimitsProblems, STAGES, DEFAULT_STAGE, stageProblems, roadCutoffsProblems } from '../../../scripts/trip-settings.mjs';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const SKILL = path.resolve(HERE, '..');
@@ -32,12 +38,14 @@ const opt = n => { const i = args.indexOf(n); return i >= 0 ? args[i + 1] : unde
 const RECONF = args.includes('--reconfigure');
 const ADD_FOOD = args.includes('--add-food');
 const ADD_BOOKINGS = args.includes('--add-bookings');
+const ADD_ITINERARY = args.includes('--add-itinerary');
 const VAULT = path.resolve(opt('--vault') || process.cwd());
 const ANSWERS = opt('--answers');
 const die = m => { console.error(`trip-init: ${m}`); process.exit(1); };
 if (!ANSWERS) die('missing --answers <file.json>');
 if (ADD_FOOD && !RECONF) die('--add-food only works with --reconfigure (a new vault already has the Food category)');
 if (ADD_BOOKINGS && !RECONF) die('--add-bookings only works with --reconfigure (a new vault already has the booking list)');
+if (ADD_ITINERARY && !RECONF) die('--add-itinerary only works with --reconfigure (a new vault already has what build-itinerary needs)');
 
 // ---------- the answers ----------
 // Property order and defaults, the same as vault-template/trip.md.
@@ -47,7 +55,7 @@ const DEFAULTS = {
   traveller_notes: '', pace: '', food_needs: '', group_vehicle: '', currency: '', currency_symbol: '',
   season: '', daylight_hrs: 10, day_start: '08:00', sunset: '18:00', regions: [], bases: [], evening_bases: [],
   categories: ['viewpoint', 'nature', 'old-town', 'museum', 'market', 'food', 'activity', 'beach', 'hike'],
-  map_box: null, field_packs: [], planning_limits: PLANNING_LIMIT_DEFAULTS,
+  map_box: null, field_packs: [], planning_limits: PLANNING_LIMIT_DEFAULTS, road_cutoffs: [],
 };
 let raw;
 try { raw = JSON.parse(fs.readFileSync(path.resolve(ANSWERS), "utf8")); }
@@ -68,6 +76,14 @@ try {
   nowStage = tripSetting(old, 'stage');
 } catch { nowStage = undefined; }
 A.stage = raw.stage !== undefined && raw.stage !== '' ? raw.stage : (STAGES.includes(nowStage) ? nowStage : DEFAULT_STAGE);
+// road_cutoffs: the answer, else what trip.md has now (on --reconfigure, when it is valid), else none.
+let nowCutoffs;
+try {
+  const old = RECONF && fs.existsSync(path.join(VAULT, 'trip.md')) ? fs.readFileSync(path.join(VAULT, 'trip.md'), 'utf8').match(/^---\r?\n([\s\S]*?)\r?\n---/)?.[1] || '' : '';
+  nowCutoffs = tripSetting(old, 'road_cutoffs');
+} catch { nowCutoffs = undefined; }
+A.road_cutoffs = raw.road_cutoffs !== undefined && raw.road_cutoffs !== null ? raw.road_cutoffs
+  : (Array.isArray(nowCutoffs) && !roadCutoffsProblems(nowCutoffs).length ? nowCutoffs : []);
 A.planning_limits = { ...PLANNING_LIMIT_DEFAULTS, ...(limitsOk(nowLimits) ? nowLimits : {}), ...(raw.planning_limits && typeof raw.planning_limits === 'object' ? raw.planning_limits : {}) };
 
 const problems = [...stageProblems(A.stage)];
@@ -91,6 +107,7 @@ if (A.map_box) {
 // Optional travel settings, read by the review-travel-times skill (see ../slots.md). Left out of trip.md unless given.
 problems.push(...settingsProblems(A.road_speeds, A.stop_buffer));
 problems.push(...planningLimitsProblems(raw.planning_limits));   // a limit is a number; see PLANNING_LIMIT_DEFAULTS
+problems.push(...roadCutoffsProblems(raw.road_cutoffs));          // [{area, no_drive_after: "HH:MM", reason}]
 const PACK_DIR = path.join(SKILL, 'field-packs');
 const PACKS = Object.fromEntries(fs.readdirSync(PACK_DIR).filter(f => f.endsWith('.json'))
   .map(f => [f.replace(/\.json$/, ''), JSON.parse(fs.readFileSync(path.join(PACK_DIR, f), 'utf8'))]));
@@ -125,11 +142,12 @@ const write = (rel, text) => {
 
 // ---------- trip.md ----------
 const needsQuote = s => s === '' || /^[\s\-?:,\[\]{}#&*!|>'"%@`]|[:#]\s|:$|^\d{2}:\d{2}$|^(true|false|null|yes|no|~)$|^[\d.+-]+$/i.test(s) && !/^\d{4}-\d{2}-\d{2}$/.test(s);
-const scalar = v => typeof v === 'number' || typeof v === 'boolean' ? String(v)
-  : v == null ? '' : needsQuote(String(v)) ? JSON.stringify(String(v)) : String(v);
-const yamlValue = v => Array.isArray(v) ? `[${v.map(scalar).join(', ')}]`
-  : v && typeof v === 'object' ? `{${Object.entries(v).map(([k, x]) => `${k}: ${yamlValue(x)}`).join(', ')}}`
-  : scalar(v);
+// Inside a [list] or {map} a comma or bracket would end the value, so such text is quoted there too.
+const scalar = (v, nested = false) => typeof v === 'number' || typeof v === 'boolean' ? String(v)
+  : v == null ? '' : needsQuote(String(v)) || (nested && /[,{}[\]]/.test(String(v))) ? JSON.stringify(String(v)) : String(v);
+const yamlValue = (v, nested = false) => Array.isArray(v) ? `[${v.map(x => yamlValue(x, true)).join(', ')}]`
+  : v && typeof v === 'object' ? `{${Object.entries(v).map(([k, x]) => `${k}: ${yamlValue(x, true)}`).join(', ')}}`
+  : scalar(v, nested);
 const keys = [...Object.keys(DEFAULTS), ...Object.keys(A).filter(k => !(k in DEFAULTS))];
 let front = keys.map(k => { const v = yamlValue(A[k]); return v === '' ? `${k}:` : `${k}: ${v}`; }).join('\n');
 // Optional settings that people add by hand (read by scripts/validate.mjs and the review-travel-times skill):
@@ -201,6 +219,63 @@ if (ADD_BOOKINGS) {
   });
   if (fs.existsSync(path.join(VAULT, '.claude/CLAUDE.md'))) edit('.claude/CLAUDE.md', t => /## Bookings live on/.test(t) ? t
     : t.replace(/\n*$/, '\n') + fromStarter('.claude/CLAUDE.md').match(/\n## Bookings live on[\s\S]*$/)[0]);
+}
+
+// ---------- --add-itinerary: bring a vault made before 0.12.0 up to what build-itinerary needs ----------
+if (ADD_ITINERARY) {
+  const fromStarter = rel => fs.readFileSync(path.join(TEMPLATE_VAULT, rel), 'utf8');
+  for (const f of ['Templates/Trip Itinerary.md', 'Templates/Operator Brief.md']) if (!fs.existsSync(path.join(VAULT, f))) write(f, fromStarter(f));
+  // Route has no per-trip lines: an old one (no Day by day table) is replaced by the starter's.
+  if (fs.existsSync(path.join(VAULT, 'Templates/Route.md')) && !/^## Day by day$/m.test(read('Templates/Route.md'))) write('Templates/Route.md', fromStarter('Templates/Route.md'));
+  // Day Plan and Location have per-trip lines and field packs, so the new lines are put in place, as in the starter vault.
+  const starterLine = (rel, re) => fromStarter(rel).match(re)[0];
+  edit('Templates/Day Plan.md', t => {
+    if (!/^start_time:/m.test(t)) t = sub(t, /^(locations:.*\n(?:\s+-.*\n)*)/m, '$1start_time:\n', 'locations in the Day Plan template');
+    if (!/^backtrack_km:/m.test(t)) t = sub(t, /^(total_walk_km:.*\n)/m, '$1backtrack_km:\n', 'total_walk_km in the Day Plan template');
+    if (!/^start_time: "HH:MM"/m.test(t)) t = sub(t, /^(early_start: "HH:MM".*)$/m, `${starterLine('Templates/Day Plan.md', /^start_time: "HH:MM".*$/m)}\n$1`, 'the early_start line in the Day Plan FIELD GUIDE');
+    if (!/^backtrack_km: km/m.test(t)) t = sub(t, /^rule_bends: how many.*$/m, `${starterLine('Templates/Day Plan.md', /^backtrack_km: km.*$/m)}\n${starterLine('Templates/Day Plan.md', /^rule_bends: how many.*$/m)}`, 'the rule_bends line in the Day Plan FIELD GUIDE');
+    if (!/^## Along the way$/m.test(t)) t = sub(t, /^## Meals$/m, fromStarter('Templates/Day Plan.md').match(/^## Along the way\n[\s\S]*?\n\n(?=## Meals)/m)[0] + '## Meals', 'the Meals section of the Day Plan template');
+    return t;
+  });
+  edit('Templates/Location.md', t => {
+    if (!/^needs_night_nearby:/m.test(t)) t = sub(t, /^(last_mile:.*\n)/m, '$1needs_night_nearby:\n', 'last_mile in the Location template');
+    if (!/^needs_night_nearby: true when/m.test(t)) t = sub(t, /^after_dark_note: .*$/m.test(t) ? /^(after_dark_note: .*)$/m : /^(time_needed_hrs: .*)$/m,
+      `$1\n${starterLine('Templates/Location.md', /^needs_night_nearby: true when.*$/m)}`, 'the after_dark_note line in the Location FIELD GUIDE');
+    return t;
+  });
+  edit('.obsidian/types.json', t => {   // in the same places as the starter vault
+    const j = JSON.parse(t), types = {};
+    const after = { last_mile: [['needs_night_nearby', 'checkbox']], locations: [['start_time', 'text']], rule_bends: [['backtrack_km', 'number']] };
+    const notes = [['route', 'text'], ['built_on', 'date'], ['seats', 'number']];   // the Trip Itinerary and Operator Brief properties
+    const put = list => { for (const [a, b] of list) if (!(a in j.types) && !(a in types)) types[a] = b; };
+    for (const [k, v] of Object.entries(j.types)) {
+      if (k === 'needs_booking') put(notes);
+      types[k] = v;
+      put(after[k] || []);
+    }
+    put(notes);
+    return JSON.stringify({ ...j, types }, null, 2) + '\n';
+  });
+  edit('Bases/Itinerary.base', t => {
+    if (!/^\s+- start_time$/m.test(t)) {
+      t = sub(t, /^(  travel_verdict:\n    displayName: .*\n)/m, '$1  start_time:\n    displayName: Start\n  backtrack_km:\n    displayName: Doubles back km\n', 'the travel_verdict column name in the Itinerary base');
+      t = sub(t, /^(      - locations\n)/m, '$1      - start_time\n', 'the locations column in the Itinerary base');
+      t = sub(t, /^(      - total_walk_km\n)/m, '$1      - backtrack_km\n', 'the total_walk_km column in the Itinerary base');
+      t = sub(t, /^(      total_walk_km: Sum\n)/m, '$1      backtrack_km: Sum\n', 'the total_walk_km summary in the Itinerary base');
+    }
+    return t;
+  });
+  edit('Bases/Locations.base', t => {
+    if (/needs_night_nearby/.test(t)) return t;
+    t = sub(t, /^(  time_needed_hrs:\n    displayName: .*\n)/m, '$1  needs_night_nearby:\n    displayName: Night nearby\n', 'the time_needed_hrs column name in the Locations base');
+    return sub(t, /^(    name: All\n    order:\n(?:      - .*\n)*?      - time_needed_hrs\n)/m, '$1      - needs_night_nearby\n', 'the All view of the Locations base');
+  });
+  edit('00 Home.md', t => {
+    const home = fromStarter('00 Home.md');
+    if (!/^6\. \*\*Plan the route\.\*\*.*build-itinerary/m.test(t)) t = sub(t, /^6\. \*\*Plan the route\.\*\*.*$/m, home.match(/^6\. \*\*Plan the route\.\*\*.*$/m)[0], 'step 6 (Plan the route) of "How this vault works" in 00 Home.md');
+    if (!/`build-itinerary` skill plans every day/.test(t)) t = sub(t, /It never scores them, and the group decides\.(?! Once the group picks)/, home.match(/It never scores them, and the group decides\. Once the group picks[^\n]*/)[0], 'the compare-itineraries sentence in 00 Home.md');
+    return t;
+  });
 }
 
 // ---------- slots (see ../slots.md) ----------

@@ -36,6 +36,7 @@ after_dark_note:
 opening_hours: Daylight hours; start early
 closed_days:
 last_mile: Sohra → Tyrna village, about 12 km (30–40 min) on a paved road. Tempo traveller OK to the Tyrna parking area; everything after that is on foot
+needs_night_nearby:
 permits: None
 needs_booking: false
 entry_fee: 20

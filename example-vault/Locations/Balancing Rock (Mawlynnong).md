@@ -35,6 +35,7 @@ after_dark_note:
 opening_hours: About 6 AM – 5 PM
 closed_days:
 last_mile: Village road between Mawlynnong and Riwai/Nohwet. Tempo traveller OK, with roadside or small-lot parking
+needs_night_nearby:
 permits: None
 needs_booking: false
 entry_fee: 20

@@ -35,6 +35,7 @@ after_dark_note:
 opening_hours: Shops about 10:00–20:00; street food stalls mostly in the evening
 closed_days: Sunday (many shops and eateries shut or keep short hours; varies by shop)
 last_mile: City centre; one-way streets and heavy traffic. Drop off at Police Point and walk; parking is very limited for a tempo traveller.
+needs_night_nearby:
 permits: None
 needs_booking: false
 entry_fee:

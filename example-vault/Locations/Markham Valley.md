@@ -36,6 +36,7 @@ after_dark_note:
 opening_hours: Daylight hours
 closed_days:
 last_mile: About 52 km on the Shillong–Mairang–Nongstoin road (NH-106) to Shyrwang, then 10–15 km of narrow village road (gravel/stone patches, poor signage). Confirm tempo traveller access with the driver
+needs_night_nearby:
 permits: None
 needs_booking: false
 entry_fee:

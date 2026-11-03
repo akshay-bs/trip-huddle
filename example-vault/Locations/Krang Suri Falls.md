@@ -35,6 +35,7 @@ after_dark_note:
 opening_hours: About 7:00 am – 6:00 pm (one source) or 9:00 am – 5:00 pm (Muddie Trails); verify locally and don't plan to arrive before 9:00
 closed_days:
 last_mile: Jowai → Amlarem road, then a short road to the parking area; paved. Tempo traveller OK (confirm)
+needs_night_nearby:
 permits: None
 needs_booking: false
 entry_fee: 40

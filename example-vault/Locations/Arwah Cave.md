@@ -35,6 +35,7 @@ after_dark_note:
 opening_hours: About 9:00 am – 5:00 pm (verify locally)
 closed_days:
 last_mile: Paved road from Sohra town (about 3.5 km) to parking at Lumshynna; tempo traveller OK
+needs_night_nearby:
 permits: None
 needs_booking: false
 entry_fee: 50

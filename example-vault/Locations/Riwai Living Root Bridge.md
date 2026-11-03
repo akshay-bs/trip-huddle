@@ -36,6 +36,7 @@ after_dark_note:
 opening_hours: About 8 AM – 5 PM (some listings say until 6–7 PM)
 closed_days:
 last_mile: Paved village road from the Mawlynnong approach to a small car park at Riwai. Tempo traveller OK. The parking area is tight at peak hours
+needs_night_nearby:
 permits: None
 needs_booking: false
 entry_fee: 50

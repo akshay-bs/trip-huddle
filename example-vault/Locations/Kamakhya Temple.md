@@ -34,6 +34,7 @@ after_dark_note:
 opening_hours: 5:30 AM – 1:00 PM and 2:30 PM – 5:30 PM (closed for noon bhog). VIP passes are sold in slots, about 8 AM – 4:30 PM
 closed_days: Open daily. Closed for a few days during Ambubachi Mela (June) and on some special ritual days
 last_mile: Up Nilachal Hill from Maligaon or Kamakhya Gate. Cars and small vehicles usually reach the hilltop parking. Large vehicles may be stopped at the foothill parking, with shared autos or shuttles going up. Whether a tempo traveller can go up on 25 Dec is unconfirmed
+needs_night_nearby:
 permits: None
 needs_booking: false
 entry_fee: 0

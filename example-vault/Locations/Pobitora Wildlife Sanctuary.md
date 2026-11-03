@@ -33,6 +33,7 @@ after_dark_note:
 opening_hours: About 7:00 AM – 4:00 PM. Jeep slots run about 7:00 AM – 3:00 PM and elephant rides about 6:00–8:00 AM (sources differ, so confirm when booking)
 closed_days: Closed for the monsoon (roughly May/June to October). Open daily in season
 last_mile: About 45–50 km east of Guwahati (1.5 hrs) via Jagiroad/Mayong roads. The rural road is fine for a tempo traveller
+needs_night_nearby:
 permits: Entry ticket and safari permit bought at the range office or through online agents. Carry photo ID
 needs_booking: false
 entry_fee: 50

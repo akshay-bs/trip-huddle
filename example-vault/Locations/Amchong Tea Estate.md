@@ -35,6 +35,7 @@ after_dark_note:
 opening_hours: Amchong Leaf about 9 AM – 6 PM (the website also says 10 AM – 7 PM for the shop); Steep House restaurant from 10 AM
 closed_days:
 last_mile: About 48 km from Guwahati airport (about 1.5 hrs through city traffic). Take NH-27 east to Sonapur, then the Sonapur–Digaru road into the estate. Tempo traveller OK (paved estate road; confirm parking)
+needs_night_nearby:
 permits:
 needs_booking: false
 entry_fee:

@@ -33,6 +33,7 @@ after_dark_note:
 opening_hours: About 9:00 am – 5:00 pm (some sources say 9:30 am – 5:30 pm)
 closed_days:
 last_mile: Paved road via Mawsmai village, about 6 km south of Sohra town; tempo traveller OK
+needs_night_nearby:
 permits: None
 needs_booking: false
 entry_fee: 20

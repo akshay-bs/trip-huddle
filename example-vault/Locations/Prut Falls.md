@@ -34,6 +34,7 @@ after_dark_note:
 opening_hours: 07:00–18:00
 closed_days:
 last_mile: Road to the car park at Laitduh / Laitlyndop village (Plus Code 8M7R+8MV); confirm big-vehicle parking with the driver
+needs_night_nearby:
 permits: None
 needs_booking: false
 entry_fee: 50

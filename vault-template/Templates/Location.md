@@ -24,6 +24,7 @@ after_dark_note:
 opening_hours:
 closed_days:
 last_mile:
+needs_night_nearby:
 permits:
 needs_booking: false
 entry_fee:
@@ -59,6 +60,7 @@ time_needed_hrs: time AT the place incl. walk, excluding drive
 best_time_of_day: sunrise | morning | midday | afternoon | sunset | evening | night | any   (when to be there; a list, e.g. [sunrise] or [evening, night])
 after_dark: good | fine | avoid   (good = worth visiting after dark: lights, night market, festival; fine = no problem, nothing special; avoid = closes, is unsafe or pointless after dark, or the way back is a bad night drive)
 after_dark_note: the reason, in a few words, e.g. "lit up for the festival", "no lights, forest road back"
+needs_night_nearby: true when the time at the place plus the drive in and out does not fit one day from any base, so the group has to sleep nearby (empty otherwise). Set by add-place research; build-itinerary makes such a place a night stop
 crowd_level: low | medium | high
 decision: considering | selected | backup | dropped   (+ decision_reason, decided_on)
 priority: must | should | maybe

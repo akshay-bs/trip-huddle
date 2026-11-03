@@ -36,6 +36,7 @@ after_dark_note:
 opening_hours:
 closed_days:
 last_mile: Wahkhen village (map pin is the village trailhead, not the rock), about 45 km (1.5–2 hrs) from Shillong; about 60 km (2–2.5 hrs) from Sohra via Pynursla
+needs_night_nearby:
 permits:
 needs_booking: false
 entry_fee:

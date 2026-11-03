@@ -9,6 +9,7 @@ locations:
   - "[[Cliff Viewpoint (Example)]]"
   - "[[Fishing Harbour (Example)]]"
   - "[[Old Town Walk (Example)]]"
+start_time: "05:00"
 early_start: "05:00"
 sunrise: "06:14"
 sunset: "20:54"
@@ -17,6 +18,7 @@ drive_hrs: 2.3
 activity_hrs: 10
 predawn_hrs: 1.3
 total_walk_km: 5
+backtrack_km: 0
 rule_bends: 1
 travel_checked:
 travel_verdict:
@@ -28,12 +30,14 @@ FIELD GUIDE
 Name the note "Day 01", "Day 02", …
 stay: "[[Stay note]]" for tonight
 locations: list of "[[Location note]]" visited today (also set scheduled_day on each Location)
+start_time: "HH:MM", when the day starts: the first drive, or the first activity at the stay (the Schedule's first row)
 early_start: "HH:MM", only when the day starts before sunrise (leave empty otherwise)
 sunrise, sunset: local time "HH:MM" on this date at the day's base (the plan-day skill works them out with scripts/sun.mjs)
 daylight_hrs: real daylight, sunset − sunrise. It is not the length of your day. If the sun times are unknown, the default from trip.md is used
 drive_hrs: sum of the legs below, using the upper end of each range (after a travel-time check it also holds the stops buffer);  activity_hrs: time at the day's locations (time_needed_hrs) + meals and rests. Leave out after-dark activities
 predawn_hrs: the part of drive_hrs + activity_hrs that happens before sunrise (empty if none). It is counted separately and does not use up daylight
-rule_bends: how many choices are listed under "Choices that bend the rules" (0 if none)
+backtrack_km: km driven today on a road the trip already drove (earlier today or on an earlier day), from the build-itinerary route check; a stop and straight back is not counted. 0 if none, empty if not worked out
+rule_bends: how many choices are listed under "Choices that bend the rules" (0 if none). A leg in a road_cutoffs area (trip.md) driven after its time is a rule bend too
 travel_checked: date (YYYY-MM-DD) the review-travel-times skill last checked the drive times; empty if never
 travel_verdict: ok | tight | too much   (that skill's verdict on the drive times, empty if not checked; the checker warns when it is better than the slack verdict below)
 Legs table, After dark column: ok = lit highway or city streets; avoid = unlit, forest, hill or bad surface
@@ -80,6 +84,10 @@ A loop from Lagos with the one early start of the trip, for sunrise at the cliff
 | 17:00 | **[[Old Town Walk (Example)]]** | Flat, 5 km in all with the harbour. Done well before sunset |
 | 19:30 | Dinner in the old town | |
 | 20:54 | Sunset | |
+
+## Along the way
+- **The lighthouse on the coast road**, seen from the van just before the gravel track. No stop: it is dark on the way out.
+- **The fuel station at the harbour roundabout**, the only one on today's route. Fill up on the way back.
 
 ## Meals
 - **Breakfast:** village café after the viewpoint (opens at 07:00)

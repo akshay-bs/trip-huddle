@@ -34,6 +34,7 @@ after_dark_note:
 opening_hours: About 9:00–15:30 (last entry; timings set by the Air Force)
 closed_days: Wednesday (reported by several sources; confirm locally)
 last_mile: Paved road via Upper Shillong into the Indian Air Force station, with a security check at the gate; tempo traveller OK
+needs_night_nearby:
 permits: Original photo ID for every visitor at the IAF checkpoint; foreigners reportedly not allowed
 needs_booking: false
 entry_fee: 30

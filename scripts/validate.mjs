@@ -13,12 +13,14 @@
 //   .obsidian/types.json  property types (number, checkbox, date, multitext).
 //   trip.md (optional) map_box, regions, decision_values, folders (a map of note type to folder) and
 //                      planning_limits (slack_ok_hrs is the "ok" threshold of the travel_verdict check) and road_cutoffs
-//                      (a Day note leg in a cutoff area driven after its time, with no rule bend written down, is warned about).
+//                      (a Day note leg in a cutoff area driven after its time, with no rule bend written down, is warned about),
+//                      and group_wishes ({must: [], nice: [], avoid: []}, lists of short lines; a bad shape is an error).
+//   Destination Brief.md (optional) the one note of type destination, kept at the vault root (trip-init writes it).
 //   Logistics/legs.json (optional) the shared distance file of the build-itinerary skill: its links are checked for shape.
 import fs from 'node:fs';
 import path from 'node:path';
 import { TOO_MUCH_BELOW_HRS } from '../skills/plan-day/scripts/sun.mjs';   // the slack verdict thresholds
-import { loadPlanningLimits, stageProblems, loadRoadCutoffs, cutoffFor } from './trip-settings.mjs';
+import { loadPlanningLimits, stageProblems, loadRoadCutoffs, cutoffFor, loadGroupWishes } from './trip-settings.mjs';
 import { linkProblems, dayByDay } from '../skills/build-itinerary/scripts/route.mjs';
 
 // ---------- arguments ----------
@@ -141,13 +143,17 @@ const regions = Array.isArray(trip.regions) && trip.regions.length ? trip.region
 const decisionValues = Array.isArray(trip.decision_values) && trip.decision_values.length
   ? trip.decision_values.map(String) : ['considering', 'selected', 'backup', 'dropped'];
 const FOLDERS = { location: 'Locations', stay: 'Stays', day: 'Itinerary', source: 'Sources', comparison: 'Sources', decision: 'Decisions', food: 'Food', route: 'Itinerary', transport: 'Logistics', booking: 'Bookings', itinerary: 'Itinerary', brief: 'Itinerary' };
+const ROOT_TYPES = ['destination'];   // note types kept at the vault root, one per vault (the Destination Brief)
 const DECISION_STATUSES = ['open', 'decided', 'locked'];   // see decisionChecks
+const PICKS = ['deep dive', 'maybe', 'skip'];   // the Pick column of a research Source (shortlist-places)
+const FITS = ['fits', 'mixed', "doesn't fit"];   // its "Fits the group" column: a word and the reason, never a score
 // The booking list (see bookingChecks): the fields every bookable note has, the folder for vouchers, and what counts as booked.
 const BOOKING_FIELDS = ['booking_status', 'cost_agreed', 'advance_paid', 'balance_pending', 'confirmation'];
 const CONFIRMATIONS = 'Confirmations';   // vouchers, tickets and pasted emails; not checked as notes
 const BOOKED = ['booked', 'paid'];
 const planning = loadPlanningLimits(VAULT);   // the defaults, changed by planning_limits in trip.md
 const roadCutoffs = loadRoadCutoffs(VAULT);   // areas where nobody drives after a set time (valid entries only)
+const groupWishes = loadGroupWishes(VAULT);   // what the group wants: {must, nice, avoid} (shortlist-places)
 if (trip.folders && typeof trip.folders === 'object' && !Array.isArray(trip.folders)) {
   for (const [t, f] of Object.entries(trip.folders)) if (f) FOLDERS[t] = String(f).replace(/^\/+|\/+$/g, '');
 }
@@ -178,12 +184,14 @@ const warn = (f, msg) => warnings.push(`${rel(f)}: ${msg}`);
 for (const p of planning.problems) warnings.push(`trip.md: ${p}. The default is used instead`);
 for (const p of stageProblems(trip.stage)) warnings.push(`trip.md: ${p}`);
 for (const p of roadCutoffs.problems) warnings.push(`trip.md: ${p}. That cutoff is not used until it is fixed`);
+for (const p of groupWishes.problems) errors.push(`trip.md: ${p}. The skills cannot read the group's wishes until it is fixed`);
 const strayEvening = Array.isArray(trip.bases) ? eveningBases.filter(x => !trip.bases.map(String).includes(x)) : [];
 if (strayEvening.length) warnings.push(`trip.md: evening_bases has towns that are not in bases: ${strayEvening.join(', ')}. Use the same spelling as in bases`);
 
 const isTripNoteSpot = p => {
   const r = rel(p);
-  if (r.startsWith('Templates/') || r.startsWith('Memories/') || !r.includes('/')) return false;
+  if (r.startsWith('Templates/') || r.startsWith('Memories/')) return false;
+  if (!r.includes('/')) return ROOT_TYPES.includes(parseFrontmatter(read(p))?.data.type);   // the Destination Brief
   if (Object.values(FOLDERS).some(f => r.startsWith(f + '/'))) return true;
   const fm = parseFrontmatter(read(p));
   return !!(fm && SCHEMA[fm.data.type]);   // a trip note filed in the wrong place
@@ -214,8 +222,8 @@ for (const f of targets) {
     err(f, `type "${type}" has no template in Templates/. Known types: ${Object.keys(SCHEMA).join(', ')}. Fix the type, or add a template for it.`);
     continue;
   }
-  const want = FOLDERS[type];
-  if (want && dir !== want) err(f, `a "${type}" note must live in ${want}/ (it is in ${dir === '.' ? 'the vault root' : dir + '/'}). Move it, or fix its type.`);
+  const want = ROOT_TYPES.includes(type) ? '.' : FOLDERS[type];
+  if (want && dir !== want) err(f, `a "${type}" note must live in ${want === '.' ? 'the vault root' : want + '/'} (it is in ${dir === '.' ? 'the vault root' : dir + '/'}). Move it, or fix its type.`);
   if (/[\[\]#^|:\\/?]/.test(name)) err(f, 'the file name contains a character Obsidian links cannot handle ([ ] # ^ | : \\ / ?). Rename the note.');
 
   // properties: missing, unknown
@@ -314,7 +322,10 @@ for (const f of targets) {
   if (type === 'itinerary' || type === 'brief') itineraryChecks(f, type, fm.data, fm.body);
   if (type === 'decision') decisionChecks(f, fm.data);
   if (['stay', 'transport', 'location', 'booking'].includes(type)) bookingChecks(f, type, fm.data, name);
-  if (type === 'source' && String(fm.data.processed) === 'true') {
+  if (type === 'destination') destinationChecks(f, fm.data, fm.body);
+  const research = type === 'source' && String(fm.data.source_kind) === 'research';
+  if (research) researchChecks(f, fm.data, fm.body, name);
+  if (type === 'source' && String(fm.data.processed) === 'true' && !research) {
     for (const l of new Set(wikilinks(fm.body))) if (!resolves(l)) warn(f, `marked processed, but [[${l}]] has no note yet`);
     const open = fm.body.replace(/<!--[\s\S]*?-->/g, '').split('\n').filter(l => /^\s*- \[ \]\s*\S/.test(l) && !/^\s*- \[ \]\s*(\[\[\s*\]\])\s*$/.test(l));
     if (open.length) warn(f, `marked processed, but ${open.length} checklist line(s) are not ticked, e.g. "${open[0].trim().slice(0, 60)}". Tick them, or set processed: false`);
@@ -327,6 +338,61 @@ for (const f of targets) {
   if (!/^# .+/m.test(fm.body)) warn(f, 'no H1 heading (a line starting with "# ")');
   else if (!fm.body.match(/^# (.+)$/m)[1].includes(name.replace(/\s*\(.*\)$/, ''))) warn(f, 'the H1 heading does not match the file name');
   if (/\{\{(title|date|time)\}\}/.test(text)) err(f, 'a template placeholder like {{title}} was not replaced with real text');
+}
+
+// The Destination Brief (trip-init): one per vault, at the vault root (the vault-wide checks count them). Safety, visa and
+// health rules change, so it says when it was checked, and every source has a date.
+function destinationChecks(f, d, body) {
+  if (!d.checked_on) warn(f, 'checked_on is empty. Say on which date the brief was checked (YYYY-MM-DD): safety, visa and health rules change');
+  const m = body.replace(/<!--[\s\S]*?-->/g, '').match(/^## Sources[^\n]*\n([\s\S]*?)(?=^## |(?![\s\S]))/m);
+  const lines = (m ? m[1] : '').split(/\r?\n/).filter(l => /^\s*[-*]\s+\S/.test(l));
+  if (!lines.length) { warn(f, 'the Sources section lists no sources. Every safety, visa and health line needs a source and the date it was checked'); return; }
+  const dated = /\b(19|20)\d{2}-\d{2}(-\d{2})?\b|\b(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]* (19|20)\d{2}\b/;
+  const undated = lines.filter(l => !dated.test(l));
+  if (undated.length) warn(f, `${undated.length} source(s) with no date, e.g. "${undated[0].trim().slice(0, 60)}". Give each source the date it was checked or published`);
+}
+
+// A research Source (the shortlist of shortlist-places): its candidates are a table under "Places mentioned", with extra
+// columns (Region, Type, Why go, Season, Time needed, Fits the group, Pick). A place is a link only once it has a note.
+// Pick is deep dive, maybe or skip (empty until the group decides); "Fits the group" is fits, mixed or doesn't fit with the
+// reason, never a score. It is processed when every row is deep dive (with a note that lists this source) or skip.
+function researchChecks(f, d, body, name) {
+  const section = body.replace(/<!--[\s\S]*?-->/g, '').match(/^## Places mentioned[^\n]*\n([\s\S]*?)(?=^## |(?![\s\S]))/m)?.[1] || '';
+  const cells = l => l.trim().replace(/^\||\|$/g, '').split(/(?<!\\)\|/).map(c => c.trim());
+  const tables = [];   // runs of table lines, each { head, rows }
+  let run = [];
+  for (const l of [...section.split(/\r?\n/), '']) {
+    if (/^\s*\|/.test(l)) { run.push(cells(l)); continue; }
+    if (run.length) { const rows = run.filter(r => !r.every(c => /^:?-+:?$/.test(c))); tables.push({ head: rows[0].map(c => c.toLowerCase()), rows: rows.slice(1) }); run = []; }
+  }
+  const used = tables.filter(t => t.head.includes('place') && t.head.includes('pick'));
+  if (!used.length) { warn(f, 'a research source keeps its candidates in a table under "Places mentioned", with at least a Place and a Pick column'); return; }
+  const plain = s => s.replace(/\[\[([^\]|]*\|)?([^\]]*)\]\]/g, '$2').replace(/\*\*/g, '').trim();
+  const open = [], noNote = [];
+  for (const t of used) {
+    const P = t.head.indexOf('place'), K = t.head.indexOf('pick'), F = t.head.indexOf('fits the group');
+    for (const r of t.rows) {
+      const place = plain(r[P] || ''), pick = (r[K] || '').toLowerCase().replace(/\*\*/g, '').trim();
+      if (!place) continue;
+      const word = PICKS.find(p => pick === p || pick.startsWith(p + ' ') || pick.startsWith(p + ':') || pick.startsWith(p + ',') || pick.startsWith(p + ' –') || pick.startsWith(p + ' —'));
+      if (pick && !word) warn(f, `Pick "${r[K]}" for ${place} should be ${PICKS.join(', ')} (or empty until the group decides)`);
+      const fit = F >= 0 ? (r[F] || '').toLowerCase().replace(/\*\*/g, '').replace(/’/g, "'").replace(/^does not fit/, "doesn't fit").trim() : '';
+      if (fit && !FITS.some(x => fit === x || fit.startsWith(x + ':') || fit.startsWith(x + ' ') || fit.startsWith(x + ','))) {
+        warn(f, `"Fits the group" for ${place} is "${r[F]}". Start it with ${FITS.join(', ')}, then the wish it matches or clashes with (no scores)`);
+      }
+      if (word === 'deep dive') {
+        const link = wikilinks(r[P] || '')[0];
+        const note = link && (byBase.get(link) || []).find(p => p.endsWith('.md') && !rel(p).startsWith('Templates/'));
+        const recs = note ? (parseFrontmatter(read(note))?.data.recommended_by || []) : [];
+        if (!note || !(Array.isArray(recs) ? recs : [recs]).some(x => String(x).replace(/^\[\[|\]\]$/g, '').split('|')[0] === name)) noNote.push(place);
+      } else if (word !== 'skip') open.push(place);
+    }
+  }
+  if (String(d.processed) !== 'true') return;
+  if (open.length) warn(f, `marked processed, but ${open.length} row(s) are still maybe or not picked, e.g. ${open.slice(0, 3).join(', ')}. Every row must be deep dive (with a note) or skip, or set processed: false`);
+  if (noNote.length) warn(f, `marked processed, but ${noNote.length} deep dive row(s) have no note that lists this source yet, e.g. ${noNote.slice(0, 3).join(', ')}. Link the place in the Place column once add-place has made its note`);
+  const unticked = body.replace(/<!--[\s\S]*?-->/g, '').split('\n').filter(l => /^\s*- \[ \]\s*\S/.test(l) && !/^\s*- \[ \]\s*(\[\[\s*\]\])\s*$/.test(l));
+  if (unticked.length) warn(f, `marked processed, but ${unticked.length} checklist line(s) are not ticked, e.g. "${unticked[0].trim().slice(0, 60)}". Tick them, or set processed: false`);
 }
 
 // Comparison notes (compare-itineraries): 2 or more options, each a Source or Route note; a decided comparison names
@@ -668,7 +734,11 @@ if (!explicit) {
     const md = ps.filter(p => p.endsWith('.md') && !rel(p).startsWith('Templates/'));
     if (md.length > 1) errors.push(`duplicate note name "${b}": ${md.map(rel).join(', ')}. Links need unique names; rename one.`);
   }
+  // One Destination Brief per vault: a trip across two countries gets a short subsection per country in the same note.
+  const briefs = mdFiles.filter(p => !rel(p).startsWith('Templates/') && ROOT_TYPES.includes(parseFrontmatter(read(p))?.data.type));
+  if (briefs.length > 1) errors.push(`${briefs.length} Destination Brief notes (type destination): ${briefs.map(rel).join(', ')}. Keep one, at the vault root; a second country gets its own subsection in the same note`);
   for (const p of mdFiles.filter(p => path.dirname(p) === VAULT && !['00 Home.md', 'trip.md'].includes(path.basename(p)))) {
+    if (targets.includes(p)) continue;   // a note of a root type (the Destination Brief) is checked like any other note
     const size = fs.statSync(p).size;
     if (size) warnings.push(`${rel(p)}: a note in the vault root (only "00 Home.md" and "trip.md" belong there). If it is a place, stay or day, move it to its folder; if it is your own note, leave it`);
     else errors.push(`${rel(p)}: an EMPTY note in the vault root. It was created by clicking a link before its note existed. Safe to delete`);

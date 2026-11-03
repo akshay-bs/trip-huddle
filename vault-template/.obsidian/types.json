@@ -121,6 +121,8 @@
     "locked_by": "text",
     "affects": "multitext",
     "deadline": "date",
+    "destination": "text",
+    "checked_on": "date",
     "route": "text",
     "built_on": "date",
     "seats": "number",

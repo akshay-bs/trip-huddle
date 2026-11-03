@@ -6,15 +6,16 @@
 // Itinerary base through trip-init, and are checked), Comparison notes and the made-up comparison, Food notes (the template, the Base, the folder, the example notes and the upgrade of an older vault),
 // the booking list (templates, the Bookings base, the example, the checker's booking warnings, trip-init --add-bookings and migrate-bookings),
 // build-itinerary (the route script's links, candidates and check on the made-up loops, road cutoffs, the Route Day by day checks, the
-// Trip itinerary and Operator brief, trip-init's road_cutoffs and --add-itinerary, migrate-itinerary), and a deliberately
-// broken vault where every problem must be reported. Works on temporary copies, so the repo is never modified. Exits 1 if anything fails.
+// Trip itinerary and Operator brief, trip-init's road_cutoffs and --add-itinerary, migrate-itinerary), the destination brief and
+// the place shortlist (the Destination Brief note, group_wishes in trip.md, research Sources, trip-init's group_wishes and
+// --add-scout), and a deliberately broken vault where every problem must be reported. Works on temporary copies, so the repo is never modified. Exits 1 if anything fails.
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { sunTimes, slack, tzOffsetMinutes, TIGHT_BELOW_HRS, TOO_MUCH_BELOW_HRS } from '../skills/plan-day/scripts/sun.mjs';
-import { loadPlanningLimits, planningLimitsProblems, PLANNING_LIMIT_DEFAULTS } from './trip-settings.mjs';
+import { loadPlanningLimits, planningLimitsProblems, PLANNING_LIMIT_DEFAULTS, tripSetting, groupWishesProblems } from './trip-settings.mjs';
 import { vehicleClass, loadSettings, checkDay, settingsProblems, DEFAULT_SPEEDS, DEFAULT_STOP_BUFFER, DARK_TOO_MUCH_MIN } from '../skills/review-travel-times/scripts/travel.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -1319,10 +1320,250 @@ const warnLine = (out, file, text) => out.split('\n').some(l => l.includes(file)
   });
 }
 
-test('plugin: both manifests have the same version, and it is 0.12.0', () => {
+// ---- destination brief and place shortlist (v0.13.0): the Destination Brief, group_wishes in trip.md, research Sources (the
+// shortlist), trip-init's group_wishes and --add-scout, and the skills that read the wishes
+{
+  const rd = (v, f) => fs.readFileSync(path.join(v, f), 'utf8');
+  const TV = path.join(ROOT, 'vault-template'), EV = path.join(ROOT, 'example-vault');
+  const TREF = path.join(ROOT, 'skills/trip-init/references'), SREF = path.join(ROOT, 'skills/shortlist-places/references');
+  const BRIEF = 'Destination Brief.md';
+  const SECTIONS = ['At a glance', 'Safety and rules', 'When to go', 'How long', 'Kinds of experiences', 'Regions', 'Common routes', 'Budget', 'Getting around', 'Sources', 'History'];
+  const wishesOf = v => tripSetting(rd(v, 'trip.md').match(/^---\n([\s\S]*?)\n---/)[1], 'group_wishes');
+  const exA = JSON.parse(fs.readFileSync(path.join(ANSWERS, 'example-vault-answers.json'), 'utf8'));
+  const reconf = (v, name, extra, ...flags) => { const f = path.join(TMP, name + '.json'); fs.writeFileSync(f, JSON.stringify({ ...exA, ...extra })); return run(INIT, ['--answers', f, '--vault', v, '--reconfigure', ...flags]); };
+
+  test('scout: the Destination Brief template, the Source template and the types are the same in both vaults', () => {
+    const bad = [];
+    for (const f of ['Templates/Destination Brief.md', 'Templates/Source Itinerary.md', '.obsidian/types.json']) if (rd(TV, f) !== rd(EV, f)) bad.push(`${f} differs`);
+    const tpl = rd(TV, 'Templates/Destination Brief.md');
+    if (tpl.match(/^---\n([\s\S]*?)\n---/)[1] !== 'type: destination\ndestination:\nchecked_on: {{date}}\ntags:\n  - destination') bad.push('template frontmatter');
+    for (const h of SECTIONS) if (!new RegExp(`^## ${h}$`, 'm').test(tpl)) bad.push(`template has no ## ${h}`);
+    if (!/^\*\*Checked on \{\{date\}\}\.\*\*/m.test(tpl)) bad.push('no "Checked on" line at the top');
+    const types = JSON.parse(rd(TV, '.obsidian/types.json')).types;
+    if (types.destination !== 'text' || types.checked_on !== 'date') bad.push('types: destination text, checked_on date');
+    if (!/^source_kind: friend \| blog \| agency \| video \| research \| other$/m.test(rd(TV, 'Templates/Source Itinerary.md'))) bad.push('source_kind has no research');
+    return bad.join('; ');
+  });
+  test('scout: group_wishes is in both trip.md files with its line of text, empty in the starter vault', () => {
+    const bad = [];
+    if (JSON.stringify(wishesOf(TV)) !== JSON.stringify({ must: [], nice: [], avoid: [] })) bad.push(`starter: ${JSON.stringify(wishesOf(TV))}`);
+    const ex = wishesOf(EV);
+    if (groupWishesProblems(ex).length || !ex.must.length) bad.push(`example: ${JSON.stringify(ex)}`);
+    const line = t => t.split('\n').find(l => l.startsWith('- `group_wishes` are')) || '';
+    if (!line(rd(TV, 'trip.md')) || line(rd(TV, 'trip.md')) !== line(rd(EV, 'trip.md'))) bad.push('the group_wishes line of text');
+    for (const w of ['shortlist-places', 'build-itinerary', 'compare-itineraries', 'plan-day', 'Red flags']) if (!line(rd(TV, 'trip.md')).includes(w)) bad.push(`the line does not mention ${w}`);
+    return bad.join('; ');
+  });
+  test('scout: the example\'s wishes are neutral (no names, numbers of people, ages or dates)', () => {
+    const all = Object.values(wishesOf(EV)).flat();
+    const bad = all.filter(w => /\d|\b(family|families|kids?|child|children|people|person|adults?|parents?|grand\w*|wife|husband|years?|old|aged?)\b|[A-Z]/.test(w));
+    return bad.length ? `not neutral: ${bad.join(', ')}` : '';
+  });
+  test('scout: the example\'s Destination Brief sits at the root, passes with no warnings, and links only the public research note', () => {
+    const r = check(EV), t = rd(EV, BRIEF), bad = [];
+    if (r.code !== 0 || r.out.split('\n').some(l => l.includes('Destination Brief'))) bad.push(r.out);
+    for (const h of SECTIONS) if (!new RegExp(`^## ${h}$`, 'm').test(t)) bad.push(`no ## ${h}`);
+    const links = [...new Set([...t.replace(/<!--[\s\S]*?-->/g, '').matchAll(/\[\[([^\]|#]+)/g)].map(m => m[1]))];
+    if (links.join() !== 'Example - Public research') bad.push(`links: ${links.join(', ')}`);
+    const checked = t.match(/^checked_on: (.*)$/m)[1];
+    const dates = new Set(t.match(/\b\d{4}-\d{2}-\d{2}\b/g));
+    for (const d of dates) if (d !== checked && d !== '2026-10-31') bad.push(`a date that is not a check date: ${d}`);
+    const safety = t.match(/^## Safety and rules\n([\s\S]*?)\n## /m)[1].split('\n').filter(l => /^- \*\*(Safety|Visa|Health):/.test(l));
+    if (safety.length !== 3 || safety.some(l => !/checked \d{4}-\d{2}-\d{2}\)/.test(l))) bad.push('every safety, visa and health line needs a source and a date');
+    if (!/\b\d[\d,]*–[\d,]+\b/.test(t.match(/^## Budget\n([\s\S]*?)\n## /m)[1])) bad.push('budget as ranges');
+    return bad.join('\n');
+  });
+  test('scout: the home pages link the brief and mention shortlist-places', () => {
+    const bad = [];
+    for (const v of [TV, EV]) {
+      const h = rd(v, '00 Home.md');
+      if (!/^- \*\*Destination brief:\*\* \[\[Destination Brief\]\]/m.test(h)) bad.push(`${path.basename(v)}: Trip facts line`);
+      if (!/`shortlist-places` skill/.test(h) || !/refresh the destination brief/.test(h)) bad.push(`${path.basename(v)}: the paragraph`);
+    }
+    return bad.join('; ');
+  });
+
+  // A new vault from the Portugal answers, plus the made-up brief and its two route Sources
+  const pv = path.join(TMP, 'scout-portugal');
+  fs.cpSync(portugal, pv, { recursive: true });
+  fs.copyFileSync(path.join(TREF, 'destination-brief-example.md'), path.join(pv, BRIEF));
+  for (const f of fs.readdirSync(path.join(TREF, 'example-context'))) fs.copyFileSync(path.join(TREF, 'example-context', f), path.join(pv, 'Sources', f));
+  test('trip-init: a new vault from the Portugal answers gets an empty group_wishes, and passes the checker with the made-up brief and its route Sources', () => {
+    const r = check(pv), bad = [];
+    if (!/\ngroup_wishes: \{must: \[\], nice: \[\], avoid: \[\]\}\n/.test(rd(portugal, 'trip.md')) || !fs.existsSync(path.join(portugal, 'Templates/Destination Brief.md'))) bad.push('the new vault');
+    if (!(r.code === 0 && counts(r.out).errors === 0 && counts(r.out).warnings === counts(check(portugal).out).warnings)) bad.push(r.out);
+    const routes = fs.readdirSync(path.join(TREF, 'example-context')).map(f => rd(path.join(TREF, 'example-context'), f));
+    if (!routes.every(t => /^source_kind: blog$/m.test(t))) bad.push('the route Sources are source_kind: blog');
+    for (const f of fs.readdirSync(path.join(TREF, 'example-context'))) if (!rd(TREF, 'destination-brief-example.md').includes(`[[${f.replace(/\.md$/, '')}]]`)) bad.push(`the brief does not link ${f}`);
+    return bad.join('\n');
+  });
+  test('checker: a second Destination Brief is an error, one in a folder must move to the root, and a brief with no date or undated sources is warned about', () => {
+    const v = path.join(TMP, 'scout-two-briefs');
+    fs.cpSync(EV, v, { recursive: true });
+    fs.writeFileSync(path.join(v, 'Sources/Destination Brief - Bhutan.md'), rd(EV, BRIEF).replace('# Destination Brief', '# Destination Brief - Bhutan'));
+    const two = check(v);
+    fs.rmSync(path.join(v, 'Sources/Destination Brief - Bhutan.md'));
+    fs.writeFileSync(path.join(v, BRIEF), rd(EV, BRIEF).replace(/^checked_on: .*$/m, 'checked_on:').replace(/^- Wikivoyage, Meghalaya and Assam pages: (.*) \(checked 2026-11-03\)\.$/m, '- Wikivoyage, Meghalaya and Assam pages: $1.'));
+    const one = check(v);
+    const errs = o => o.split('WARNINGS')[0];
+    return two.code === 1 && /2 Destination Brief notes \(type destination\)/.test(errs(two.out)) && warnLine(errs(two.out), 'Sources/Destination Brief - Bhutan.md', 'must live in the vault root')
+      && one.code === 0 && warnLine(one.out, BRIEF, 'checked_on is empty') && warnLine(one.out, BRIEF, '1 source(s) with no date') && !warnLine(one.out, BRIEF, 'a note in the vault root') ? '' : two.out + one.out;
+  });
+  test('checker: a bad group_wishes in trip.md is an error; the three lists, flow or block style, pass', () => {
+    const one = (tag, line) => {
+      const v = path.join(TMP, 'scout-wishes-' + tag);
+      fs.cpSync(EV, v, { recursive: true });
+      fs.writeFileSync(path.join(v, 'trip.md'), rd(EV, 'trip.md').replace(/^group_wishes:.*$/m, line));
+      return check(v);
+    };
+    const bads = [['text', 'group_wishes: {must: see a rhino, nice: [], avoid: []}', 'group_wishes.must must be a list'],
+      ['list', 'group_wishes: [see a rhino]', 'group_wishes must be a map of three lists'],
+      ['missing', 'group_wishes: {must: [], nice: []}', 'group_wishes has no avoid list'],
+      ['extra', 'group_wishes: {must: [], nice: [], avoid: [], later: []}', '"later" is not a list name'],
+      ['nested', 'group_wishes: {must: [[a, b]], nice: [], avoid: []}', 'must be a short line of text, not a list'],
+      ['long', `group_wishes: {must: [${'a very long wish '.repeat(10)}], nice: [], avoid: []}`, 'Keep each wish to one short line']];
+    const out = [];
+    for (const [tag, line, msg] of bads) { const r = one(tag, line); if (!(r.code === 1 && warnLine(r.out.split('WARNINGS')[0], 'trip.md', msg))) out.push(`${tag}: ${r.out}`); }
+    const block = one('block', 'group_wishes:\n  must:\n    - see a rhino\n    - "two days of waterfalls, at least"\n  nice: []\n  avoid:\n  - long hikes');
+    if (block.code !== 0 || /group_wishes/.test(block.out)) out.push(`block style: ${block.out}`);
+    return out.join('\n');
+  });
+  test('trip-init: group_wishes are written from the answers, each list replaced when given and kept when left out, and a bad one is refused', () => {
+    const v = path.join(TMP, 'scout-init');
+    fs.cpSync(EV, v, { recursive: true });
+    const a = reconf(v, 'sw-a', { group_wishes: { must: ['see a rhino', 'two days of waterfalls, at least'] } });
+    const afterA = wishesOf(v), t1 = rd(v, 'trip.md');
+    const b = reconf(v, 'sw-b', {});
+    const before = rd(v, 'trip.md');
+    const bads = [{ must: 'see a rhino' }, { later: [] }, { must: [['a']] }, ['a'], { avoid: ['x'.repeat(200)] }].map((w, i) => reconf(v, 'sw-bad' + i, { group_wishes: w }));
+    const kept = rd(v, 'trip.md') === before;
+    const back = reconf(v, 'sw-back', { group_wishes: wishesOf(EV) });
+    const same = rd(v, 'trip.md') === rd(EV, 'trip.md');
+    const ok = a.code === 0 && JSON.stringify(afterA) === JSON.stringify({ ...wishesOf(EV), must: ['see a rhino', 'two days of waterfalls, at least'] })
+      && t1.includes('must: [see a rhino, "two days of waterfalls, at least"]') && b.out.includes('Nothing changed') && bads.every(r => r.code === 1 && /group_wishes/.test(r.out)) && kept
+      && back.code === 0 && same;
+    return ok ? '' : [a.out, JSON.stringify(afterA), b.out, ...bads.map(r => r.out), back.out].join('\n');
+  });
+
+  // The made-up shortlist, in the Portugal vault with the plan-day example places (already in the vault) and the wishes
+  const sv = path.join(TMP, 'scout-shortlist');
+  fs.cpSync(dayVault, sv, { recursive: true });
+  fs.copyFileSync(path.join(TREF, 'destination-brief-example.md'), path.join(sv, BRIEF));
+  for (const f of fs.readdirSync(path.join(TREF, 'example-context'))) fs.copyFileSync(path.join(TREF, 'example-context', f), path.join(sv, 'Sources', f));
+  const WISHES = { must: ['at least two beach days', 'one old town with a castle'], nice: ['a winery visit', 'a boat trip into sea caves'], avoid: ['long climbs or steep steps', 'more than 3 hours of driving in a day'] };
+  const pAnswers = JSON.parse(fs.readFileSync(path.join(ANSWERS, 'portugal-answers.json'), 'utf8'));
+  fs.writeFileSync(path.join(TMP, 'sl-wishes.json'), JSON.stringify({ ...pAnswers, group_wishes: WISHES }));
+  const slInit = run(INIT, ['--answers', path.join(TMP, 'sl-wishes.json'), '--vault', sv, '--reconfigure']);
+  const SL = 'Sources/Shortlist - Portugal.md';
+  const slText = rd(SREF, 'shortlist-example.md');
+  fs.writeFileSync(path.join(sv, SL), slText);
+  const DEEP = [...slText.matchAll(/^\| \[\[([^\]]+)\]\] \|.*\| deep dive \|$/gm)].map(m => m[1]);
+  const locTplS = rd(sv, 'Templates/Location.md');
+  for (const n of DEEP) fs.writeFileSync(path.join(sv, 'Locations', n + '.md'), locTplS.replace('{{title}}', n).replace('location: []', 'location: [37.1, -8.7]')
+    .replace('recommended_by: []', 'recommended_by:\n  - "[[Shortlist - Portugal]]"').replace('  - location\n', '  - location\n  - ShortlistPortugal\n'));
+  const mineS = out => out.split('\n').filter(l => /Shortlist|Destination Brief|Example Blog|Example Guide|\(Example\)\.md/.test(l));
+  const slVariant = (tag, fn, pre = () => {}) => { const v = path.join(TMP, 'scout-sl-' + tag); fs.cpSync(sv, v, { recursive: true }); pre(v); fs.writeFileSync(path.join(v, SL), fn(slText)); return check(v); };
+  test('shortlist-places: the made-up shortlist passes the checker with no warnings about it (wishes written by trip-init)', () => {
+    const r = check(sv);
+    return slInit.code === 0 && JSON.stringify(wishesOf(sv)) === JSON.stringify(WISHES) && DEEP.length === 5 && r.code === 0 && !mineS(r.out).length ? '' : slInit.out + r.out;
+  });
+  test('checker: a shortlist with skip rows is processed once every row is deep dive (with a note) or skip', () => {
+    const r = slVariant('done', t => t.replace('processed: false', 'processed: true').replace(/\| maybe \|$/gm, '| skip: not this time |'));
+    return r.code === 0 && !mineS(r.out).length ? '' : r.out;
+  });
+  test('checker: a processed shortlist with maybe or empty rows, or a deep dive with no note that lists it, is flagged', () => {
+    const maybe = slVariant('maybe', t => t.replace('processed: false', 'processed: true').replace('| skip: the steps |', '|  |'));
+    const noNote = slVariant('nonote', t => t.replace('processed: false', 'processed: true').replace(/\| maybe \|$/gm, '| skip |'), v => fs.rmSync(path.join(v, 'Locations/Estate Winery (Example).md')));
+    const notListed = slVariant('notlisted', t => t.replace('processed: false', 'processed: true').replace(/\| maybe \|$/gm, '| skip |'),
+      v => { const f = path.join(v, 'Locations/Tile Museum (Example).md'); fs.writeFileSync(f, rd(v, 'Locations/Tile Museum (Example).md').replace('"[[Shortlist - Portugal]]"', '"[[Example Blog - Ten days in the south]]"')); });
+    return warnLine(maybe.out, SL, 'marked processed, but 4 row(s) are still maybe or not picked, e.g. Castle Hill Lanes (Example)')
+      && warnLine(noNote.out, SL, '1 deep dive row(s) have no note that lists this source yet, e.g. Estate Winery (Example)')
+      && warnLine(notListed.out, SL, 'e.g. Tile Museum (Example)') ? '' : maybe.out + noNote.out + notListed.out;
+  });
+  test('checker: a Pick that is not deep dive, maybe or skip, a scored "Fits the group" and a shortlist with no Place and Pick table are flagged', () => {
+    const odd = slVariant('odd', t => t.replace('| fits: a winery visit | deep dive |', '| 8/10 | yes please |'));
+    const noTable = slVariant('notable', t => t.replace(/\| Place \| Region \| Type \| Why go \| Season \| Time needed \| Fits the group \| Pick \|/g, '| Name | Region | Type | Why go | Season | Time needed | Fits the group | Choice |'));
+    return warnLine(odd.out, SL, 'Pick "yes please" for Estate Winery (Example) should be deep dive, maybe, skip') && warnLine(odd.out, SL, '"Fits the group" for Estate Winery (Example) is "8/10"')
+      && warnLine(noTable.out, SL, 'with at least a Place and a Pick column') ? '' : odd.out + noTable.out;
+  });
+  test('shortlist-places: the example is grouped by region, links only the places with a note, covers every must-have, and has no scores', () => {
+    const bad = [], body = slText.replace(/<!--[\s\S]*?-->/g, '');
+    const rows = [...body.matchAll(/^\| (?!Place |-)(.+) \|$/gm)].map(m => m[1].split(' | '));
+    if (rows.length < 10 || rows.some(r => r.length !== 8)) bad.push(`rows: ${rows.length}`);
+    for (const r of rows) {
+      if (/\[\[/.test(r[0]) !== (r[7] === 'deep dive')) bad.push(`only deep dive rows link a note: ${r[0]}`);
+      if (!/^(fits|mixed|doesn't fit)\b/.test(r[6]) || !/^(good|mixed|poor)\b/.test(r[4])) bad.push(`fits or season: ${r[0]}`);
+    }
+    const regions = [...body.matchAll(/^### (.+)$/gm)].map(m => m[1]);
+    if (regions.join() !== pAnswers.regions.join()) bad.push(`regions: ${regions.join(', ')}`);
+    for (const [i, reg] of regions.entries()) { const part = body.split(/^### /m)[i + 1]; if (part.split('\n').filter(l => /^\| /.test(l) && !/^\| (Place|-)/.test(l)).some(l => l.split(' | ')[1] !== reg)) bad.push(`a row under ${reg} from another region`); }
+    for (const w of [...WISHES.must, ...WISHES.nice, ...WISHES.avoid]) if (!body.toLowerCase().includes(w.toLowerCase())) bad.push(`Wishes covered lacks "${w}"`);
+    if (/\d+\s*\/\s*10|★|\bscore|\brank/i.test(body)) bad.push('a score or a rank');
+    if (!/^Already in the vault, so not repeated: \[\[/m.test(body) || ['skip', 'maybe', 'deep dive'].some(p => !rows.some(r => r[7].startsWith(p)))) bad.push('already-in-vault line, and a row of each pick');
+    return bad.join('\n');
+  });
+
+  // An older vault (before 0.13.0), brought up to date by trip-init --add-scout
+  const old = path.join(TMP, 'pre-0.13');
+  fs.cpSync(EV, old, { recursive: true });
+  const ow = (rel, fn) => { const p = path.join(old, rel); fs.writeFileSync(p, fn(fs.readFileSync(p, 'utf8'))); };
+  fs.rmSync(path.join(old, 'Templates/Destination Brief.md')); fs.rmSync(path.join(old, BRIEF));
+  ow('Templates/Source Itinerary.md', s => s.replace('agency | video | research | other', 'agency | video | other').replace(/^research: .*\n/m, ''));
+  ow('.obsidian/types.json', s => s.replace(/\n\s*"(destination|checked_on)": "\w+",/g, ''));
+  ow('00 Home.md', s => s.replace(/^- \*\*Destination brief:\*\*.*\n/m, '').replace(/^New to the place\?.*\n\n/m, ''));
+  ow('trip.md', s => s.replace(/^group_wishes:.*\n/m, '').replace(/^- `group_wishes` are.*\n/m, ''));
+  const SCOUT = ['Templates/Destination Brief.md', 'Templates/Source Itinerary.md', '.obsidian/types.json', '00 Home.md', 'trip.md'];
+  const emptyWishes = t => t.replace(/^group_wishes: .*$/m, 'group_wishes: {must: [], nice: [], avoid: []}');
+  test('scout: the made-up older vault really is old, and --reconfigure alone adds nothing', () => {
+    const notOld = SCOUT.filter(f => fs.existsSync(path.join(old, f)) && rd(old, f) === rd(EV, f));
+    const r = run(INIT, ['--answers', path.join(ANSWERS, 'example-vault-answers.json'), '--vault', old, '--reconfigure']);
+    return !notOld.length && r.code === 0 && r.out.includes('Nothing changed') && !/group_wishes/.test(rd(old, 'trip.md')) ? '' : `not changed by setup: ${notOld.join(', ')}\n${r.out}`;
+  });
+  const up = run(INIT, ['--answers', path.join(ANSWERS, 'example-vault-answers.json'), '--vault', old, '--reconfigure', '--add-scout']);
+  test('trip-init --reconfigure --add-scout brings an older vault to what the example has (template, Source template, types, Home, an empty group_wishes)', () => {
+    const diff = SCOUT.filter(f => !fs.existsSync(path.join(old, f)) || rd(old, f) !== (f === 'trip.md' ? emptyWishes(rd(EV, f)) : rd(EV, f)));
+    return up.code === 0 && !diff.length && !fs.existsSync(path.join(old, BRIEF)) ? '' : `${up.out}\ndiffers: ${diff.join(', ')}`;
+  });
+  test('trip-init --add-scout: a second run changes nothing, the result passes the checker, and without --reconfigure it is refused', () => {
+    const again = run(INIT, ['--answers', path.join(ANSWERS, 'example-vault-answers.json'), '--vault', old, '--reconfigure', '--add-scout']);
+    const no = run(INIT, ['--answers', path.join(ANSWERS, 'example-vault-answers.json'), '--vault', path.join(TMP, 'never-s'), '--add-scout']);
+    const r = check(old);
+    return again.code === 0 && again.out.includes('Nothing changed') && no.code === 1 && /--add-scout only works with --reconfigure/.test(no.out) && r.code === 0 ? '' : again.out + no.out + r.out;
+  });
+
+  // The skills, the docs, the roadmap and the plan
+  test('scout: shortlist-places and trip-init describe the new pieces, and the other skills read the wishes', () => {
+    const sk = n => fs.readFileSync(path.join(ROOT, 'skills', n, 'SKILL.md'), 'utf8'), bad = [];
+    const s = sk('shortlist-places');
+    for (const w of ['group_wishes', 'Must have', 'Nice to have', 'Avoid', 'deep dive', 'maybe', 'skip', 'fits', 'mixed', "doesn't fit", 'No scores', '20 to 25', '10 to 15', 'about 30', 'in rounds by region', 'per region', 'cheaper model', 'background', 'agent-prompt.md', 'shortlist-example.md', 'source_kind: research', 'add-place', 'never suggests it again', 'Already in the vault', 'not offer it', 'Never merge', 'Decisions/', '--add-scout', 'group-decisions'])
+      if (!s.includes(w)) bad.push(`shortlist-places: ${w}`);
+    const t = sk('trip-init');
+    for (const w of ['brief-agent-prompt.md', 'background', 'cheaper model', 'never holds up', 'Destination Brief.md', 'vault root', 'refresh the destination brief', '--add-scout', 'group_wishes', 'shortlist-places', 'Don\'t research places here', 'source_kind: blog', 'map box', 'daily budget', 'categories'])
+      if (!t.includes(w)) bad.push(`trip-init: ${w}`);
+    for (const n of ['build-itinerary', 'compare-itineraries', 'plan-day']) if (!sk(n).includes('group_wishes')) bad.push(`${n}: group_wishes`);
+    if (!/must-have[^\n]*Red flags|Red flags[^\n]*must-have/i.test(sk('build-itinerary'))) bad.push('build-itinerary: a missed must-have is a red flag');
+    if (!/Group must-haves/.test(sk('compare-itineraries'))) bad.push('compare-itineraries: the must-haves row');
+    if (!/avoid list/.test(sk('plan-day'))) bad.push('plan-day: the avoid list');
+    const g = sk('group-decisions');
+    if (!/maybe/.test(g) || !/Destination Brief/.test(g) || !/3 months/.test(g) || !/booking/.test(g)) bad.push('group-decisions: maybe places and an old brief');
+    for (const f of ['brief-agent-prompt.md', 'destination-brief-example.md']) if (!fs.existsSync(path.join(TREF, f))) bad.push(f);
+    if (!fs.existsSync(path.join(SREF, 'agent-prompt.md'))) bad.push('shortlist-places/references/agent-prompt.md');
+    return bad.join('; ');
+  });
+  test('scout: the README, docs/SKILLS.md and CLAUDE.md list shortlist-places; the roadmap marks it done; the plan says built', () => {
+    const bad = [];
+    for (const f of ['README.md', 'docs/SKILLS.md', 'CLAUDE.md']) if (!rd(ROOT, f).includes('shortlist-places')) bad.push(f);
+    if (!/\[x\] \(v0\.13\.0\) \*\*Destination brief and `shortlist-places`\*\*/.test(rd(ROOT, 'docs/ROADMAP.md'))) bad.push('roadmap not marked done');
+    const plan = rd(ROOT, 'docs/PLAN-destination-scout.md');
+    if (!/^Status: built \(v0\.13\.0\)/m.test(plan) || /^## Open questions/m.test(plan) || !/^## Decisions$/m.test(plan)) bad.push('plan status line and decisions');
+    return bad.join('; ');
+  });
+}
+
+test('plugin: both manifests have the same version, and it is 0.13.0', () => {
   const a = JSON.parse(fs.readFileSync(path.join(ROOT, '.claude-plugin/plugin.json'), 'utf8')).version;
   const b = JSON.parse(fs.readFileSync(path.join(ROOT, '.claude-plugin/marketplace.json'), 'utf8')).plugins[0].version;
-  return a === b && a === '0.12.0' ? '' : `plugin.json ${a}, marketplace.json ${b}`;
+  return a === b && a === '0.13.0' ? '' : `plugin.json ${a}, marketplace.json ${b}`;
 });
 // ---- Food spots (restaurants and cafes): the template, the Base, the folder, the example notes and the old-vault upgrade
 {

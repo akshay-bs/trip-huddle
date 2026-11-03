@@ -37,6 +37,8 @@ Look in these places, in this order. Each finding is one of: a decision that nee
 | `Locations/` | Places at `considering`: **count them**, do not make a note for each. Say how many, and how many are `must`, with a pointer to the *To decide* view. A place gets a Decision note only when it has a deadline or a booking attached (a permit, a safari, a ticket that sells out). |
 | `Itinerary/Route*.md` | A Route note that is `draft` while the group has no agreed route: "which route?" |
 | `Sources/` | Source notes with `processed: false`: items nobody has looked at. |
+| `Sources/` shortlist (`source_kind: research`) | Rows whose Pick is `maybe`: one open question, "places still marked maybe: <names>", with a link to the shortlist. Rows with no Pick yet: one line, "places on the shortlist still to pick". Never pick for the group. |
+| `Destination Brief.md` | In the `booking` stage (and later), a brief whose `checked_on` is more than 3 months old: one open question, "check the destination brief again before booking (checked on <date>): safety and visa rules change", answered by `trip-init` ("refresh the destination brief"). |
 | `Logistics/`, `trip.md` | The vehicle (no Transport note `selected`), arrival and departure, the dates: any that are empty while the stage is `booking` are open questions. |
 | The booking list (`Bases/Bookings.base`) | Selected stays, the selected vehicle, selected places with `needs_booking: true`, and the notes in `Bookings/`: what is still to book, booked with no confirmation yet, and balances still owed. A booking is not a decision: list it, don't make a Decision note for it. |
 | `Decisions/` | Open decisions already there. Update them; never make a second note for the same question. |

@@ -1,6 +1,16 @@
 # Plan: destination brief and place shortlist
 
-Status: proposed.
+Status: built (v0.13.0).
+
+How it was built, where it differs from the proposal below:
+- **The background research** is one `general-purpose` agent on a cheaper model, started right after interview message 1, with the prompt in `skills/trip-init/references/brief-agent-prompt.md`. It writes nothing to disk: it replies with the brief body and its suggestions (regions and bases, the season verdict per region, daylight and sunset, a map box, the currency and a daily budget range, categories, and any road cutoff it found). The interview uses them once they are back and plain defaults before; the user confirms every value. A cutoff it found is only suggested, never added without asking.
+- **The note** is `Destination Brief.md` at the vault root, from `Templates/Destination Brief.md` (properties `destination` and `checked_on`; sections as in the table below, plus *History*). The "Checked on" line is the first line of the body. The checker learns the type from the template, allows it only at the vault root, refuses a second one (an error), and warns when `checked_on` is empty or a line under *Sources* has no date. It does not check each safety line for a source: the skill does.
+- **The usual routes as Sources** are written by `trip-init` with `processed: true` while they name only towns. The example vault's brief points its routes to [[Example - Public research]] instead (the example's notes link only that note); the made-up Portugal brief in `skills/trip-init/references/` has two route Sources in `example-context/`.
+- **`group_wishes`** is read by `scripts/trip-settings.mjs` (flow or block YAML). A bad shape is a checker **error**, not a warning, since three skills read it. A wish is at most 120 characters. `trip-init` writes it empty in a new vault; on `--reconfigure` a list the answers give replaces that list and the others are kept. An older `trip.md` without it gets it only with `--add-scout` (asked first), which also adds the template, `research` in the Source template, the `destination` and `checked_on` types and the brief's line and paragraph on the home page. No note migration is needed.
+- **The shortlist table** is one table per region under a `### <Region>` heading in *Places mentioned*, with the columns below. A place is plain text until `add-place` has made its note, then a link, so the table never links a note that does not exist; places already in the vault go in one line per region instead of a row. Pick is `deep dive`, `maybe` or `skip: <reason>`. The shortlist has a *Wishes covered* section. The checker warns about a Pick or a "Fits the group" outside the words, a research Source with no Place and Pick table, and, once `processed`, a maybe or empty row or a deep dive with no note that lists the shortlist in `recommended_by`.
+- **Saving the wishes** goes through the `trip-init` script (the answers with every current value plus `group_wishes`, `--reconfigure`), so they are checked like every other setting. The pace answers go in `pace` and `planning_limits.max_drive_hrs_day`.
+- **The example vault** has the made-up brief and three neutral wishes (`trip-init --reconfigure` keeps them, so the example stays unchanged). The made-up shortlist is in `skills/shortlist-places/references/` for the Portugal answers, not in the example vault.
+
 
 ## The problem
 Every trip-huddle skill starts once the group already knows the destination well enough to name places. A group going somewhere new ("Sri Lanka?") does not. Before they can add a single place they need answers to:
@@ -123,8 +133,9 @@ The Source is `processed` when every row is deep dive (with a note) or skip.
 - A shortlist Source with skip rows can be `processed`.
 - `--add-scout` brings an older vault up to date and then changes nothing.
 
-## Open questions
-1. **Where the wishes live.** `trip.md` (proposed: every skill already reads it) or their own Decision notes (more visible, but heavier for what are guidelines).
-2. **One brief per vault, or per country** for a trip across two countries.
-3. **How many candidates.** 20 to 25 is a guess; a small island may need 10, a big country 30 split into two rounds by region.
-4. **Should the brief also run in change settings mode** when the destination changes, or only on request.
+## Decisions
+The open questions, settled by the owner:
+1. **Where the wishes live:** in `trip.md`, as `group_wishes: {must: [], nice: [], avoid: []}` (lists of short plain-text lines).
+2. **One brief per vault.** A trip across two countries gets a short subsection per country inside the same note.
+3. **How many candidates:** about 20 to 25 by default; 10 to 15 for a small destination; for a big country, in rounds by region (up to about 30 in all). This is guidance in the skill.
+4. **When the brief is rebuilt:** only on request ("refresh the destination brief"), not on "re-run trip-init settings". If the destination changes in the change-settings mode, `trip-init` suggests refreshing it but does not do it unasked.

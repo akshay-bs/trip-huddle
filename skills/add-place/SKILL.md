@@ -40,7 +40,7 @@ Before creating anything, search for the place or stay. The user's spelling is o
 - File name = the H1 heading = the canonical English name in Title Case, e.g. `Krang Suri Falls.md`, `Hotel Sapphire Shillong.md`.
 - Add a parenthetical when the bare name is ambiguous or generic: `Balancing Rock (Mawlynnong)`, `Blue Lagoon (Nongriat)`, `River Dolphin Point (Mayong)`.
 - No `[ ] # ^ | : / \ ?` characters in names. Spellings the user used, and local names, go in `aliases`.
-- Locations go in `Locations/`, stays in `Stays/` and food spots in `Food/` (the folders are set by `folders` in `trip.md`; create `Food/` if it is not there). **Nothing goes in the vault root.** Only `00 Home.md` and `trip.md` live there.
+- Locations go in `Locations/`, stays in `Stays/` and food spots in `Food/` (the folders are set by `folders` in `trip.md`; create `Food/` if it is not there). **Nothing goes in the vault root.** Only `00 Home.md`, `trip.md` and the `Destination Brief.md` that `trip-init` writes live there.
 
 ## 4. Research and write the note
 - **Several items:** with 3 or more new items, fan out to `general-purpose` subagents, 3–5 items per agent, grouped by area. Run them in the background, in parallel. Use the prompt in `${CLAUDE_PLUGIN_ROOT}/skills/add-place/references/agent-prompt.md`, filled in.
@@ -104,6 +104,7 @@ After the notes are written:
    - Tick each item in "Places mentioned", "Stays mentioned" or "Restaurants and cafes mentioned" (add that heading from `Templates/Source Itinerary.md` if the note lacks it) as `- [x] [[Name]]` (with "(new)" or "(already on the list from …)").
    - Add "Our observations" bullets for the important findings (strenuous, dry, off-route, capacity).
    - Set `processed: true` once every item is linked.
+   - **A shortlist** (`source_kind: research`, from `shortlist-places`) has a table instead of checklists: turn the place's cell in the Place column into the link `[[Name]]` and leave its Pick as `deep dive`. It is `processed` only when every row is deep dive (with its note) or skip; leave that to `shortlist-places`.
 2. **`00 Home.md`, under "Open questions for the group":** add one `- [ ] Group decision on …` line. Use one line per item for one or two items, or one grouped line per source for more (follow the existing lines there). List anything the group needs to answer.
 3. **Don't touch** `Itinerary/Route.md`, the Day notes or any `decision` fields unless the user asks.
 

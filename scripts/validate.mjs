@@ -143,7 +143,7 @@ const decisionValues = Array.isArray(trip.decision_values) && trip.decision_valu
 const FOLDERS = { location: 'Locations', stay: 'Stays', day: 'Itinerary', source: 'Sources', comparison: 'Sources', decision: 'Decisions', food: 'Food', route: 'Itinerary', transport: 'Logistics', booking: 'Bookings', itinerary: 'Itinerary', brief: 'Itinerary' };
 const DECISION_STATUSES = ['open', 'decided', 'locked'];   // see decisionChecks
 // The booking list (see bookingChecks): the fields every bookable note has, the folder for vouchers, and what counts as booked.
-const BOOKING_FIELDS = ['booking_status', 'cost_agreed', 'advance_paid', 'balance_pending', 'confirmation'];
+const BOOKING_FIELDS = ['booking_status', 'cost_agreed', 'advance_paid', 'balance_pending', 'payment_due', 'cancel_by', 'confirmation'];
 const CONFIRMATIONS = 'Confirmations';   // vouchers, tickets and pasted emails; not checked as notes
 const BOOKED = ['booked', 'paid'];
 const planning = loadPlanningLimits(VAULT);   // the defaults, changed by planning_limits in trip.md
@@ -422,6 +422,13 @@ function bookingChecks(f, type, d, name) {
     const inFolder = conf.startsWith(CONFIRMATIONS + '/') || (byBase.get(conf) || byBase.get(conf + '.md') || []).some(p => rel(p).startsWith(CONFIRMATIONS + '/'));
     if (!inFolder) warn(f, `confirmation [[${conf}]] is not in ${CONFIRMATIONS}/. Keep vouchers and emails there`);
   }
+  const parseDate = v => { const s = String(v ?? '').trim(); return /^\d{4}-\d{2}-\d{2}$/.test(s) ? s : null; };
+  const payDue = parseDate(d.payment_due), cancelBy = parseDate(d.cancel_by);
+  const today = new Date().toISOString().slice(0, 10);
+  if (payDue && payDue < today && bal > 0) warn(f, `payment overdue since ${payDue}`);
+  if (cancelBy && cancelBy < today && status === 'booked') warn(f, `free cancellation expired on ${cancelBy}, balance still owed`);
+  if (cancelBy && payDue && cancelBy < payDue) warn(f, `cancellation cut-off (${cancelBy}) is before payment is due (${payDue}) — check these dates`);
+  if ((payDue || cancelBy) && !['quoted', 'booked', 'paid'].includes(status)) warn(f, `a date is set but booking is ${status || 'empty'}`);
   if (!booked) return;
   if (type !== 'booking' && d.decision !== 'selected') warn(f, `${status}, but the group has it as "${d.decision ?? ''}", not selected. Select it again, or cancel the booking (booking_status: cancelled)`);
   const mine = decisionsFor(name);

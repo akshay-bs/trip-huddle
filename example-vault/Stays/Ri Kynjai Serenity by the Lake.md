@@ -21,6 +21,8 @@ nights_booked:
 cost_agreed:
 advance_paid:
 balance_pending:
+payment_due:
+cancel_by:
 cancellation_policy:
 check_in:
 check_out:

@@ -42,6 +42,8 @@ booking_status: not-contacted
 cost_agreed:
 advance_paid:
 balance_pending:
+payment_due:
+cancel_by:
 confirmation:
 entry_fee:
 other_fees: "Park entry and camera fees may be charged separately; confirm what the ₹4,500 covers"

@@ -10,6 +10,8 @@ booking_status: not-contacted
 cost_agreed:
 advance_paid:
 balance_pending:
+payment_due:
+cancel_by:
 confirmation:
 max_km_per_day:
 max_hrs_per_day:
@@ -24,6 +26,8 @@ decision: considering | selected | backup | dropped   (the group selects the veh
 quote: total price for the whole trip, plain number in the trip currency (see trip.md); no symbol or text
 booking_status: not-contacted | enquired | quoted | booked | paid | cancelled
 cost_agreed / advance_paid / balance_pending: plain numbers in the trip currency, once booked
+payment_due: the date by which the next payment must be made (YYYY-MM-DD)
+cancel_by: the last date to cancel without penalty (YYYY-MM-DD). Empty when non-refundable or not yet booked
 confirmation: a link to the booking confirmation or pasted email, kept in Confirmations/
 max_km_per_day / max_hrs_per_day: the limits in the quote or agreement; the checker warns if a Day note's drive_hrs is over max_hrs_per_day
 -->

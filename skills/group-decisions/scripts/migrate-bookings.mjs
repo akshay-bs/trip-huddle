@@ -4,11 +4,14 @@
 //
 // Run it after `trip-init --reconfigure --add-bookings`, which brings the templates, the Bookings base, the folders, the
 // types and the home page up to date (and touches no notes). This script touches only notes, and only adds empty fields:
-//   - Location notes: `needs_booking: false` right after `permits`;
-//   - Stay notes: `confirmation` after `booking_ref`, `cost_agreed` after `nights_booked`, `balance_pending` after `advance_paid`;
+//   - Location notes: `needs_booking: false` right after `permits`, or, when `needs_booking` is true, `payment_due` and
+//     `cancel_by` after `balance_pending`;
+//   - Stay notes: `confirmation` after `booking_ref`, `cost_agreed` after `nights_booked`, `balance_pending` after `advance_paid`,
+//     `payment_due` and `cancel_by` after `balance_pending`;
 //   - Transport notes: `decision` and `decision_reason` after `contact_phone`, and `cost_agreed`, `advance_paid`,
-//     `balance_pending` and `confirmation` after `booking_status`. `decision` is `selected` when the vehicle is already
-//     booked or paid (booking it was the group's choice), otherwise `considering`.
+//     `balance_pending`, `payment_due`, `cancel_by` and `confirmation` after `booking_status`. `decision` is `selected` when
+//     the vehicle is already booked or paid (booking it was the group's choice), otherwise `considering`.
+//   - Booking notes: `payment_due` and `cancel_by` after `balance_pending`.
 // Nothing else changes: no value is filled in or guessed.
 import fs from 'node:fs';
 import path from 'node:path';
@@ -42,13 +45,15 @@ function addAfter(front, anchor, lines) {
 const has = (front, key) => new RegExp(`^${key}:`, 'm').test(front);
 
 const PLAN = {
-  location: () => [['permits', ['needs_booking: false']]],
-  stay: () => [['booking_ref', ['confirmation:']], ['nights_booked', ['cost_agreed:']], ['advance_paid', ['balance_pending:']]],
+  location: front => /^needs_booking:\s*true\s*$/m.test(front)
+    ? [['balance_pending', ['payment_due:', 'cancel_by:']]] : [['permits', ['needs_booking: false']]],
+  stay: () => [['booking_ref', ['confirmation:']], ['nights_booked', ['cost_agreed:']], ['advance_paid', ['balance_pending:']], ['balance_pending', ['payment_due:', 'cancel_by:']]],
   transport: front => {
     const booked = /^booking_status:\s*(booked|paid)\s*$/m.test(front);
     return [['contact_phone', [`decision: ${booked ? 'selected' : 'considering'}`, 'decision_reason:']],
-      ['booking_status', ['cost_agreed:', 'advance_paid:', 'balance_pending:', 'confirmation:']]];
+      ['booking_status', ['cost_agreed:', 'advance_paid:', 'balance_pending:', 'payment_due:', 'cancel_by:', 'confirmation:']]];
   },
+  booking: () => [['balance_pending', ['payment_due:', 'cancel_by:']]],
 };
 
 let changed = 0;

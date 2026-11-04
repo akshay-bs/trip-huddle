@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // trip-init: set up a trip-huddle vault from an answers file, or update an existing vault's settings.
 //
-//   node init.mjs --answers <file.json> [--vault <folder>] [--reconfigure [--add-food] [--add-bookings] [--add-itinerary] [--add-deadlines] [--add-scout]]
+//   node init.mjs --answers <file.json> [--vault <folder>] [--reconfigure [--add-food] [--add-bookings] [--add-itinerary] [--add-deadlines] [--add-scout] [--add-travelling]]
 //
 // New vault (default): copies vault-template into the folder (empty or missing), then fills it in.
 // --reconfigure: the folder already has trip.md. Rewrites trip.md, the per-trip values in Templates
@@ -28,6 +28,9 @@
 // writes no brief: the trip-init skill does that from research, only when asked. Notes are never touched.
 // group_wishes ({must: [], nice: [], avoid: []}): a new vault gets it empty; on --reconfigure a list the answers give replaces
 // that list, a list left out keeps its current value, and an older trip.md without it only gets it with --add-scout.
+// --add-travelling (with --reconfigure, for a vault made before 0.15.0): adds what the on-the-road skill records on a Day note: day_status
+// and skipped in the Day Plan template (properties and FIELD GUIDE), its What happened section, the types and the Status column of the
+// Itinerary base. Notes are never touched: a Day note without day_status reads as planned.
 // The per-trip values ("slots") are listed in ../slots.md.
 
 import fs from 'node:fs';
@@ -50,6 +53,7 @@ const ADD_BOOKINGS = args.includes('--add-bookings');
 const ADD_ITINERARY = args.includes('--add-itinerary');
 const ADD_DEADLINES = args.includes('--add-deadlines');
 const ADD_SCOUT = args.includes('--add-scout');
+const ADD_TRAVELLING = args.includes('--add-travelling');
 const VAULT = path.resolve(opt('--vault') || process.cwd());
 const ANSWERS = opt('--answers');
 const die = m => { console.error(`trip-init: ${m}`); process.exit(1); };
@@ -58,6 +62,7 @@ if (ADD_FOOD && !RECONF) die('--add-food only works with --reconfigure (a new va
 if (ADD_BOOKINGS && !RECONF) die('--add-bookings only works with --reconfigure (a new vault already has the booking list)');
 if (ADD_ITINERARY && !RECONF) die('--add-itinerary only works with --reconfigure (a new vault already has what build-itinerary needs)');
 if (ADD_DEADLINES && !RECONF) die('--add-deadlines only works with --reconfigure (a new vault already has booking deadlines)');
+if (ADD_TRAVELLING && !RECONF) die('--add-travelling only works with --reconfigure (a new vault already has day_status and skipped)');
 if (ADD_SCOUT && !RECONF) die('--add-scout only works with --reconfigure (a new vault already has the destination brief template and group_wishes)');
 
 // ---------- the answers ----------
@@ -332,6 +337,30 @@ if (ADD_SCOUT) {
     if (!/^- \*\*Destination brief:\*\*/m.test(t)) t = sub(t, /^(- \*\*Destination:\*\*.*)$/m, `$1\n${home.match(/^- \*\*Destination brief:\*\*.*$/m)[0]}`, 'the Destination line of Trip facts in 00 Home.md');
     if (!/`shortlist-places` skill/.test(t)) t = sub(t, /^With the trip-huddle plugin, paste or forward/m, `${home.match(/^New to the place\?.*$/m)[0]}\n\nWith the trip-huddle plugin, paste or forward`, 'the "With the trip-huddle plugin" paragraph of 00 Home.md');
     return t;
+  });
+}
+
+// ---------- --add-travelling: bring a vault made before 0.15.0 up to day_status, skipped and What happened ----------
+if (ADD_TRAVELLING) {
+  const fromStarter = rel => fs.readFileSync(path.join(TEMPLATE_VAULT, rel), 'utf8');
+  const guide = key => fromStarter('Templates/Day Plan.md').match(/<!--[\s\S]*?-->/)[0].split('\n').filter(l => l.startsWith(key + ': ')).join('\n');
+  edit('Templates/Day Plan.md', t => {
+    if (!/^day_status:/m.test(t)) t = sub(t, /^(rule_bends:.*\n)/m, '$1day_status: planned\nskipped: []\n', 'rule_bends in the Day Plan template');
+    if (!/^day_status: planned \|/m.test(t)) t = sub(t, /^(travel_checked: date)/m, `${guide('day_status')}\n${guide('skipped')}\n$1`, 'the travel_checked line in the Day Plan FIELD GUIDE');
+    if (!/^## What happened$/m.test(t)) t = sub(t, /^(## Choices that bend the rules)/m, fromStarter('Templates/Day Plan.md').match(/^## What happened\n[\s\S]*?\n\n(?=## Choices that bend the rules)/m)[0] + '$1', 'the Choices that bend the rules section in the Day Plan template');
+    return t;
+  });
+  edit('.obsidian/types.json', t => {   // just after backtrack_km, as in the starter vault
+    const j = JSON.parse(t), types = {};
+    const put = () => { for (const [a, b] of [['day_status', 'text'], ['skipped', 'multitext']]) if (!(a in j.types) && !(a in types)) types[a] = b; };
+    for (const [k, v] of Object.entries(j.types)) { types[k] = v; if (k === 'backtrack_km') put(); }
+    put();
+    return JSON.stringify({ ...j, types }, null, 2) + '\n';
+  });
+  edit('Bases/Itinerary.base', t => {
+    if (/^\s+- day_status$/m.test(t)) return t;
+    t = sub(t, /^(  travel_verdict:\n    displayName: .*\n(?:  (?:start_time|backtrack_km):\n    displayName: .*\n)*)/m, '$1  day_status:\n    displayName: Status\n', 'the travel_verdict column name in the Itinerary base');
+    return sub(t, /^(      - rule_bends\n)/m, '$1      - day_status\n', 'the rule_bends column in the Itinerary base');
   });
 }
 

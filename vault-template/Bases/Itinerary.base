@@ -24,6 +24,8 @@ properties:
     displayName: Start
   backtrack_km:
     displayName: Doubles back km
+  day_status:
+    displayName: Status
 views:
   - type: table
     name: Days
@@ -48,6 +50,7 @@ views:
       - total_walk_km
       - backtrack_km
       - rule_bends
+      - day_status
     sort:
       - property: day
         direction: ASC

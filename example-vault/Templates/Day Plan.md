@@ -17,6 +17,8 @@ predawn_hrs:
 total_walk_km:
 backtrack_km:
 rule_bends: 0
+day_status: planned
+skipped: []
 travel_checked:
 travel_verdict:
 tags:
@@ -35,6 +37,8 @@ drive_hrs: sum of the legs below, using the upper end of each range (after a tra
 predawn_hrs: the part of drive_hrs + activity_hrs that happens before sunrise (empty if none). It is counted separately and does not use up daylight
 backtrack_km: km driven today on a road the trip already drove (earlier today or on an earlier day), from the build-itinerary route check; a stop and straight back is not counted. 0 if none, empty if not worked out
 rule_bends: how many choices are listed under "Choices that bend the rules" (0 if none). A leg in a road_cutoffs area (trip.md) driven after its time is a rule bend too
+day_status: planned | done | changed | skipped   (planned = not yet recorded; done = as planned; changed = re-planned or went differently; skipped = nothing planned happened. The on-the-road skill sets it when the group says how the day went; a Day note without it reads as planned)
+skipped: list of "[[Location note]]" from this day's locations that did not happen (empty if none). Clear scheduled_day on each, so it shows as selected but unscheduled; its decision does not change
 travel_checked: date (YYYY-MM-DD) the review-travel-times skill last checked the drive times; empty if never
 travel_verdict: ok | tight | too much   (that skill's verdict on the drive times, empty if not checked; the checker warns when it is better than the slack verdict below)
 Legs table, After dark column: ok = lit highway or city streets; avoid = unlit, forest, hill or bad surface
@@ -76,6 +80,9 @@ Slack = daylight_hrs − (drive_hrs + activity_hrs − predawn_hrs), computed in
 
 ## Backup plan (weather / closure / delay)
 - 
+
+## What happened
+<!-- Written on the road, in the group's own words: what we really did, when we arrived, what went wrong. A few plain lines. Leave empty for a day that went as planned. The plan above is never rewritten; this is the real story beside it. -->
 
 ## Choices that bend the rules
 <!-- One line per choice, then set rule_bends to the number: - **What we chose.** Why: the reason. Cost: what it costs, e.g. 15 min on city streets after dark. -->

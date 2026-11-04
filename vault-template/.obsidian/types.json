@@ -96,6 +96,8 @@
     "total_walk_km": "number",
     "rule_bends": "number",
     "backtrack_km": "number",
+    "day_status": "text",
+    "skipped": "multitext",
     "travel_checked": "date",
     "travel_verdict": "text",
     "kind": "text",

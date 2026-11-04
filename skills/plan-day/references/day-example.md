@@ -20,6 +20,8 @@ predawn_hrs: 1.3
 total_walk_km: 5
 backtrack_km: 0
 rule_bends: 1
+day_status: planned
+skipped: []
 travel_checked:
 travel_verdict:
 tags:

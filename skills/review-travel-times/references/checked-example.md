@@ -19,6 +19,8 @@ predawn_hrs:
 total_walk_km: 3
 backtrack_km: 0
 rule_bends: 0
+day_status: planned
+skipped: []
 travel_checked: 2026-11-02
 travel_verdict: ok
 tags:

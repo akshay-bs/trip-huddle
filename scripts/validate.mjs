@@ -317,6 +317,7 @@ for (const f of targets) {
       warn(f, `drive_hrs ${fm.data.drive_hrs} is over the daily limit of ${maxHrs} hours in the Transport note`);
     }
     dayChecks(f, fm.data, fm.body);
+    dayStatusChecks(f, fm.data, fm.body, name);
   }
   if (type === 'comparison') comparisonChecks(f, fm.data);
   if (type === 'itinerary' || type === 'brief') itineraryChecks(f, type, fm.data, fm.body);
@@ -539,6 +540,29 @@ function dayChecks(f, d, body = '') {
   travelChecks(f, d);
   afterDarkChecks(f, d, body, times.sunset);
   cutoffChecks(f, d, body);
+}
+
+// What really happened (on-the-road). day_status says if the plan was followed; skipped lists the places that did not happen.
+// Only what can be read reliably is checked. A Day note with no day_status reads as planned.
+function dayStatusChecks(f, d, body, name) {
+  const today = new Date().toISOString().slice(0, 10);
+  const status = String(d.day_status ?? '').trim();
+  const date = /^\d{4}-\d{2}-\d{2}/.test(String(d.date ?? '')) ? String(d.date).slice(0, 10) : null;
+  if (['done', 'changed', 'skipped'].includes(status) && date && date > today) warn(f, `day_status is "${status}", but the date ${date} is still ahead. Set it back to planned, or fix the date`);
+  if (String(trip.stage) === 'travelling' && date && date < today && (status === '' || status === 'planned')) warn(f, `the trip is travelling and ${date} is past, but day_status is ${status || 'empty'}. Record what happened on this day (done, changed or skipped)`);
+  const asLinks = v => (Array.isArray(v) ? v : v ? [v] : []).flatMap(x => wikilinks(String(x)));
+  const skipped = asLinks(d.skipped), planned = asLinks(d.locations);
+  for (const l of skipped) if (!planned.includes(l)) warn(f, `skipped lists [[${l}]], which is not in this day's locations. Skip only a place that was on this day's plan`);
+  const stillHere = link => {
+    const p = (byBase.get(link) || []).find(x => x.endsWith('.md') && !rel(x).startsWith('Templates/'));
+    return p && asLinks(parseFrontmatter(read(p))?.data.scheduled_day).includes(name);
+  };
+  const toCheck = status === 'skipped' ? [...new Set([...skipped, ...planned])] : skipped;
+  for (const l of toCheck) if (stillHere(l)) warn(f, `${status === 'skipped' && !skipped.includes(l) ? 'the day was skipped' : 'skipped lists it'}, but [[${l}]] still has scheduled_day on this day. Clear scheduled_day so it shows as selected but unscheduled`);
+  if (status === 'changed') {
+    const m = body.replace(/<!--[\s\S]*?-->/g, '').match(/^## What happened[^\n]*\n([\s\S]*?)(?=^## |(?![\s\S]))/m);
+    if (!m || !m[1].replace(/^\s*-?\s*$/gm, '').trim()) warn(f, 'day_status is "changed", but the What happened section is empty. Write in a few plain lines what really happened');
+  }
 }
 
 // The travel-time check (review-travel-times). Its verdict allows for stops, road types and local reports, so it should

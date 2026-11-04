@@ -1,0 +1,27 @@
+{
+  "date": "2026-06-10",
+  "start": "11:00",
+  "sunrise": "06:14",
+  "sunset": "20:54",
+  "daylight_hrs": 14.7,
+  "activity_hrs": 4.5,
+  "predawn_hrs": 0,
+  "evening_base_end": true,
+  "legs": [
+    {
+      "from": "Lagos", "to": "Mountain Fort", "after_dark": "avoid", "stay_hrs": 2,
+      "segments": [{ "km": 15, "road": "rural" }, { "km": 30, "road": "hill" }],
+      "map_hrs": 1.2, "reports_hrs": null
+    },
+    {
+      "from": "Mountain Fort", "to": "Cork Oak Farm", "after_dark": "avoid", "stay_hrs": 2.5,
+      "segments": [{ "km": 12, "road": "hill" }],
+      "map_hrs": 0.4, "reports_hrs": null
+    },
+    {
+      "from": "Cork Oak Farm", "to": "Lagos", "after_dark": "ok",
+      "segments": [{ "km": 10, "road": "hill" }, { "km": 28, "road": "highway" }],
+      "map_hrs": 0.9, "reports_hrs": null
+    }
+  ]
+}

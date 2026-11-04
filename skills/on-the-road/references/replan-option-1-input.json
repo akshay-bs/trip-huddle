@@ -1,0 +1,22 @@
+{
+  "date": "2026-06-10",
+  "start": "09:30",
+  "sunrise": "06:14",
+  "sunset": "20:54",
+  "daylight_hrs": 14.7,
+  "activity_hrs": 2.5,
+  "predawn_hrs": 0,
+  "evening_base_end": true,
+  "legs": [
+    {
+      "from": "Lagos", "to": "Cork Oak Farm", "after_dark": "ok", "stay_hrs": 2.5,
+      "segments": [{ "km": 6, "road": "city" }, { "km": 34, "road": "highway" }],
+      "map_hrs": 0.8, "reports_hrs": null
+    },
+    {
+      "from": "Cork Oak Farm", "to": "Lagos", "after_dark": "ok",
+      "segments": [{ "km": 34, "road": "highway" }, { "km": 6, "road": "city" }],
+      "map_hrs": 0.8, "reports_hrs": null
+    }
+  ]
+}

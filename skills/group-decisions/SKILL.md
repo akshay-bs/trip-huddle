@@ -44,7 +44,7 @@ Look in these places, in this order. Each finding is one of: a decision that nee
 | The booking list (`Bases/Bookings.base`) | Selected stays, the selected vehicle, selected places with `needs_booking: true`, and the notes in `Bookings/`: what is still to book, booked with no confirmation yet, and balances still owed. A booking is not a decision: list it, don't make a Decision note for it. |
 | `Decisions/` | Open decisions already there. Update them; never make a second note for the same question. |
 
-What the stage changes: in `planning` lead with open decisions, undecided comparisons and place counts; in `booking` lead with decisions that have a deadline, things decided but not booked, and locks that are missing; in `travelling` list only what blocks the next days and the locked rules that today's plan must keep; in `after` list only what was never closed. The stage never locks or decides anything.
+What the stage changes: in `planning` lead with open decisions, undecided comparisons and place counts; in `booking` lead with decisions that have a deadline, things decided but not booked, and locks that are missing; in `travelling` list only what blocks the next days and the locked rules that today's plan must keep (a Day note's `day_status` tells which days are over; for today's brief or a re-plan on the road, point to the `on-the-road` skill, which hands any booking or lock that has to change back here); in `after` list only what was never closed. The stage never locks or decides anything.
 
 ## 3. Create or update Decision notes
 - **One note per real choice.** Good: "Which stay in Sohra", "How do we get there", "Which itinerary", "Do we do the safari". Not: one note per place.

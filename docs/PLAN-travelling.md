@@ -1,6 +1,16 @@
 # Plan: travelling skill (a plan for today, and a quick re-plan)
 
-Status: proposal (not built).
+Status: built (v0.15.0).
+
+How it was built, where it differs from the proposal below:
+- **The owner's answers.** All six defaults in the questions at the end were accepted: (1) a new skill, `on-the-road`, not more modes of `plan-day`; (2) Today lives in the chat only, built from the Day note, with no new note and nothing added to the home page; (3) only `day_status`, a `skipped` list and a few lines under *What happened* are recorded, with no times, costs or ratings; (4) no offline or printable version in this round; (5) anyone can ask for a re-plan, whoever holds the vault decides after asking the group, and the skill never takes a vote; (6) a re-plan may move places and days, and moving a night or the vehicle is only shown as "touches a booking" with its `cancel_by` and `payment_due`, never as a default option.
+- **The skill** is `skills/on-the-road/SKILL.md` with a Today brief and a Re-plan, then a short section on recording a day. It writes no scripts of its own: sunrise and sunset come from `skills/plan-day/scripts/sun.mjs`, verdicts from `skills/review-travel-times/scripts/travel.mjs check` (a road told to be shut is `blocked` in its input), and a chosen option is written by `plan-day`'s steps. `group-decisions` and `plan-day` each got one or two sentences that point to it.
+- **The old plan of a re-planned day** goes in one line under *Notes* ("Re-planned on <date>: was ...") and not in a *History* line, since the Day Plan template has no *History* section. A day that has already happened keeps its plan; what really happened goes in *What happened*, with `day_status` and `skipped`.
+- **The status of a past day.** The checker's "record what happened" warning fires when `stage` is `travelling`, the `date` is past and `day_status` is empty or still `planned` (the proposal said "has no `day_status`"; `planned` is the default in the template, so an empty value alone would almost never occur). The other warnings are as proposed; `day_status: skipped` also warns about any place of the day's `locations` that still has `scheduled_day` on that day.
+- **The fields** `day_status: planned` and `skipped: []` are in the Day Plan template after `rule_bends`, with the value list in the FIELD GUIDE (so the checker reads it by itself); the types are `text` and `multitext`; the Itinerary base's *Days* view has a Status column. The example vault has no Day notes, so it only has the template, types and base. No *Today* view and no home page section (answer 2).
+- **Older vaults:** `trip-init --reconfigure --add-travelling` adds the template fields, the guide lines, the *What happened* section, the types and the base column, and no migration script was needed. It does not touch the home page (there is no Today section).
+- **Made-up examples** in `skills/on-the-road/references/`: `replan-example.md` (a landslide on a made-up Portugal day, two options and one shown-not-suggested option, with the numbers from `travel.mjs` on `replan-option-1-input.json` and `replan-option-2-input.json`) and `changed-day-example.md` (the same day after it went differently; dated in the past, so it never warns).
+
 
 ## The problem
 Once the group is on the road, the plan meets the real world. Two things come up again and again.
@@ -158,7 +168,7 @@ The example vault gets only empty fields and the template changes. No trip dates
 ## Not in this version
 No live data: no weather, traffic or road-closure feed. No alarms or reminders. No automatic stage change. No expense log or "would we go again" note (After travel). No rebuilding of the whole route: a large change goes back to `build-itinerary`.
 
-## Questions for you
+## Questions for you (all six accepted as suggested, see the top)
 1. **New skill or extend `plan-day`?** Suggested: a new skill, `on-the-road`, with a Today mode and a Re-plan mode, reusing `plan-day`, `travel.mjs` and `group-decisions`.
 2. **Where does "today" live?** A note, a home-page section, or chat only? Suggested: chat only, built from the Day note, which is already readable offline. No new note.
 3. **How much do we record about what happened?** Suggested: only `day_status`, a `skipped` list and a few lines under *What happened* on the Day note. No times, no costs, no ratings (those are After travel).

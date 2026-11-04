@@ -8,7 +8,7 @@
       "name": "trip-huddle",
       "source": "./",
       "description": "Plan a group trip in an Obsidian vault with Claude.",
-      "version": "0.14.0"
+      "version": "0.15.0"
     }
   ]
 }

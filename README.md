@@ -23,12 +23,13 @@ You scroll up. You find three versions of the plan, two agency PDFs, a voice not
 - **Choose.** Going somewhere new? Setup writes a one-page brief on the place (safety, visas, when to go, budget, the usual routes, each with its source and date), then asks what the group wants and suggests places worth a closer look, region by region, each marked fits, mixed or doesn't fit, never scored. Or paste any message, quote or link. Every place, stay, café and vehicle gets one note, with who suggested it. "Laboon" finds the existing *Labon Falls*. Each place is checked for your season, how hard the walk is, and whether it suits your group.
 - **Agree the route.** Every drive is checked three ways (a map, the kind of road, recent local reports) against that date's real sunset. Each day comes back ok, tight or too much. Your picks become two or three route options, including the agencies' order and its reverse, with what each makes possible and where it breaks (a road nobody drives after 4 pm, the same road twice). Agency quotes and your own plan are compared side by side, with no scores. The chosen route becomes a one-page itinerary for the group and a brief to get quotes from tour operators.
 - **Book.** One booking list, made from what the group chose: what's booked, what's paid, what's owed, and where the voucher is. Places that need tickets land on it by themselves. Once something is booked it's locked, and nothing gets planned against it.
+- **Travel.** On the road, "what's today?" gets a short answer you can read with one bar of signal: where you sleep, when to leave, sunset, the risky drive, what is booked and the next deadline. When something slips (a shut road, a sick traveller, rain), you get two or three options for the days left, each checked against daylight, each saying which bookings it touches and their dates. Locked choices and bookings are never moved without asking, and the group picks.
 
 **You'll still argue about the hotel. You'll just argue about it once.**
 
 ## How it works
 
-- **A Claude plugin** (for Cowork and Claude Code) with nine skills. You never call them by name; you just talk:
+- **A Claude plugin** (for Cowork and Claude Code) with ten skills. You never call them by name; you just talk:
 
   | You say | Skill |
   |---|---|
@@ -39,6 +40,7 @@ You scroll up. You find three versions of the plan, two agency PDFs, a voice not
   | "Turn what we picked into a route. Try it the other way round too." | `build-itinerary` |
   | "Plan day 3, Shillong to Sohra." | `plan-day` |
   | "Can we really do this before dark?" | `review-travel-times` |
+  | "What's today?" / "The road to Dawki is shut, what now?" | `on-the-road` |
   | "What do we still have to decide?" / "We paid the advance." | `group-decisions` |
 
 - **An Obsidian vault layout.** Places, stays, cafés, days, decisions and bookings are each a note. Obsidian's Bases views show the open questions, the booking list with the cost per family, and a map.

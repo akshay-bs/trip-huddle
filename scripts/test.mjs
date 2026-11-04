@@ -548,7 +548,7 @@ const warnLine = (out, file, text) => out.split('\n').some(l => l.includes(file)
   test('trip-init: a new vault gets the Day Plan template with the travel properties, in the same order as the checked example', () => {
     const keys = text => (text.match(/^---\n([\s\S]*?)\n---/)[1].match(/^[a-z_]+(?=:)/gm) || []).join();
     const tpl = fs.readFileSync(path.join(portugal, 'Templates/Day Plan.md'), 'utf8');
-    return /rule_bends,travel_checked,travel_verdict,tags/.test(keys(tpl)) && keys(tpl) === keys(fs.readFileSync(path.join(CHECKED, 'checked-example.md'), 'utf8')) ? '' : keys(tpl);
+    return /rule_bends,day_status,skipped,travel_checked,travel_verdict,tags/.test(keys(tpl)) && keys(tpl) === keys(fs.readFileSync(path.join(CHECKED, 'checked-example.md'), 'utf8')) ? '' : keys(tpl);
   });
 }
 // ---- planning_limits in trip.md: defaults, overrides that change the verdicts, trip-init, the checker
@@ -1581,10 +1581,10 @@ const warnLine = (out, file, text) => out.split('\n').some(l => l.includes(file)
   });
 }
 
-test('plugin: both manifests have the same version, and it is 0.14.0', () => {
+test('plugin: both manifests have the same version, and it is 0.15.0', () => {
   const a = JSON.parse(fs.readFileSync(path.join(ROOT, '.claude-plugin/plugin.json'), 'utf8')).version;
   const b = JSON.parse(fs.readFileSync(path.join(ROOT, '.claude-plugin/marketplace.json'), 'utf8')).plugins[0].version;
-  return a === b && a === '0.14.0' ? '' : `plugin.json ${a}, marketplace.json ${b}`;
+  return a === b && a === '0.15.0' ? '' : `plugin.json ${a}, marketplace.json ${b}`;
 });
 // ---- Food spots (restaurants and cafes): the template, the Base, the folder, the example notes and the old-vault upgrade
 {
@@ -2113,6 +2113,184 @@ test('vaults: the Day Plan template, trip.md notes and Home pointer agree betwee
   });
 }
 
+// ---- travelling (v0.15.0): day_status, skipped and What happened, the checker warnings, --add-travelling, the on-the-road skill
+{
+  const REF = path.join(ROOT, 'skills/on-the-road/references');
+  const rd = (dir, rel) => fs.readFileSync(path.join(dir, rel), 'utf8');
+  const VT = path.join(ROOT, 'vault-template'), EXV = path.join(ROOT, 'example-vault');
+  test('travelling: both vaults carry day_status, skipped and the What happened section in the Day Plan template, the types and the Itinerary base', () => {
+    const bad = [];
+    for (const [name, dir] of [['vault-template', VT], ['example-vault', EXV]]) {
+      const day = rd(dir, 'Templates/Day Plan.md');
+      if (!/^rule_bends: 0\nday_status: planned\nskipped: \[\]\ntravel_checked:/m.test(day)) bad.push(`${name}: day_status and skipped after rule_bends`);
+      if (!/^day_status: planned \| done \| changed \| skipped/m.test(day) || !/^skipped: list of /m.test(day)) bad.push(`${name}: FIELD GUIDE lines`);
+      if (!/## Backup plan[^\n]*\n(?:.*\n)*?\n## What happened\n<!--[\s\S]*?-->\n\n## Choices that bend the rules/.test(day)) bad.push(`${name}: What happened after Backup plan`);
+      const types = JSON.parse(rd(dir, '.obsidian/types.json')).types;
+      if (types.day_status !== 'text' || types.skipped !== 'multitext') bad.push(`${name}: types`);
+      const base = rd(dir, 'Bases/Itinerary.base');
+      if (!/^  day_status:\n    displayName: Status$/m.test(base) || !/^      - day_status$/m.test(base)) bad.push(`${name}: Itinerary base column`);
+    }
+    for (const f of ['Templates/Day Plan.md', 'Bases/Itinerary.base', '.obsidian/types.json']) {
+      const mask = t => t.replace(/^(daylight_hrs): .*$/m, '$1: X').replace(/^\| (08:00|07:00) \|/m, '| X |').replace(/^\| 1[68]:\d\d \| Sunset/m, '| X | Sunset').replace(/slack_ok_hrs.*$/gm, '');
+      if (mask(rd(VT, f)) !== mask(rd(EXV, f))) bad.push(`${f} differs between the vaults`);
+    }
+    return bad.join('; ');
+  });
+  test('travelling: the example vault has 0 errors, and the status fields default to planned and empty', () => {
+    const r = check(EXV);
+    return r.code === 0 && counts(r.out).errors === 0 && !/day_status/.test(r.out) ? '' : r.out;
+  });
+
+  // the made-up changed Day note, in a copy of the Portugal vault with the stubs of the plan-day example
+  const tv = path.join(TMP, 'travelling');
+  fs.cpSync(dayVault, tv, { recursive: true });
+  const day5 = path.join(tv, 'Itinerary/Day 05.md'), fort = path.join(tv, 'Locations/Mountain Fort (Example).md'), tripMd = path.join(tv, 'trip.md');
+  fs.copyFileSync(path.join(REF, 'changed-day-example.md'), day5);
+  const sub = (f, a, b) => { const t = fs.readFileSync(f, 'utf8'); if (!t.includes(a)) throw new Error(`test setup: "${a}" not in ${path.basename(f)}`); fs.writeFileSync(f, t.replace(a, b)); };
+  sub(fort, /scheduled_day: .*/.exec(fs.readFileSync(fort, 'utf8'))[0], 'scheduled_day:');   // the skipped fort is no longer scheduled
+  const mine = () => check(tv).out.split('\n').filter(l => /Day 05|Mountain Fort/.test(l)).join('\n');
+  test('travelling: the made-up changed Day note passes the checker with no warnings about it', () => {
+    const r = check(tv);
+    return r.code === 0 && !mine() ? '' : r.out;
+  });
+  test('travelling: the made-up changed Day note matches the sun script for its date', () => {
+    const text = rd(tv, 'Itinerary/Day 05.md'), get = k => text.match(new RegExp(`^${k}: "?([^"\\n]*)"?$`, 'm'))[1];
+    const sun = sunTimes(get('date'), 37.10, -8.67, tzOffsetMinutes('Europe/Lisbon', 2026, 6, 10));
+    return sun.sunrise === get('sunrise') && sun.sunset === get('sunset') && sun.daylight_hrs === Number(get('daylight_hrs')) && get('day_status') === 'changed' && /^## What happened\n- \S/m.test(text) ? '' : JSON.stringify(sun);
+  });
+  test('travelling: the options in the made-up re-plan match travel.mjs (drive, slack, verdict, when the day ends)', () => {
+    const text = rd(REF, 'replan-example.md'), bad = [];
+    for (const n of [1, 2]) {
+      const out = JSON.parse(run(TRAVEL, ['check', '--input', path.join(REF, `replan-option-${n}-input.json`), '--vault', portugal]).out);
+      const line = `Day check: drive ${out.day.drive_hrs} hrs, ${out.day.slack.slack_hrs} hrs of slack. Verdict: ${out.day.verdict}`;
+      if (!text.includes(line)) bad.push(`option ${n} should say "${line}"`);
+      if (!text.includes(out.day.ends_at.replace(/^0/, '')) && !text.includes(out.day.ends_at)) bad.push(`option ${n} ends at ${out.day.ends_at}`);
+    }
+    if (!/Verdict: ok\./.test(text) || /too much/i.test(text.split('**Shown, not suggested')[0])) bad.push('an option that is too much must not be offered');
+    if (!/Touches bookings?/i.test(text) || !/free cancellation/.test(text) || !/passed/.test(text) || !/needs the dates unlocked/.test(text)) bad.push('the booking option lacks its dates or the unlock');
+    return bad.join('; ');
+  });
+
+  // each new warning fires on a changed copy and goes quiet when fixed
+  const fires = (name, text, breakIt, fixIt) => {
+    breakIt();
+    const o1 = mine();
+    fixIt();
+    const o2 = mine();
+    test(`travelling: the checker warns about ${name}, and goes quiet when it is fixed`, () => o1.includes(text) && !o2 ? '' : `broken: ${o1}\nfixed: ${o2}`);
+  };
+  fires('a done, changed or skipped day whose date is still ahead', 'is still ahead',
+    () => sub(day5, 'date: 2026-06-10', 'date: 2099-06-10'), () => sub(day5, 'date: 2099-06-10', 'date: 2026-06-10'));
+  fires('a skipped place that still has scheduled_day on the day', 'still has scheduled_day on this day',
+    () => sub(fort, 'scheduled_day:', 'scheduled_day: "[[Day 05]]"'), () => sub(fort, 'scheduled_day: "[[Day 05]]"', 'scheduled_day:'));
+  fires('a skipped link that is not in the day\'s locations', 'which is not in this day\'s locations',
+    () => sub(day5, 'skipped:\n  - "[[Mountain Fort (Example)]]"', 'skipped:\n  - "[[Mountain Fort (Example)]]"\n  - "[[Old Town Walk (Example)]]"'),
+    () => sub(day5, '\n  - "[[Old Town Walk (Example)]]"', ''));
+  let kept = '';
+  fires('a changed day with nothing under What happened', 'What happened section is empty', () => {
+    kept = rd(tv, 'Itinerary/Day 05.md');
+    fs.writeFileSync(day5, kept.replace(/## What happened\n[\s\S]*?\n\n(?=## Choices)/, '## What happened\n<!-- nothing yet -->\n- \n\n'));
+  }, () => fs.writeFileSync(day5, kept));
+  fires('a skipped day whose places are still scheduled on it', 'the day was skipped',
+    () => { sub(day5, 'day_status: changed', 'day_status: skipped'); sub(day5, 'skipped:\n  - "[[Mountain Fort (Example)]]"', 'skipped: []') ; sub(fort, 'scheduled_day:', 'scheduled_day: "[[Day 05]]"'); },
+    () => { sub(day5, 'day_status: skipped', 'day_status: changed'); sub(day5, 'skipped: []', 'skipped:\n  - "[[Mountain Fort (Example)]]"'); sub(fort, 'scheduled_day: "[[Day 05]]"', 'scheduled_day:'); });
+  {
+    sub(tripMd, 'stage: planning', 'stage: travelling');
+    sub(day5, 'day_status: changed', 'day_status: planned');
+    const o1 = mine();
+    sub(day5, 'day_status: planned', 'day_status:');
+    const o2 = mine();
+    sub(day5, 'day_status:\n', 'day_status: done\n');
+    const o3 = mine();
+    sub(day5, 'day_status: done', 'day_status: changed');
+    sub(tripMd, 'stage: travelling', 'stage: planning');
+    sub(day5, 'day_status: changed', 'day_status: planned');
+    const o4 = mine();   // a planned past day is fine while the trip is still being planned
+    sub(day5, 'day_status: planned', 'day_status: changed');
+    test('travelling: a past day still planned (or empty) warns only while stage is travelling, and is quiet once recorded', () =>
+      o1.includes('Record what happened') && o2.includes('Record what happened') && !o3 && !o4 ? '' : `planned: ${o1}\nempty: ${o2}\ndone: ${o3}\nplanning: ${o4}`);
+    test('travelling: a day_status outside the list is flagged', () => {
+      sub(day5, 'day_status: changed', 'day_status: maybe');
+      const o = mine();
+      sub(day5, 'day_status: maybe', 'day_status: changed');
+      return o.includes('day_status "maybe" is not one of') ? '' : o;
+    });
+    test('travelling: done on a too-much day with no rule bends is fine (it happened)', () => {
+      sub(day5, 'day_status: changed', 'day_status: done');
+      sub(day5, 'travel_verdict: ok', 'travel_verdict: too much');
+      const o = mine();
+      sub(day5, 'travel_verdict: too much', 'travel_verdict: ok'); sub(day5, 'day_status: done', 'day_status: changed');
+      return o;
+    });
+  }
+
+  // an older vault (before 0.15.0), brought up to date by trip-init --add-travelling
+  const old = path.join(TMP, 'pre-0.15');
+  fs.cpSync(EXV, old, { recursive: true });
+  const ow = (rel, fn) => { const p = path.join(old, rel); fs.writeFileSync(p, fn(fs.readFileSync(p, 'utf8'))); };
+  ow('Templates/Day Plan.md', s => s.replace(/^(day_status|skipped): .*\n/gm, '').replace(/^skipped: \[\]\n/m, '').replace(/## What happened\n[\s\S]*?\n\n(?=## Choices)/, ''));
+  ow('.obsidian/types.json', s => s.replace(/\n\s*"(day_status|skipped)": "\w+",/g, ''));
+  ow('Bases/Itinerary.base', s => s.replace('  day_status:\n    displayName: Status\n', '').replace('      - day_status\n', ''));
+  const TRAV = ['Templates/Day Plan.md', '.obsidian/types.json', 'Bases/Itinerary.base'];
+  const exAnswers = path.join(ANSWERS, 'example-vault-answers.json');
+  test('travelling: the made-up older vault really is old, and --reconfigure alone adds nothing', () => {
+    const notOld = TRAV.filter(f => rd(old, f) === rd(EXV, f));
+    const r = run(INIT, ['--answers', exAnswers, '--vault', old, '--reconfigure']);
+    return !notOld.length && r.code === 0 && r.out.includes('Nothing changed') && !/day_status/.test(rd(old, 'Templates/Day Plan.md')) ? '' : `not changed by setup: ${notOld.join(', ')}\n${r.out}`;
+  });
+  const up = run(INIT, ['--answers', exAnswers, '--vault', old, '--reconfigure', '--add-travelling']);
+  test('trip-init --reconfigure --add-travelling brings an older vault to what the example has (template, types, Itinerary base)', () => {
+    const diff = TRAV.filter(f => rd(old, f) !== rd(EXV, f));
+    return up.code === 0 && !diff.length ? '' : `${up.out}\ndiffers: ${diff.join(', ')}`;
+  });
+  test('trip-init --add-travelling: a second run changes nothing, the result passes the checker, and without --reconfigure it is refused', () => {
+    const again = run(INIT, ['--answers', exAnswers, '--vault', old, '--reconfigure', '--add-travelling']);
+    const no = run(INIT, ['--answers', exAnswers, '--vault', path.join(TMP, 'never-t'), '--add-travelling']);
+    const r = check(old);
+    return again.code === 0 && again.out.includes('Nothing changed') && no.code === 1 && /--add-travelling only works with --reconfigure/.test(no.out) && r.code === 0 && counts(r.out).errors === 0 ? '' : again.out + no.out + r.out;
+  });
+  test('trip-init: a new vault from the Portugal answers has the fields and the section, and passes with a Day note made from its template', () => {
+    const v = path.join(TMP, 'portugal-travelling');
+    fs.cpSync(portugal, v, { recursive: true });
+    fs.mkdirSync(path.join(v, 'Itinerary'), { recursive: true });
+    fs.writeFileSync(path.join(v, 'Itinerary/Day 01.md'), rd(v, 'Templates/Day Plan.md').replace('{{title}}', 'Day 01'));
+    const r = check(v), t = rd(v, 'Templates/Day Plan.md');
+    return /^day_status: planned$/m.test(t) && /^skipped: \[\]$/m.test(t) && /^## What happened$/m.test(t) && r.code === 0 && !/Day 01/.test(r.out) ? '' : r.out;
+  });
+
+  // the skill and the docs
+  test('travelling: the on-the-road skill states the hard rules, the two modes, the options and the scripts it reuses', () => {
+    const s = rd(ROOT, 'skills/on-the-road/SKILL.md'), bad = [];
+    for (const w of ['name: on-the-road', 'Today brief', 'Re-plan', 'The group decides', 'Never take a vote', 'Locked means locked', 'needs unlocking', 'Booked is not moved silently', 'touches a booking', 'cancel_by', 'payment_due', 'balance_pending', 'Never invent facts',
+      'Past days are not rewritten', 'stage: travelling', 'never change `stage`', '2 or 3 options', 'travel.mjs', 'sun.mjs', 'plan-day', 'group-decisions', 'build-itinerary', 'day_status', 'skipped', 'What happened', '--add-travelling', 'in the chat only', 'about 15 lines', 'Which one?',
+      '${CLAUDE_PLUGIN_ROOT}/skills/review-travel-times/scripts/travel.mjs', '${CLAUDE_PLUGIN_ROOT}/skills/plan-day/scripts/sun.mjs', 'never as a default option']) {
+      const w2 = w === 'never change `stage`' ? 'you never change `stage` yourself' : w;
+      if (!s.includes(w2)) bad.push(w);
+    }
+    for (const f of ['replan-example.md', 'changed-day-example.md', 'replan-option-1-input.json', 'replan-option-2-input.json']) if (!fs.existsSync(path.join(REF, f))) bad.push(f);
+    if (/^description: [\s\S]{0,1}$/m.test(s)) bad.push('description');
+    return bad.join('; ');
+  });
+  test('travelling: group-decisions, plan-day and trip-init point to the new pieces', () => {
+    const bad = [];
+    if (!/on-the-road/.test(rd(ROOT, 'skills/group-decisions/SKILL.md'))) bad.push('group-decisions');
+    const p = rd(ROOT, 'skills/plan-day/SKILL.md');
+    if (!/on-the-road/.test(p) || !/day_status/.test(p)) bad.push('plan-day');
+    const t = rd(ROOT, 'skills/trip-init/SKILL.md');
+    if (!/--add-travelling/.test(t) || !/before 0\.15\.0/.test(t)) bad.push('trip-init');
+    return bad.join('; ');
+  });
+  test('travelling: the README, docs/SKILLS.md and CLAUDE.md list on-the-road; the roadmap marks it done; the plan says built; both manifests say 0.15.0', () => {
+    const bad = [];
+    for (const f of ['README.md', 'docs/SKILLS.md', 'CLAUDE.md']) if (!rd(ROOT, f).includes('on-the-road')) bad.push(f);
+    if (!/\[x\] \(v0\.15\.0\) \*\*Travelling/.test(rd(ROOT, 'docs/ROADMAP.md'))) bad.push('roadmap not marked done');
+    const plan = rd(ROOT, 'docs/PLAN-travelling.md');
+    if (!/^Status: built \(v0\.15\.0\)\.$/m.test(plan) || !/^How it was built, where it differs/m.test(plan) || !/The owner's answers/.test(plan)) bad.push('plan status line and how it was built');
+    for (const f of ['.claude-plugin/plugin.json', '.claude-plugin/marketplace.json']) if (!/"version": "0\.15\.0"/.test(rd(ROOT, f))) bad.push(f);
+    return bad.join('; ');
+  });
+}
+
 // ---- (d) a broken vault: every problem must be reported
 const broken = path.join(TMP, 'broken');
 fs.cpSync(path.join(ROOT, 'example-vault'), broken, { recursive: true });
@@ -2161,6 +2339,11 @@ fs.writeFileSync(path.join(broken, 'Itinerary/Route - Option A.md'), fs.readFile
   .replace('{{title}}', 'Route - Option A').replace('bases: []', 'bases: [A]').replace('nights_per_base: []', 'nights_per_base: [2]').replace('total_nights:', 'total_nights: 2')
   .replace('| 1 |  |  |  |  |\n| 2 |  |  |  |  |', '| 1 | 08:00, A |  | A | A |\n| 2 | 08:00, A |  | A | A |'));
 
+// a Day note for a day that is still ahead: changed with nothing under What happened, skipping a place that is still scheduled on it
+fs.writeFileSync(path.join(broken, 'Itinerary/Day 03.md'), dayTpl.replace('{{title}}', 'Day 03').replace('date:', 'date: 2099-01-05').replace('day_status: planned', 'day_status: changed')
+  .replace('locations: []', 'locations:\n  - "[[Arwah Cave]]"').replace('skipped: []', 'skipped:\n  - "[[Arwah Cave]]"\n  - "[[Kynrem Falls]]"'));
+edit(loc, /^scheduled_day:.*$/m.exec(fs.readFileSync(path.join(broken, loc), 'utf8'))[0], 'scheduled_day: "[[Day 03]]"');
+
 const brokenRun = check(broken);
 const expectIn = (name, file, text, level) => test(`checker finds: ${name}`, () => {
   const section = brokenRun.out.split('WARNINGS (')[level === 'error' ? 0 : 1];
@@ -2185,6 +2368,10 @@ expectIn('a booked stay whose decision is not locked', 'Stays/Sohra Plaza.md', '
 expectIn('a road cutoff with a bad time', 'trip.md', 'no_drive_after must be a time', 'warning');
 expectIn('a Route Day by day table a row short', 'Itinerary/Route - Option A.md', 'Day by day has 2 row(s), but 2 nights need 3', 'warning');
 expectIn('a booking_status outside the list', 'Bookings/Book - Travel to and from the trip.md', 'booking_status "done" is not one of', 'warning');
+expectIn('a changed day that is still ahead', 'Itinerary/Day 03.md', 'is still ahead', 'warning');
+expectIn('a skipped place that is still scheduled on the day', 'Itinerary/Day 03.md', 'skipped lists it, but [[Arwah Cave]] still has scheduled_day on this day', 'warning');
+expectIn('a skipped link that is not in the day\'s locations', 'Itinerary/Day 03.md', 'skipped lists [[Kynrem Falls]], which is not in this day\'s locations', 'warning');
+expectIn('a changed day with nothing under What happened', 'Itinerary/Day 03.md', 'What happened section is empty', 'warning');
 
 fs.rmSync(TMP, { recursive: true, force: true });
 console.log(failed ? `\n${failed} test(s) FAILED` : '\nAll tests passed');

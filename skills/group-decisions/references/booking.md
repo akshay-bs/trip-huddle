@@ -12,12 +12,16 @@ This is how `group-decisions` handles bookings. The list is made from what the g
 
 `Bases/Bookings.base` shows the list: **To book**, **No confirmation yet**, **Balance pending** and **All bookings** (with the totals and the share per cost-sharing unit). The home page's *Bookings* section embeds the first two. When a selection changes, the list follows without any extra step. Never copy an item into `Bookings/` to put it on the list.
 
-Every item uses the same five fields on its own note:
+Every item uses the same seven fields on its own note:
 - `booking_status`: `not-contacted | enquired | quoted | booked | paid | cancelled`.
 - `cost_agreed`, `advance_paid`, `balance_pending`: plain numbers in the trip currency.
+- `payment_due`: the date by which the next payment must be made (YYYY-MM-DD). Update it to the balance deadline once the advance is paid.
+- `cancel_by`: the last date to cancel without penalty (YYYY-MM-DD). Empty when non-refundable or not yet booked.
 - `confirmation`: a link to the voucher, ticket, reservation slip or pasted email in `Confirmations/`.
 
 A stay also keeps its `booking_ref`. A place has these fields only while `needs_booking` is `true`. To add them, put them right after `needs_booking`, in that order, with `booking_status: not-contacted`.
+
+When the user says a booking is confirmed, or pastes a confirmation, look for payment due dates and cancellation cut-offs in the text and ask to set `payment_due` and `cancel_by`. When the user reports paying an advance, ask whether the balance has a due date and set `payment_due` to it.
 
 ## Booking notes (extra tasks)
 Make a note in `Bookings/` only for something with no note of its own: flights, trains, a regional permit, travel insurance, anything else the group has to book. Never make one for a stay, the vehicle or a place: book those on their own notes.
@@ -49,9 +53,13 @@ When the user pastes a confirmation with a reference, the reference stays on the
 ## What the checker says
 - **booked, no confirmation yet**: `booked` or `paid` with `confirmation` empty.
 - `paid` while `balance_pending` is above 0, and `advance_paid` + `balance_pending` not equal to `cost_agreed` (when all three are set).
+- **payment overdue**: `payment_due` is in the past and `balance_pending` is above 0.
+- **free cancellation expired**: `cancel_by` is in the past and `booking_status` is `booked` (not `paid`).
+- **cancellation cut-off before payment due**: `cancel_by` is before `payment_due` on the same note.
+- **date set but booking is not quoted or booked**: `payment_due` or `cancel_by` on a note that is not `quoted`, `booked` or `paid`.
 - A booked item the group no longer has as `selected`.
 - A booked item whose Decision is not locked, and a `locked_by` link to something that is not booked or paid.
 - A place whose booking fields do not match `needs_booking`, and a `confirmation` link outside `Confirmations/`.
 
 ## In the summary
-In the `booking` stage, lead with the list: what is still to book (each with its Decision's `deadline` if it has one), what is booked with no confirmation yet, and what is still owed (the sum of `balance_pending`). In the `travelling` stage, list only what is booked for the next days with no confirmation, and what is still owed on the road.
+In the `booking` stage, lead with the list: what is still to book (each with its Decision's `deadline` if it has one), what is booked with no confirmation yet, and what is still owed (the sum of `balance_pending`). After the list, add a **Coming up** section: items with `payment_due` or `cancel_by` in the next 14 days, sorted by date, with the Decision `deadline` items mixed in (one timeline). Past-due items go at the top with a note. In the `travelling` stage, list only what is booked for the next days with no confirmation, and what is still owed on the road.

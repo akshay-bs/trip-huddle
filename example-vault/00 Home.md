@@ -43,6 +43,9 @@ What the group still has to book, made from what it selected (stays, the vehicle
 ### To book
 ![[Bookings.base#To book]]
 
+### Deadlines coming up
+![[Bookings.base#By date]]
+
 ### Booked, no confirmation yet
 ![[Bookings.base#No confirmation yet]]
 

@@ -4,6 +4,8 @@ booking_status: not-contacted
 cost_agreed:
 advance_paid:
 balance_pending:
+payment_due:
+cancel_by:
 confirmation:
 tags:
   - booking

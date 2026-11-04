@@ -73,6 +73,23 @@ views:
     summaries:
       balance_pending: Sum
   - type: table
+    name: By date
+    filters:
+      or:
+        - '!payment_due.isEmpty()'
+        - '!cancel_by.isEmpty()'
+    order:
+      - file.name
+      - type
+      - booking_status
+      - payment_due
+      - cancel_by
+      - balance_pending
+      - confirmation
+    sort:
+      - property: payment_due
+        direction: ASC
+  - type: table
     name: All bookings
     order:
       - file.name
@@ -81,6 +98,8 @@ views:
       - cost_agreed
       - advance_paid
       - balance_pending
+      - payment_due
+      - cancel_by
       - formula.cost_per_split
       - confirmation
     sort:

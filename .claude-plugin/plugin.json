@@ -1,6 +1,6 @@
 {
   "name": "trip-huddle",
-  "version": "0.13.0",
+  "version": "0.14.0",
   "description": "Plan a group trip in an Obsidian vault with Claude: every suggestion traced to its source, places and stays researched and checked against templates, decisions left to the group.",
   "author": {
     "name": "akshay-bs",

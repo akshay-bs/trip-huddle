@@ -1,6 +1,6 @@
 # Plan: destination brief and place shortlist
 
-Status: built (v0.13.0).
+Status: built (v0.14.0).
 
 How it was built, where it differs from the proposal below:
 - **The background research** is one `general-purpose` agent on a cheaper model, started right after interview message 1, with the prompt in `skills/trip-init/references/brief-agent-prompt.md`. It writes nothing to disk: it replies with the brief body and its suggestions (regions and bases, the season verdict per region, daylight and sunset, a map box, the currency and a daily budget range, categories, and any road cutoff it found). The interview uses them once they are back and plain defaults before; the user confirms every value. A cutoff it found is only suggested, never added without asking.

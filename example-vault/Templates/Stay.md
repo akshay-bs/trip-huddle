@@ -17,6 +17,8 @@ nights_booked:
 cost_agreed:
 advance_paid:
 balance_pending:
+payment_due:
+cancel_by:
 cancellation_policy:
 check_in:
 check_out:
@@ -57,6 +59,8 @@ price_basis: per-room | whole-unit   (what price_per_night refers to)
 est_total: total for the whole group for all nights, in the trip currency (the per-split cost is computed in the Stays base)
 price_per_night / extra_bed / cost_agreed / advance_paid / balance_pending: plain numbers in the trip currency (see trip.md); no symbol or text
 cost_agreed: the total agreed with the stay once booked (est_total stays the estimate); balance_pending: what is still owed
+payment_due: the date by which the next payment must be made (YYYY-MM-DD)
+cancel_by: the last date to cancel without penalty (YYYY-MM-DD). Empty when non-refundable or not yet booked. cancellation_policy stays as the policy wording
 confirmation: a link to the voucher, reservation slip or pasted email, kept in Confirmations/, e.g. "[[Confirmations/stay-voucher.pdf]]". booking_ref stays as the stay's own reference
 parking_for_group_vehicle: true if your group's vehicle can park on site
 room_config: e.g. "4 doubles + 1 family room (3 beds)" or "whole villa, sleeps 14"

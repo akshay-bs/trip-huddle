@@ -51,8 +51,8 @@ category: waterfall | viewpoint | cave | village | root-bridge | lake-river | wi
 location: [lat, lng]  e.g. [48.8584, 2.2945]  (decimal degrees, used by the map)
 season_verdict: great | good | ok | skip   (how good is it in your travel season)
 entry_fee: plain number in the trip currency (see trip.md); no symbol or text
-needs_booking: true when tickets, a permit or a slot must be booked ahead (see permits). Only then add these five lines right after it, and the place shows on the booking list once selected: booking_status, cost_agreed, advance_paid, balance_pending, confirmation
-booking_status: not-contacted | enquired | quoted | booked | paid | cancelled   (only when needs_booking is true; cost_agreed, advance_paid and balance_pending are plain numbers; confirmation links to a file in Confirmations/)
+needs_booking: true when tickets, a permit or a slot must be booked ahead (see permits). Only then add these seven lines right after it, and the place shows on the booking list once selected: booking_status, cost_agreed, advance_paid, balance_pending, payment_due, cancel_by, confirmation
+booking_status: not-contacted | enquired | quoted | booked | paid | cancelled   (only when needs_booking is true; cost_agreed, advance_paid and balance_pending are plain numbers; payment_due and cancel_by are dates YYYY-MM-DD; confirmation links to a file in Confirmations/)
 walk_distance_km / walk_duration_min: ROUND TRIP
 difficulty: easy | moderate | strenuous
 group_fit: good | ok | poor   (for the group described in 00 Home → Trip facts)

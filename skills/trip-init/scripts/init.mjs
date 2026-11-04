@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // trip-init: set up a trip-huddle vault from an answers file, or update an existing vault's settings.
 //
-//   node init.mjs --answers <file.json> [--vault <folder>] [--reconfigure [--add-food] [--add-bookings] [--add-itinerary] [--add-scout]]
+//   node init.mjs --answers <file.json> [--vault <folder>] [--reconfigure [--add-food] [--add-bookings] [--add-itinerary] [--add-deadlines] [--add-scout]]
 //
 // New vault (default): copies vault-template into the folder (empty or missing), then fills it in.
 // --reconfigure: the folder already has trip.md. Rewrites trip.md, the per-trip values in Templates
@@ -19,7 +19,10 @@
 // columns in the Itinerary and Locations Bases and the route step of 00 Home.md. Notes are never touched: the build-itinerary
 // skill's scripts/migrate-itinerary.mjs adds the new fields to existing notes. (road_cutoffs and planning_limits.on_the_way_min
 // come with every --reconfigure, like the other trip.md settings.)
-// --add-scout (with --reconfigure, for a vault made before 0.13.0): adds what the destination brief and the shortlist-places
+// --add-deadlines (with --reconfigure, for a vault made before 0.13.0): adds booking deadline fields (payment_due and cancel_by)
+// to the Booking, Stay and Transport templates, the Location FIELD GUIDE, the types, a By date view in the Bookings base, and the
+// Deadlines coming up section of 00 Home.md. Notes are never touched: the fields are empty until the user fills them.
+// --add-scout (with --reconfigure, for a vault made before 0.14.0): adds what the destination brief and the shortlist-places
 // skill need: the Destination Brief template, the research kind in the Source template, the destination and checked_on types,
 // the brief's line and paragraph on 00 Home.md, and an empty group_wishes in trip.md (with its line in the trip.md text). It
 // writes no brief: the trip-init skill does that from research, only when asked. Notes are never touched.
@@ -45,6 +48,7 @@ const RECONF = args.includes('--reconfigure');
 const ADD_FOOD = args.includes('--add-food');
 const ADD_BOOKINGS = args.includes('--add-bookings');
 const ADD_ITINERARY = args.includes('--add-itinerary');
+const ADD_DEADLINES = args.includes('--add-deadlines');
 const ADD_SCOUT = args.includes('--add-scout');
 const VAULT = path.resolve(opt('--vault') || process.cwd());
 const ANSWERS = opt('--answers');
@@ -53,6 +57,7 @@ if (!ANSWERS) die('missing --answers <file.json>');
 if (ADD_FOOD && !RECONF) die('--add-food only works with --reconfigure (a new vault already has the Food category)');
 if (ADD_BOOKINGS && !RECONF) die('--add-bookings only works with --reconfigure (a new vault already has the booking list)');
 if (ADD_ITINERARY && !RECONF) die('--add-itinerary only works with --reconfigure (a new vault already has what build-itinerary needs)');
+if (ADD_DEADLINES && !RECONF) die('--add-deadlines only works with --reconfigure (a new vault already has booking deadlines)');
 if (ADD_SCOUT && !RECONF) die('--add-scout only works with --reconfigure (a new vault already has the destination brief template and group_wishes)');
 
 // ---------- the answers ----------
@@ -303,7 +308,7 @@ if (ADD_ITINERARY) {
   });
 }
 
-// ---------- --add-scout: bring a vault made before 0.13.0 up to the destination brief and the shortlist ----------
+// ---------- --add-scout: bring a vault made before 0.14.0 up to the destination brief and the shortlist ----------
 if (ADD_SCOUT) {
   const fromStarter = rel => fs.readFileSync(path.join(TEMPLATE_VAULT, rel), 'utf8');
   if (!fs.existsSync(path.join(VAULT, 'Templates/Destination Brief.md'))) write('Templates/Destination Brief.md', fromStarter('Templates/Destination Brief.md'));
@@ -328,6 +333,57 @@ if (ADD_SCOUT) {
     if (!/`shortlist-places` skill/.test(t)) t = sub(t, /^With the trip-huddle plugin, paste or forward/m, `${home.match(/^New to the place\?.*$/m)[0]}\n\nWith the trip-huddle plugin, paste or forward`, 'the "With the trip-huddle plugin" paragraph of 00 Home.md');
     return t;
   });
+}
+
+// ---------- --add-deadlines: bring a vault made before 0.13.0 up to booking deadlines ----------
+// --add-bookings also adds the deadlines: the starter's booking list already has them.
+if (ADD_DEADLINES || ADD_BOOKINGS) {
+  const fromStarter = rel => fs.readFileSync(path.join(TEMPLATE_VAULT, rel), 'utf8');
+  // Templates: add payment_due and cancel_by after balance_pending
+  for (const tpl of ['Templates/Booking.md', 'Templates/Transport.md']) edit(tpl, t => {
+    if (/^payment_due:/m.test(t)) return t;
+    return sub(t, /^(balance_pending:.*\n)/m, '$1payment_due:\ncancel_by:\n', `balance_pending in ${tpl}`);
+  });
+  edit('Templates/Stay.md', t => {
+    if (/^payment_due:/m.test(t)) return t;
+    return sub(t, /^(balance_pending:.*\n)/m, '$1payment_due:\ncancel_by:\n', 'balance_pending in Templates/Stay.md');
+  });
+  // FIELD GUIDEs: add payment_due and cancel_by lines
+  const starterGuide = (rel, key) => fromStarter(rel).match(/<!--[\s\S]*?-->/)[0].split('\n').filter(l => l.startsWith(key)).join('\n');
+  edit('Templates/Booking.md', t => /^payment_due: the date/m.test(t) ? t
+    : sub(t, /^(confirmation: a link to the voucher, ticket,)/m,[starterGuide('Templates/Booking.md', 'payment_due: '), starterGuide('Templates/Booking.md', 'cancel_by: '), '$1'].join('\n'),
+      'the confirmation line in the Booking FIELD GUIDE'));
+  edit('Templates/Transport.md', t => /^payment_due: the date/m.test(t) ? t
+    : sub(t, /^(confirmation: a link to the booking confirmation)/m,[starterGuide('Templates/Transport.md', 'payment_due: '), starterGuide('Templates/Transport.md', 'cancel_by: '), '$1'].join('\n'),
+      'the confirmation line in the Transport FIELD GUIDE'));
+  edit('Templates/Stay.md', t => /^payment_due: the date/m.test(t) ? t
+    : sub(t, /^(confirmation: a link to the voucher, reservation)/m,[starterGuide('Templates/Stay.md', 'payment_due: '), starterGuide('Templates/Stay.md', 'cancel_by: '), '$1'].join('\n'),
+      'the confirmation line in the Stay FIELD GUIDE'));
+  edit('Templates/Location.md', t => /payment_due and cancel_by/.test(t) ? t
+    : sub(t, /add these five lines/, 'add these seven lines', 'the needs_booking line in the Location FIELD GUIDE')
+      .replace(/cost_agreed, advance_paid, balance_pending, confirmation\n(booking_status:.*plain numbers; )confirmation links/,
+        'cost_agreed, advance_paid, balance_pending, payment_due, cancel_by, confirmation\n$1payment_due and cancel_by are dates YYYY-MM-DD; confirmation links'));
+  // types.json: add the two date types
+  edit('.obsidian/types.json', t => {
+    const j = JSON.parse(t);
+    if (!('payment_due' in j.types)) j.types.payment_due = 'date';
+    if (!('cancel_by' in j.types)) j.types.cancel_by = 'date';
+    return JSON.stringify(j, null, 2) + '\n';
+  });
+  // Bookings base: add the By date view and the date columns in All bookings
+  edit('Bases/Bookings.base', t => {
+    if (/name: By date/.test(t)) return t;
+    const starter = fromStarter('Bases/Bookings.base');
+    const byDate = starter.match(/  - type: table\n    name: By date\n[\s\S]*?(?=  - type: table\n    name: All bookings)/)[0];
+    t = sub(t, /^(  - type: table\n    name: All bookings)/m, byDate + '$1', 'the All bookings view in Bases/Bookings.base');
+    if (!/payment_due/.test(t.match(/name: All bookings[\s\S]*$/)[0])) {
+      t = sub(t, /^(      - balance_pending\n)(      - formula\.cost_per_split)/m, '$1      - payment_due\n      - cancel_by\n$2', 'the balance_pending column before cost_per_split in All bookings');
+    }
+    return t;
+  });
+  // Home page: add the By date embed
+  edit('00 Home.md', t => /Bookings\.base#By date/.test(t) ? t
+    : sub(t, /^(### Booked, no confirmation yet)/m, '### Deadlines coming up\n![[Bookings.base#By date]]\n\n$1', 'the Booked, no confirmation yet section of 00 Home.md'));
 }
 
 // ---------- slots (see ../slots.md) ----------

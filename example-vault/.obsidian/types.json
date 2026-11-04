@@ -129,6 +129,8 @@
     "needs_booking": "checkbox",
     "cost_agreed": "number",
     "balance_pending": "number",
-    "confirmation": "text"
+    "confirmation": "text",
+    "payment_due": "date",
+    "cancel_by": "date"
   }
 }

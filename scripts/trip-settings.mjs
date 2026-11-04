@@ -1,5 +1,6 @@
 // Shared reader for trip.md settings, and the planning limits. Plain Node, no dependencies.
-// Used by scripts/validate.mjs, the plan-day sun script, the review-travel-times script, the build-itinerary route script and trip-init,
+// Used by scripts/validate.mjs, the plan-day sun script, the review-travel-times script, the build-itinerary route script and trip-init
+// (group_wishes too: the checker and trip-init),
 // so the numbers a group changes in trip.md reach every one of them the same way.
 import fs from 'node:fs';
 import path from 'node:path';
@@ -42,13 +43,20 @@ function parseFlow(src) {
 function parseBlock(lines) {   // indented "key: value" lines -> nested object; "- " lines -> a list
   if (/^\s+-(\s|$)/.test(lines[0] || '')) return parseBlockList(lines);
   const root = {}, stack = [{ indent: -1, obj: root }];
+  let open = null;   // the last "key:" with nothing after it: "- item" lines under it make it a list
   for (const line of lines) {
+    const dash = line.match(/^\s+-\s*(.*?)\s*$/);
+    if (dash && open) {
+      if (!Array.isArray(open.parent[open.key])) open.parent[open.key] = [];
+      open.parent[open.key].push(dash[1] === '' ? '' : parseFlow(dash[1]));
+      continue;
+    }
     const m = line.match(/^(\s+)([\w-]+):\s*(.*?)\s*$/);
     if (!m) continue;
     while (stack.length > 1 && stack[stack.length - 1].indent >= m[1].length) stack.pop();
     const parent = stack[stack.length - 1].obj;
-    if (m[3] === '') { parent[m[2]] = {}; stack.push({ indent: m[1].length, obj: parent[m[2]] }); }
-    else parent[m[2]] = parseFlow(m[3]);
+    if (m[3] === '') { parent[m[2]] = {}; stack.push({ indent: m[1].length, obj: parent[m[2]] }); open = { parent, key: m[2] }; }
+    else { parent[m[2]] = parseFlow(m[3]); open = null; }
   }
   return root;
 }
@@ -189,3 +197,40 @@ export function strictRoadCutoffs(vault) {
 }
 // The cutoff for an area name (case and spacing ignored), or null.
 export const cutoffFor = (cutoffs, area) => (area ? cutoffs.find(c => c.area.toLowerCase() === String(area).trim().toLowerCase()) || null : null);
+
+// ---- the group's wishes (`group_wishes` in trip.md), from the shortlist-places skill: {must: [], nice: [], avoid: []}, each a
+// list of short plain-text lines ("see elephants", "a tea estate", "long hikes"). build-itinerary flags a route that misses a
+// must-have, compare-itineraries shows which must-haves each option covers, and plan-day reads the avoid list as guidelines.
+export const WISH_KEYS = ['must', 'nice', 'avoid'];
+export const WISH_MAX_CHARS = 120;   // a wish is a short line, not a paragraph
+export const EMPTY_WISHES = { must: [], nice: [], avoid: [] };
+// Problems with a group_wishes value, as plain sentences (empty list = fine). `partial` allows a map with only some of the
+// three lists (trip-init's answers: a list left out keeps its current value).
+export function groupWishesProblems(v, { partial = false } = {}) {
+  if (v === undefined || v === null || v === '') return [];
+  const shape = 'group_wishes must be a map of three lists, like {must: [see elephants], nice: [a tea estate], avoid: [long hikes]}';
+  if (typeof v !== 'object' || Array.isArray(v)) return [shape];
+  const out = [];
+  for (const k of Object.keys(v)) if (!WISH_KEYS.includes(k)) out.push(`group_wishes: "${k}" is not a list name (use: ${WISH_KEYS.join(', ')})`);
+  for (const k of WISH_KEYS) {
+    if (!(k in v)) { if (!partial) out.push(`group_wishes has no ${k} list. Add ${k}: [] (empty is fine)`); continue; }
+    const list = v[k];
+    if (!Array.isArray(list)) { out.push(`group_wishes.${k} must be a list of short lines, like [see elephants]${list === '' || (list && typeof list === 'object' && !Object.keys(list).length) ? ' (or [] when empty)' : ''}`); continue; }
+    list.forEach((w, i) => {
+      if (typeof w !== 'string' || !w.trim()) out.push(`group_wishes.${k} item ${i + 1} must be a short line of text${w && typeof w === 'object' ? ', not a list or a map' : ''}`);
+      else if (w.length > WISH_MAX_CHARS) out.push(`group_wishes.${k} item ${i + 1} is ${w.length} characters long. Keep each wish to one short line (${WISH_MAX_CHARS} at most)`);
+    });
+  }
+  return out;
+}
+// The wishes in force for a vault ({must, nice, avoid}, empty lists when there are none) and any problems with them.
+export function loadGroupWishes(vault) {
+  let given;
+  const problems = [];
+  try { given = tripSetting(tripFrontmatter(vault), 'group_wishes'); }
+  catch (e) { problems.push(`group_wishes: ${e.message}`); }
+  problems.push(...groupWishesProblems(given));
+  const wishes = { must: [], nice: [], avoid: [] };
+  if (given && typeof given === 'object' && !Array.isArray(given)) for (const k of WISH_KEYS) if (Array.isArray(given[k])) wishes[k] = given[k].filter(w => typeof w === 'string' && w.trim());
+  return { wishes, present: given !== undefined, problems };
+}

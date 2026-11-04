@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // trip-init: set up a trip-huddle vault from an answers file, or update an existing vault's settings.
 //
-//   node init.mjs --answers <file.json> [--vault <folder>] [--reconfigure [--add-food] [--add-bookings] [--add-itinerary] [--add-deadlines]]
+//   node init.mjs --answers <file.json> [--vault <folder>] [--reconfigure [--add-food] [--add-bookings] [--add-itinerary] [--add-deadlines] [--add-scout]]
 //
 // New vault (default): copies vault-template into the folder (empty or missing), then fills it in.
 // --reconfigure: the folder already has trip.md. Rewrites trip.md, the per-trip values in Templates
@@ -22,13 +22,19 @@
 // --add-deadlines (with --reconfigure, for a vault made before 0.13.0): adds booking deadline fields (payment_due and cancel_by)
 // to the Booking, Stay and Transport templates, the Location FIELD GUIDE, the types, a By date view in the Bookings base, and the
 // Deadlines coming up section of 00 Home.md. Notes are never touched: the fields are empty until the user fills them.
+// --add-scout (with --reconfigure, for a vault made before 0.14.0): adds what the destination brief and the shortlist-places
+// skill need: the Destination Brief template, the research kind in the Source template, the destination and checked_on types,
+// the brief's line and paragraph on 00 Home.md, and an empty group_wishes in trip.md (with its line in the trip.md text). It
+// writes no brief: the trip-init skill does that from research, only when asked. Notes are never touched.
+// group_wishes ({must: [], nice: [], avoid: []}): a new vault gets it empty; on --reconfigure a list the answers give replaces
+// that list, a list left out keeps its current value, and an older trip.md without it only gets it with --add-scout.
 // The per-trip values ("slots") are listed in ../slots.md.
 
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { settingsProblems } from '../../review-travel-times/scripts/travel.mjs';
-import { tripSetting, PLANNING_LIMIT_DEFAULTS, planningLimitsProblems, STAGES, DEFAULT_STAGE, stageProblems, roadCutoffsProblems } from '../../../scripts/trip-settings.mjs';
+import { tripSetting, PLANNING_LIMIT_DEFAULTS, planningLimitsProblems, STAGES, DEFAULT_STAGE, stageProblems, roadCutoffsProblems, EMPTY_WISHES, groupWishesProblems } from '../../../scripts/trip-settings.mjs';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const SKILL = path.resolve(HERE, '..');
@@ -43,6 +49,7 @@ const ADD_FOOD = args.includes('--add-food');
 const ADD_BOOKINGS = args.includes('--add-bookings');
 const ADD_ITINERARY = args.includes('--add-itinerary');
 const ADD_DEADLINES = args.includes('--add-deadlines');
+const ADD_SCOUT = args.includes('--add-scout');
 const VAULT = path.resolve(opt('--vault') || process.cwd());
 const ANSWERS = opt('--answers');
 const die = m => { console.error(`trip-init: ${m}`); process.exit(1); };
@@ -51,6 +58,7 @@ if (ADD_FOOD && !RECONF) die('--add-food only works with --reconfigure (a new va
 if (ADD_BOOKINGS && !RECONF) die('--add-bookings only works with --reconfigure (a new vault already has the booking list)');
 if (ADD_ITINERARY && !RECONF) die('--add-itinerary only works with --reconfigure (a new vault already has what build-itinerary needs)');
 if (ADD_DEADLINES && !RECONF) die('--add-deadlines only works with --reconfigure (a new vault already has booking deadlines)');
+if (ADD_SCOUT && !RECONF) die('--add-scout only works with --reconfigure (a new vault already has the destination brief template and group_wishes)');
 
 // ---------- the answers ----------
 // Property order and defaults, the same as vault-template/trip.md.
@@ -60,7 +68,7 @@ const DEFAULTS = {
   traveller_notes: '', pace: '', food_needs: '', group_vehicle: '', currency: '', currency_symbol: '',
   season: '', daylight_hrs: 10, day_start: '08:00', sunset: '18:00', regions: [], bases: [], evening_bases: [],
   categories: ['viewpoint', 'nature', 'old-town', 'museum', 'market', 'food', 'activity', 'beach', 'hike'],
-  map_box: null, field_packs: [], planning_limits: PLANNING_LIMIT_DEFAULTS, road_cutoffs: [],
+  map_box: null, field_packs: [], planning_limits: PLANNING_LIMIT_DEFAULTS, road_cutoffs: [], group_wishes: EMPTY_WISHES,
 };
 let raw;
 try { raw = JSON.parse(fs.readFileSync(path.resolve(ANSWERS), "utf8")); }
@@ -90,6 +98,17 @@ try {
 A.road_cutoffs = raw.road_cutoffs !== undefined && raw.road_cutoffs !== null ? raw.road_cutoffs
   : (Array.isArray(nowCutoffs) && !roadCutoffsProblems(nowCutoffs).length ? nowCutoffs : []);
 A.planning_limits = { ...PLANNING_LIMIT_DEFAULTS, ...(limitsOk(nowLimits) ? nowLimits : {}), ...(raw.planning_limits && typeof raw.planning_limits === 'object' ? raw.planning_limits : {}) };
+// group_wishes: each list the answers give replaces that list; a list left out keeps what trip.md has now (on --reconfigure,
+// when it is valid), else it is empty. An older trip.md without group_wishes gets it only with --add-scout or from the answers.
+let nowWishes;
+try {
+  const old = RECONF && fs.existsSync(path.join(VAULT, 'trip.md')) ? fs.readFileSync(path.join(VAULT, 'trip.md'), 'utf8').match(/^---\r?\n([\s\S]*?)\r?\n---/)?.[1] || '' : '';
+  nowWishes = tripSetting(old, 'group_wishes');
+} catch { nowWishes = undefined; }
+const wishesOk = x => x && typeof x === 'object' && !Array.isArray(x) && !groupWishesProblems(x).length;
+const givenWishes = raw.group_wishes !== undefined && raw.group_wishes !== null;
+const writeWishes = !RECONF || ADD_SCOUT || nowWishes !== undefined || givenWishes;
+A.group_wishes = { ...EMPTY_WISHES, ...(wishesOk(nowWishes) ? nowWishes : {}), ...(givenWishes && typeof raw.group_wishes === 'object' && !Array.isArray(raw.group_wishes) ? raw.group_wishes : {}) };
 
 const problems = [...stageProblems(A.stage)];
 const isTime = v => /^\d{2}:\d{2}$/.test(v);
@@ -113,6 +132,7 @@ if (A.map_box) {
 problems.push(...settingsProblems(A.road_speeds, A.stop_buffer));
 problems.push(...planningLimitsProblems(raw.planning_limits));   // a limit is a number; see PLANNING_LIMIT_DEFAULTS
 problems.push(...roadCutoffsProblems(raw.road_cutoffs));          // [{area, no_drive_after: "HH:MM", reason}]
+problems.push(...groupWishesProblems(raw.group_wishes, { partial: true }));   // {must: [...], nice: [...], avoid: [...]}, short lines
 const PACK_DIR = path.join(SKILL, 'field-packs');
 const PACKS = Object.fromEntries(fs.readdirSync(PACK_DIR).filter(f => f.endsWith('.json'))
   .map(f => [f.replace(/\.json$/, ''), JSON.parse(fs.readFileSync(path.join(PACK_DIR, f), 'utf8'))]));
@@ -153,7 +173,7 @@ const scalar = (v, nested = false) => typeof v === 'number' || typeof v === 'boo
 const yamlValue = (v, nested = false) => Array.isArray(v) ? `[${v.map(x => yamlValue(x, true)).join(', ')}]`
   : v && typeof v === 'object' ? `{${Object.entries(v).map(([k, x]) => `${k}: ${yamlValue(x, true)}`).join(', ')}}`
   : scalar(v, nested);
-const keys = [...Object.keys(DEFAULTS), ...Object.keys(A).filter(k => !(k in DEFAULTS))];
+const keys = [...Object.keys(DEFAULTS), ...Object.keys(A).filter(k => !(k in DEFAULTS))].filter(k => k !== 'group_wishes' || writeWishes);
 let front = keys.map(k => { const v = yamlValue(A[k]); return v === '' ? `${k}:` : `${k}: ${v}`; }).join('\n');
 // Optional settings that people add by hand (read by scripts/validate.mjs and the review-travel-times skill):
 // keep them when settings are rewritten, unless the answers give a new value.
@@ -163,7 +183,12 @@ for (const k of ['decision_values', 'folders', 'road_speeds', 'stop_buffer']) {
   if (m) front += '\n' + m[0];
 }
 const oldTrip = fs.existsSync(tripMd) ? fs.readFileSync(tripMd, 'utf8') : read('trip.md');
-const body = oldTrip.replace(/^---\n[\s\S]*?\n---\n?/, '');
+let body = oldTrip.replace(/^---\n[\s\S]*?\n---\n?/, '');
+// --add-scout: the group_wishes line of the starter's trip.md text, before the "Optional, add by hand" line.
+if (ADD_SCOUT && !/^- `group_wishes` /m.test(body)) {
+  const line = fs.readFileSync(path.join(TEMPLATE_VAULT, 'trip.md'), 'utf8').match(/^- `group_wishes` .*\n/m)[0];
+  body = /^- Optional, add by hand/m.test(body) ? body.replace(/^- Optional, add by hand/m, line + '- Optional, add by hand') : body.replace(/\n*$/, '\n') + line;
+}
 write('trip.md', `---\n${front}\n---\n${body}`);
 
 // ---------- --add-food: bring a vault made before 0.9.0 up to the Food category ----------
@@ -279,6 +304,33 @@ if (ADD_ITINERARY) {
     const home = fromStarter('00 Home.md');
     if (!/^6\. \*\*Plan the route\.\*\*.*build-itinerary/m.test(t)) t = sub(t, /^6\. \*\*Plan the route\.\*\*.*$/m, home.match(/^6\. \*\*Plan the route\.\*\*.*$/m)[0], 'step 6 (Plan the route) of "How this vault works" in 00 Home.md');
     if (!/`build-itinerary` skill plans every day/.test(t)) t = sub(t, /It never scores them, and the group decides\.(?! Once the group picks)/, home.match(/It never scores them, and the group decides\. Once the group picks[^\n]*/)[0], 'the compare-itineraries sentence in 00 Home.md');
+    return t;
+  });
+}
+
+// ---------- --add-scout: bring a vault made before 0.14.0 up to the destination brief and the shortlist ----------
+if (ADD_SCOUT) {
+  const fromStarter = rel => fs.readFileSync(path.join(TEMPLATE_VAULT, rel), 'utf8');
+  if (!fs.existsSync(path.join(VAULT, 'Templates/Destination Brief.md'))) write('Templates/Destination Brief.md', fromStarter('Templates/Destination Brief.md'));
+  // The Source template: research joins the source_kind list, with a line on what it means (as in the starter vault).
+  edit('Templates/Source Itinerary.md', t => {
+    const starter = fromStarter('Templates/Source Itinerary.md');
+    if (!/^source_kind: .*\bresearch\b/m.test(t)) t = sub(t, /^source_kind: .*$/m, starter.match(/^source_kind: .*$/m)[0], 'the source_kind line in the Source template');
+    if (!/^research: /m.test(t)) t = sub(t, /^(processed: tick .*)$/m, `$1\n${starter.match(/^research: .*$/m)[0]}`, 'the processed line in the Source template');
+    return t;
+  });
+  edit('.obsidian/types.json', t => {   // just before route (or needs_booking), as in the starter vault
+    const j = JSON.parse(t), types = {};
+    const put = () => { for (const [a, b] of [['destination', 'text'], ['checked_on', 'date']]) if (!(a in j.types) && !(a in types)) types[a] = b; };
+    const before = 'route' in j.types ? 'route' : 'needs_booking';
+    for (const [k, v] of Object.entries(j.types)) { if (k === before) put(); types[k] = v; }
+    put();
+    return JSON.stringify({ ...j, types }, null, 2) + '\n';
+  });
+  edit('00 Home.md', t => {
+    const home = fromStarter('00 Home.md');
+    if (!/^- \*\*Destination brief:\*\*/m.test(t)) t = sub(t, /^(- \*\*Destination:\*\*.*)$/m, `$1\n${home.match(/^- \*\*Destination brief:\*\*.*$/m)[0]}`, 'the Destination line of Trip facts in 00 Home.md');
+    if (!/`shortlist-places` skill/.test(t)) t = sub(t, /^With the trip-huddle plugin, paste or forward/m, `${home.match(/^New to the place\?.*$/m)[0]}\n\nWith the trip-huddle plugin, paste or forward`, 'the "With the trip-huddle plugin" paragraph of 00 Home.md');
     return t;
   });
 }

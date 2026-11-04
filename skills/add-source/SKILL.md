@@ -24,7 +24,7 @@ Search `Sources/` before creating anything. It is the same source if it has the 
 ## 3. Write the Source note
 File: `Sources/<Who> - <Label>.md`, for example `Alex - Additions 2Oct` or `Agency quote - 8N9D`. No `[ ] # ^ | : / \ ?` in the name. Start from the template: keep every property in template order, keep the comment block, and replace `{{title}}` and `{{date}}`.
 - **Properties:**
-  - `source_from` is the person, website or agency. `source_kind` is one of the values in the template comment.
+  - `source_from` is the person, website or agency. `source_kind` is one of the values in the template comment (`research` is only for the shortlist that the `shortlist-places` skill writes).
   - `received_on` is the date it arrived (`YYYY-MM-DD`), not the trip date. `source_url` is the link, if there is one.
   - `num_days` is a plain number, if the source is an itinerary. Leave anything unknown blank.
   - `processed: false`.

@@ -11,8 +11,9 @@ tags:
 ---
 <!--
 source_from: person / website / agency name
-source_kind: friend | blog | agency | video | other
+source_kind: friend | blog | agency | video | research | other
 processed: tick once every place below has a Location note with this source in its recommended_by
+research: a shortlist from the shortlist-places skill. Its places are a table under Places mentioned, with a Pick column (deep dive | maybe | skip). It is processed when every row is deep dive (with a note) or skip
 -->
 
 # {{title}}

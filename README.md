@@ -20,7 +20,7 @@ You scroll up. You find three versions of the plan, two agency PDFs, a voice not
 
 ## What trip-huddle does today
 
-- **Choose.** Paste any message, quote or link. Every place, stay, café and vehicle gets one note, with who suggested it. "Laboon" finds the existing *Labon Falls*. Each place is checked for your season, how hard the walk is, and whether it suits your group.
+- **Choose.** Going somewhere new? Setup writes a one-page brief on the place (safety, visas, when to go, budget, the usual routes, each with its source and date), then asks what the group wants and suggests places worth a closer look, region by region, each marked fits, mixed or doesn't fit, never scored. Or paste any message, quote or link. Every place, stay, café and vehicle gets one note, with who suggested it. "Laboon" finds the existing *Labon Falls*. Each place is checked for your season, how hard the walk is, and whether it suits your group.
 - **Agree the route.** Every drive is checked three ways (a map, the kind of road, recent local reports) against that date's real sunset. Each day comes back ok, tight or too much. Your picks become two or three route options, including the agencies' order and its reverse, with what each makes possible and where it breaks (a road nobody drives after 4 pm, the same road twice). Agency quotes and your own plan are compared side by side, with no scores. The chosen route becomes a one-page itinerary for the group and a brief to get quotes from tour operators.
 - **Book.** One booking list, made from what the group chose: what's booked, what's paid, what's owed, and where the voucher is. Places that need tickets land on it by themselves. Once something is booked it's locked, and nothing gets planned against it.
 
@@ -28,11 +28,12 @@ You scroll up. You find three versions of the plan, two agency PDFs, a voice not
 
 ## How it works
 
-- **A Claude plugin** (for Cowork and Claude Code) with eight skills. You never call them by name; you just talk:
+- **A Claude plugin** (for Cowork and Claude Code) with nine skills. You never call them by name; you just talk:
 
   | You say | Skill |
   |---|---|
   | "Set up a vault for our December trip." | `trip-init` |
+  | "What should we see there? We love beaches and hate long hikes." | `shortlist-places` |
   | "Here's what Priya sent." | `add-source`, then `add-place` |
   | "Compare the two agency quotes with our plan." | `compare-itineraries` |
   | "Turn what we picked into a route. Try it the other way round too." | `build-itinerary` |
